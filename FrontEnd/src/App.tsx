@@ -1,7 +1,11 @@
+import { AuthLayout } from "./layouts/AuthLayout"
+
 function App() {
   return (
     <>
-      <h1 className="font-extrabold text-4xl">Collegegram</h1>
+      <AuthLayout>
+        <div></div>
+      </AuthLayout>
     </>
   )
 }
