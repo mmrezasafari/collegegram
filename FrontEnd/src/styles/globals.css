@@ -19,4 +19,7 @@
   --color-broderColor: #A5A5A5;
   --color-geryLight: #D8D8D8;
   --color-geryVeryLight: #F2F2F7;
+
+  /* global css variables */
+  --shadow-formShadow: 5px 5px 45px 0px #00000080;
 }
