@@ -1,10 +1,11 @@
-import { AuthLayout } from "./layouts/AuthLayout"
+import { Form } from './features/auth/Form'
+import { AuthLayout } from './layouts/AuthLayout'
 
 function App() {
   return (
     <>
       <AuthLayout>
-        <div></div>
+        <Form />
       </AuthLayout>
     </>
   )
