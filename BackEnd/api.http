@@ -1,0 +1,17 @@
+Post http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "username": "daleya",
+  "password": "Kosar**12345",
+  "email": "kosar.asadipour@gmail.com"
+}
+
+###
+Post http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "password": "Kosar**12345",
+  "usernameOrEmail": "kosar.asadipour@gmail.com"
+}
