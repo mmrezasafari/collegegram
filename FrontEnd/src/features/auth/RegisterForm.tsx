@@ -21,7 +21,9 @@ export const RegisterForm = () => {
     if (!val) {
       return 'وارد کردن تکرار رمزعبور اجباری است'
     } else {
-      return val === password.value ? null : 'مقدار تکرار رمز‌عبور باید با رمزعبور برابر باشد'
+      return val === password.value
+        ? null
+        : 'مقدار تکرار رمز‌عبور باید با رمزعبور برابر باشد'
     }
   })
 
@@ -118,7 +120,6 @@ export const RegisterForm = () => {
               {rePassword.error}
             </div>
           )}
-
         </div>
       </div>
     </div>
