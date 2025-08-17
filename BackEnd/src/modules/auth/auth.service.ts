@@ -26,7 +26,7 @@ export class AuthService {
     }
     if (comparePassword(dto.password, user.password)) {
 
-      const AccToken = encryptJWT(user, process.env.JWT_SECRET_ACC ?? "", "15m");
+      const AccToken = encryptJWT(user, process.env.JWT_SECRET ?? "", "15m");
 
       const expireDate = new Date(new Date().getDay() + 30);
       const session = await this.sessionRepo.create({
