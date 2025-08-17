@@ -4,6 +4,7 @@ import {
   PasswordIcon,
   UserNameIcon,
 } from '@/assets/images/Icons'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/Input'
 import { useInput } from '@/hooks/useInput'
 import {
@@ -122,6 +123,7 @@ export const RegisterForm = () => {
           )}
         </div>
       </div>
+      <Button className="self-end">ثبت نام</Button>
     </div>
   )
 }
