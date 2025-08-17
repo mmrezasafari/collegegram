@@ -1,5 +1,8 @@
 import { EmailIcon, ErrorIcon, PasswordIcon } from '@/assets/images/Icons'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/Input'
+import { Label } from '@/components/ui/label'
 import { useInput } from '@/hooks/useInput'
 
 export const LoginForm = () => {
@@ -56,7 +59,12 @@ export const LoginForm = () => {
             </div>
           )}
         </div>
+        <div className="flex items-center gap-4">
+          <Checkbox id="terms" />
+          <Label htmlFor="rememberme">مرا به خاطر بسپار</Label>
+        </div>
       </div>
+      <Button className="self-end">ورود</Button>
     </div>
   )
 }

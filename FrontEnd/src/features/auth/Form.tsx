@@ -1,68 +1,57 @@
-// import { LoginForm } from './LoginForm'
-// import { RegisterForm } from './RegisterForm'
-import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RegisterForm } from './RegisterForm'
 import { LoginForm } from './LoginForm'
-import { Checkbox } from '../../components/ui/checkbox'
-import { Label } from '../../components/ui/label'
+import * as React from 'react'
+import { Separator } from '@/components/ui/separator'
 
-export const Form = () => {
-  const [isChecked, setIsChecked] = useState(false)
-
-  const handleCheckboxChange = (event: {
-    target: { checked: boolean | (() => boolean) }
-  }) => {
-    setIsChecked(event.target.checked)
-    if (event.target.checked) {
-      console.log('Checkbox is checked!')
-      // event.target.checked = true
-      // You can trigger any other function here
-    } else {
-      console.log('Checkbox is unchecked!')
-    }
-  }
-
+export const Form: React.FC = () => {
   return (
-    <div className="w-full h-full md:w-[500px] md:h-2/3 flex flex-col justify-center items-center bg-backgroundLight md:rounded-3xl py-16 max-md:px-6 md:shadow-formShadow">
-      <div>
-        <Tabs
-          defaultValue="register"
-          className="w-[400px]  bg-muted rounded-lg"
-        >
-          <TabsList className="grid grid-cols-2 align-middle">
-            <TabsTrigger value="register">ثبت نام</TabsTrigger>
-            <TabsTrigger value="login">ورود</TabsTrigger>
-          </TabsList>
-          <TabsContent value="register">
-            <RegisterForm />
-          </TabsContent>
-          <TabsContent value="login">
-            <LoginForm />
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="terms"
-                checked={isChecked}
-                onChange={handleCheckboxChange}
-              />
-              <Label htmlFor="rememberme">مرا به خاطر بسپار</Label>
-            </div>
-            <div>
-              <a className="float-start" color="#EA5A69" href="url">
+    <div className="w-full h-full md:w-[500px] md:h-2/3 flex flex-col justify-center items-center bg-backgroundLight md:rounded-3xl py-16 max-md:px-6 md:shadow-formShadow gap-8">
+      <img
+        src="src/assets/images/rahnema-college-logo-far 1.png"
+        width="100px"
+        height="61"
+      />
+      <Tabs
+        defaultValue="register"
+        className="h-[510px] d-flex items-center bg-muted rounded-lg gap-12"
+      >
+        <TabsList className="d-flex justify-baseline w-full">
+          <TabsTrigger
+            className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black"
+            value="login"
+          >
+            ورود
+          </TabsTrigger>
+          <Separator orientation="vertical" className="bg-black" />
+          <TabsTrigger
+            className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black"
+            value="register"
+          >
+            ثبت نام
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="register">
+          <RegisterForm />
+        </TabsContent>
+        <TabsContent value="login">
+          <LoginForm />
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2 items-baseline">
+              <span className="text-xs">&#10095;</span>
+              <a className="text-primary text-sm" href="url">
                 فراموشی رمز عبور
               </a>
             </div>
-            <div>
-              <a className="float-end" color="#EA5A69" href="url">
+            <div className="flex gap-2 items-baseline">
+              <span className="text-xs">&#10095;</span>
+              <a className="text-primary text-sm" href="url">
                 ثبت نام در کالج گرام
               </a>
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* <RegisterForm /> */}
-      {/* <LoginForm /> */}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

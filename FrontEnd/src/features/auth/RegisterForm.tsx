@@ -4,6 +4,7 @@ import {
   PasswordIcon,
   UserNameIcon,
 } from '@/assets/images/Icons'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/Input'
 import { useInput } from '@/hooks/useInput'
 import {
@@ -21,7 +22,9 @@ export const RegisterForm = () => {
     if (!val) {
       return 'وارد کردن تکرار رمزعبور اجباری است'
     } else {
-      return val === password.value ? null : 'مقدار تکرار رمز‌عبور باید با رمزعبور برابر باشد'
+      return val === password.value
+        ? null
+        : 'مقدار تکرار رمز‌عبور باید با رمزعبور برابر باشد'
     }
   })
 
@@ -118,9 +121,9 @@ export const RegisterForm = () => {
               {rePassword.error}
             </div>
           )}
-
         </div>
       </div>
+      <Button className="self-end">ثبت نام</Button>
     </div>
   )
 }
