@@ -12,6 +12,7 @@ describe("User", () => {
   });
 
   afterAll(async () => {
+    // await AppDataSource.dropDatabase();
     await AppDataSource.destroy();
   });
 
