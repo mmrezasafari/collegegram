@@ -1,9 +1,9 @@
 import { EmailIcon, ErrorIcon, PasswordIcon } from '@/assets/images/Icons'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/Input'
-import { Label } from '@/components/ui/label'
-import { useInput } from '@/hooks/useInput'
+import { Button } from '@/features/common/components/ui/button'
+import { Checkbox } from '@/features/common/components/ui/checkbox'
+import { Input } from '@/features/common/components/ui/Input'
+import { Label } from '@/features/common/components/ui/label'
+import { useInput } from '@/features/common/hooks/useInput'
 
 export const LoginForm = () => {
   const email = useInput('')
@@ -11,8 +11,9 @@ export const LoginForm = () => {
 
   return (
     <div className="w-[335px] flex flex-col gap-8">
-      <h3 className="text-sm text-center">
-        برای ثبت‌نام کافیه نام کاربری، ایمیل و یک رمز عبور وارد کنید:
+      <h3 className="text-sm text-justify">
+        به کالج‌گرام خوش آمدید. برای ورود کافیه نام کاربری/ایمیل و رمز عبور
+        خود‌تون رو وارد کنید:
       </h3>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col">
@@ -60,8 +61,8 @@ export const LoginForm = () => {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <Checkbox id="terms" />
-          <Label htmlFor="rememberme">مرا به خاطر بسپار</Label>
+          <Checkbox id="rememberMe" />
+          <Label htmlFor="rememberMe">مرا به خاطر بسپار</Label>
         </div>
       </div>
       <Button className="self-end">ورود</Button>
