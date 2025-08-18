@@ -1,76 +1,163 @@
-## Collegegram
+# Collegegram
 
-A lightweight React + TypeScript app scaffolded with Vite and styled with Tailwind CSS v4.
+A modern, feature-rich React + TypeScript application built with Vite and styled with Tailwind CSS v4. This project serves as a comprehensive social media platform for college communities.
 
-### Tech stack
-- **Framework**: React 19 + TypeScript
-- **Build tool**: Vite 7
-- **Styling**: Tailwind CSS 4 via `@tailwindcss/vite`
-- **Code quality**: ESLint + Prettier
+## 🚀 Tech Stack
 
-### Prerequisites
+### Core Framework
+- **React 19** - Latest React with concurrent features
+- **TypeScript** - Type-safe development
+- **Vite 7** - Fast build tool and dev server
+
+### Styling & UI
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **shadcn/ui** - High-quality React components
+- **Radix UI** - Accessible component primitives
+- **Lucide React** - Beautiful icons
+- **next-themes** - Theme management
+- **class-variance-authority** - Component variant management
+
+### Development Tools
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **TypeScript ESLint** - TypeScript-specific linting rules
+
+### Additional Libraries
+- **Yup** - Schema validation
+- **clsx & tailwind-merge** - Conditional styling utilities
+
+## 📋 Prerequisites
+
 - **Node.js**: 18 or newer
-- **Package manager**: `pnpm` recommended (lockfile present). You can use `npm`/`yarn` if you prefer.
+- **Package manager**: `pnpm` (recommended, lockfile present)
+  - Alternative: `npm` or `yarn`
 
-### Quick start
-```bash
-pnpm install
-pnpm dev
+## 🛠️ Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd collegegram
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Start development server**
+   ```bash
+   pnpm dev
+   ```
+
+4. **Open your browser**
+   - Navigate to `http://localhost:5173`
+   - The app will automatically reload on file changes
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start development server with HMR |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview production build locally |
+| `pnpm lint` | Run ESLint on source files |
+| `pnpm lint:fix` | Fix auto-fixable lint issues |
+| `pnpm format` | Format code with Prettier |
+
+## 📁 Project Structure
+
 ```
-- Open the URL printed by Vite (default `http://localhost:5173`).
-
-### Available scripts
-- **dev**: `pnpm dev` — start the dev server with HMR
-- **build**: `pnpm build` — type-check and build for production to `dist/`
-- **preview**: `pnpm preview` — preview the production build locally
-- **lint**: `pnpm lint` — run ESLint on `src`
-- **lint:fix**: `pnpm lint:fix` — fix lint issues
-- **format**: `pnpm format` — format source files with Prettier
-
-### Project structure
-```text
 src/
-  App.tsx            # Root app component
-  main.tsx           # Entry; mounts React app
-  styles/
-    root.css         # Tailwind entry styles
-  components/        # Reusable UI components
-  pages/             # Route-level views (scaffold)
-  layouts/           # Shared page layouts (scaffold)
-  hooks/             # Custom React hooks (scaffold)
-  utils/             # Utilities and helpers (scaffold)
-  types/             # Shared TypeScript types (scaffold)
-public/
-  vite.svg           # Static asset example
+├── app/                    # Application-specific components
+├── assets/                 # Static assets (images, fonts, etc.)
+├── features/               # Feature-based modules
+│   └── common/
+│       └── components/
+│           └── ui/        # shadcn/ui components
+├── layouts/                # Page layouts and templates
+├── lib/                    # Utility libraries and configurations
+├── styles/                 # Global styles and Tailwind config
+├── types/                  # TypeScript type definitions
+├── utils/                  # Helper functions and utilities
+├── main.tsx               # Application entry point
+└── vite-env.d.ts          # Vite environment types
 ```
 
-### Styling (Tailwind CSS v4)
-- Configured via Vite plugin in `vite.config.ts`.
-- Base styles are imported in `src/styles/root.css`.
-- Use Tailwind utility classes directly in JSX:
+## 🎨 Styling with Tailwind CSS v4
+
+The project uses Tailwind CSS v4 configured via Vite plugin. Key features:
+
+- **CSS Variables**: Theme-aware styling with CSS custom properties
+- **Component Variants**: Using `class-variance-authority` for consistent component styling
+
+### Example Usage
 ```tsx
-export function Example() {
-  return <button className="px-4 py-2 rounded bg-blue-600 text-white">Click</button>
+import { Button } from "@/features/common/components/ui/button"
+
+export function ExampleComponent() {
+  return (
+    <Button variant="default" size="lg">
+      Click me
+    </Button>
+  )
 }
 ```
 
-### Build and preview
+## 🧩 UI Components
+
+This project uses shadcn/ui components built on top of Radix UI primitives:
+
+- **Accessible**: All components follow WAI-ARIA guidelines
+- **Customizable**: Easy to customize with Tailwind classes
+- **Type-safe**: Full TypeScript support
+- **Themeable**: Dark/light mode support
+
+### Available Components
+- Buttons, Dialogs, Tabs
+- Checkboxes, Labels, Separators
+- And more via shadcn/ui
+
+## 🔧 Configuration Files
+
+- `vite.config.ts` - Vite configuration
+- `tsconfig.json` - TypeScript configuration
+- `eslint.config.js` - ESLint rules
+- `components.json` - shadcn/ui configuration
+- `tailwind.config.js` - Tailwind CSS configuration
+
+## 🚀 Deployment
+
+### Build for Production
 ```bash
 pnpm build
+```
+
+### Preview Production Build
+```bash
 pnpm preview
 ```
-- Deploy the generated `dist/` folder to any static host (e.g., Vercel, Netlify, GitHub Pages).
 
-### Linting and formatting
+### Linting
 ```bash
+# Check for issues
 pnpm lint
+
+# Auto-fix issues
 pnpm lint:fix
+```
+
+### Formatting
+```bash
+# Format all source files
 pnpm format
 ```
 
-### Notes
-- File and directory names mentioned above: `vite.config.ts`, `index.html`, `src/App.tsx`, `src/main.tsx`, `src/styles/root.css`.
-- No environment variables are required for the current setup.
 
-### License
-Copyright (c) 2025 [Rahnema college]
+## 📄 License
+
+Copyright (c) 2025 [Rahnema College]
+
+---
+
+**Built with ❤️ using modern web technologies**

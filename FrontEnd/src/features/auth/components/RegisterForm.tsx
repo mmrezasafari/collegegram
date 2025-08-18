@@ -4,9 +4,9 @@ import {
   PasswordIcon,
   UserNameIcon,
 } from '@/assets/images/Icons'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/Input'
-import { useInput } from '@/hooks/useInput'
+import { Button } from '@/features/common/components/ui/button'
+import { Input } from '@/features/common/components/ui/Input'
+import { useInput } from '@/features/common/hooks/useInput'
 import {
   emailSchema,
   passwordSchema,
