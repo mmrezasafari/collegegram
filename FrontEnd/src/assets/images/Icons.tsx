@@ -132,6 +132,26 @@ const WarningIcon = ({ width, height, fill }: IconProps) => {
   )
 }
 
+const UserIcon = ({ width, height, fill }: IconProps) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width ? width : '14'}
+      height={height ? height : '16'}
+      viewBox="0 0 14 16"
+      fill={fill ? fill : 'none'}
+    >
+      <path
+        xmlns="http://www.w3.org/2000/svg"
+        d="M7.00034 8.25C10.5441 8.25018 13.4164 11.1232 13.4164 14.667V15.75H0.583344V14.667C0.583344 11.1231 3.45641 8.25 7.00034 8.25ZM7.00034 0.25C7.90637 0.250086 8.77568 0.610304 9.41635 1.25098C10.0569 1.89169 10.4164 2.76099 10.4164 3.66699C10.4163 4.57303 10.057 5.44234 9.41635 6.08301C8.77568 6.72368 7.90637 7.08292 7.00034 7.08301C6.09433 7.08301 5.22504 6.72355 4.58432 6.08301C3.94365 5.44234 3.58343 4.57303 3.58334 3.66699C3.58334 2.76084 3.94357 1.89173 4.58432 1.25098C5.22507 0.610227 6.09418 0.25 7.00034 0.25Z"
+        fill="#D8D8D8"
+        stroke="white"
+        strokeWidth="0.5"
+      />
+    </svg>
+  )
+}
+
 export {
   EmailIcon,
   PasswordIcon,
@@ -140,4 +160,5 @@ export {
   WarningIcon,
   InfoIcon,
   SuccessIcon,
+  UserIcon,
 }
