@@ -43,13 +43,19 @@ export const Authenticate = () => {
           <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-baseline">
               <span className="text-xs">&#10095;</span>
-              <a className="text-primary/80 hover:text-primary text-sm" href="url">
+              <a
+                className="text-primary/80 hover:text-primary text-sm"
+                href="url"
+              >
                 فراموشی رمز عبور
               </a>
             </div>
             <div className="flex gap-2 items-baseline">
               <span className="text-xs">&#10095;</span>
-              <a className="text-primary/80 hover:text-primary text-sm" href="url">
+              <a
+                className="text-primary/80 hover:text-primary text-sm"
+                href="url"
+              >
                 ثبت نام در کالج گرام
               </a>
             </div>
