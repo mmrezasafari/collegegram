@@ -9,6 +9,8 @@ import { swaggerDefinition } from "./config/swagger.config";
 import { errorResponse } from "../utility/response";
 import { SessionRepository } from "./modules/auth/session.repository";
 import cookieParser from "cookie-parser";
+import { UserService } from "./modules/user/user.service";
+import { userRouter } from "./routes/user.route";
 
 export const makeApp = (dataSource: DataSource) => {
 
@@ -19,8 +21,11 @@ export const makeApp = (dataSource: DataSource) => {
   const userRepo = new UserRepository(dataSource);
   const sessionRepo = new SessionRepository(dataSource)
   const authService = new AuthService(userRepo, sessionRepo);
+  const userService = new UserService(userRepo);
 
   app.use(authRouter(authService));
+  app.use(userRouter(userService));
+
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDefinition));
 
