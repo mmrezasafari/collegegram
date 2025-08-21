@@ -4,7 +4,6 @@ import { handleExpress } from "../../utility/handle-express";
 import { updateUserDto } from "../modules/user/dto/update-user.dto";
 import zod from "zod";
 
-
 export const userRouter = (userService: UserService) => {
   const app = Router();
 
