@@ -22,7 +22,14 @@ export class UserRepository implements IUserRepository {
   }
 
   async getById(id: string) {
-    return await this.userRepository.findOneBy({ id });
+
+    const existingUser = await this.userRepository.findOneBy({ id });
+    if (existingUser) {
+      const { password, ...user } = existingUser;
+      return user;
+    }
+    return null
+
   }
 
   async getByUsername(username: string) {

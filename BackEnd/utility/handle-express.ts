@@ -43,7 +43,6 @@ export const handleExpress = async<A extends object | null>(res: Response, fn: (
         return;
       }
     }
-
     res.status(500).json(errorResponse("خطای سرور"));
   }
 }

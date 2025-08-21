@@ -5,7 +5,7 @@ import { AuthService } from "./modules/auth/auth.service";
 import { authRouter } from "./routes/auth.route";
 import { zodErrorMiddleware } from "./middleware/zod-error.middleware";
 import swaggerUi from 'swagger-ui-express';
-import { swaggerDefinition } from "./config/swagger.config";
+import { setupSwagger } from "./config/swagger.config";
 import { errorResponse } from "../utility/response";
 import { SessionRepository } from "./modules/auth/session.repository";
 import cookieParser from "cookie-parser";
@@ -24,10 +24,10 @@ export const makeApp = (dataSource: DataSource) => {
   const userService = new UserService(userRepo);
 
   app.use(authRouter(authService));
-  app.use(userRouter(userService));
+  app.use("/users", userRouter(userService));
 
 
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDefinition));
+  setupSwagger(app);
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
