@@ -8,28 +8,39 @@ export const emailSchema = yup
 
 export const passwordSchema = yup
   .string()
-  .required('وارد کردن رمزعبور اجباری است')
-  .min(8, 'رمز عبور حداقل باید ۸ کاراکتر باشد')
   .matches(/[A-Z]/, 'رمز عبور حداقل حاوی یک حرف بزرگ باشد')
   .matches(/[a-z]/, 'رمز عبور حداقل حاوی یک حرف کوچک باشد')
   .matches(/[^a-zA-Z0-9]/, 'رمز عبور حداقل حاوی یک کاراکتر خاص باشد')
+  .min(8, 'رمز عبور حداقل باید ۸ کاراکتر باشد')
+  .required('وارد کردن رمزعبور اجباری است')
 
 export const userNameSchema = yup
   .string()
+  .min(5, 'نام‌کاربری حداقل باید ۵ کاراکتر باشد')
   .required('وارد کردن نام‌کاربری اجباری است')
-  .min(8, 'نام‌کاربری حداقل باید ۵ کاراکتر باشد')
 
 export const rePasswordSchema = yup
   .string()
   .required('وارد کردن رمزعبور اجباری است')
-  .oneOf([yup.ref('password')], 'must theSame')
+  .oneOf([yup.ref('$password')], 'رمز عبور و تکرار آن باید یکسان باشند')
+
+export const registerFormSchema = yup.object({
+  password: passwordSchema,
+  userName: userNameSchema,
+  rePassword: yup
+    .string()
+    .required('وارد کردن تکرار رمزعبور اجباری است')
+    .oneOf([yup.ref('password')], 'رمز عبور و تکرار آن باید یکسان باشند'),
+  email: emailSchema,
+})
 
 export function validateWithYup<T>(
   schema: yup.Schema<T>,
-  value: T,
+  value: unknown,
+  options?: { context?: Record<string, unknown> },
 ): string | null {
   try {
-    schema.validateSync(value)
+    schema.validateSync(value, { abortEarly: true, ...options })
     return null
   } catch (err) {
     if (err instanceof ValidationError) {
