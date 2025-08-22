@@ -10,3 +10,15 @@ export interface IRegister {
   email: string
   password: string
 }
+
+export interface ILogin {
+  usernameOrEmail: string
+  password: string
+}
+
+export interface ILoginRes {
+  success: boolean
+  data: {
+    message: string
+  }
+}
