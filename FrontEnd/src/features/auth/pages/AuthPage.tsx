@@ -49,7 +49,7 @@ export const Authenticate = () => {
             </TabsContent>
             <TabsContent value="login">
               <LoginForm />
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
                 <div className="flex gap-2 items-baseline">
                   <span className="text-xs">&#10095;</span>
                   <a
@@ -61,12 +61,11 @@ export const Authenticate = () => {
                 </div>
                 <div className="flex gap-2 items-baseline">
                   <span className="text-xs">&#10095;</span>
-                  <a
-                    className="text-primary/80 hover:text-primary text-sm"
-                    href="url"
-                  >
-                    ثبت نام در کالج گرام
-                  </a>
+                  <TabsList className="p-0">
+                    <TabsTrigger className="text-primary/80 hover:text-primary p-0 font-medium cursor-pointer !text-sm" value="register">
+                      ثبت نام در کالج گرام
+                    </TabsTrigger>
+                  </TabsList>
                 </div>
               </div>
             </TabsContent>
