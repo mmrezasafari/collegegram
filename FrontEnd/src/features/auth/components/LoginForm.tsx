@@ -4,10 +4,55 @@ import { Checkbox } from '@/features/common/components/ui/checkbox'
 import { Input } from '@/features/common/components/ui/Input'
 import { Label } from '@/features/common/components/ui/label'
 import { useInput } from '@/features/common/hooks/useInput'
+import { emailSchema, loginFormSchema, passwordSchema, validateWithYup } from '@/utils/validation'
+import { useState, type ComponentProps } from 'react'
+import { useLogin } from '../hooks/useAuth'
+import { ValidationError } from 'yup'
 
 export const LoginForm = () => {
-  const email = useInput('')
-  const password = useInput('')
+  const email = useInput('email', '', (val) => validateWithYup(emailSchema, val))
+  const password = useInput('password', '', (val) => validateWithYup(passwordSchema, val))
+  const [rememberMe, setRememberMe] = useState(false)
+  const { loginMutation } = useLogin()
+
+  const onRememberMeClick: ComponentProps<'button'>['onClick'] = () => {
+    setRememberMe(value => !value)
+  }
+
+  const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
+    e.preventDefault()
+
+    const formValues = {
+      usernameOrEmail: email.value,
+      password: password.value
+    }
+
+    try {
+      loginFormSchema.validateSync(formValues, { abortEarly: false })
+      loginMutation.mutate({
+        ...formValues
+      })
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        const errorMap: Record<string, string> = {}
+        // create mapError object
+        err.inner.forEach((e) => {
+          console.log(e.path)
+          if (e.path) errorMap[e.path] = e.message
+        })
+
+        //set errors
+        if (errorMap.usernameOrEmail) email.setError(errorMap.usernameOrEmail)
+        if (errorMap.password) password.setError(errorMap.password)
+
+        // focus the first invalid input
+        const firstErrorField = [email, password].find(
+          (f) => errorMap[f.name],
+        )
+        firstErrorField?.ref.current?.focus()
+      }
+    }
+  }
 
   return (
     <div className="w-[335px] flex flex-col gap-8">
@@ -15,10 +60,12 @@ export const LoginForm = () => {
         به کالج‌گرام خوش آمدید. برای ورود کافیه نام کاربری/ایمیل و رمز عبور
         خود‌تون رو وارد کنید:
       </h3>
-      <div className="flex flex-col gap-6">
+      <form className="flex flex-col gap-6" onSubmit={onFormSubmit}>
         <div className="flex flex-col">
           <div className="relative w-full max-w-sm">
             <Input
+              name={email.name}
+              ref={email.ref}
               type="email"
               placeholder="ایمیل"
               className="pr-9"
@@ -41,6 +88,8 @@ export const LoginForm = () => {
         <div className="flex flex-col">
           <div className="relative w-full max-w-sm">
             <Input
+              name={password.name}
+              ref={password.ref}
               type="password"
               placeholder="رمز عبور"
               className="pr-9"
@@ -61,11 +110,11 @@ export const LoginForm = () => {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <Checkbox id="rememberMe" />
+          <Checkbox id="rememberMe" onClick={onRememberMeClick} checked={rememberMe} />
           <Label htmlFor="rememberMe">مرا به خاطر بسپار</Label>
         </div>
-      </div>
-      <Button className="self-end">ورود</Button>
+        <Button className="self-end" type="submit" loading={loginMutation.isPending}>ورود</Button>
+      </form>
     </div>
   )
 }

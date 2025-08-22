@@ -34,6 +34,11 @@ export const registerFormSchema = yup.object({
   email: emailSchema,
 })
 
+export const loginFormSchema = yup.object({
+  usernameOrEmail: emailSchema,
+  password: passwordSchema
+})
+
 export function validateWithYup<T>(
   schema: yup.Schema<T>,
   value: unknown,
