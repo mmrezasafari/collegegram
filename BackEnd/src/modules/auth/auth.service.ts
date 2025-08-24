@@ -15,6 +15,19 @@ export class AuthService {
   ) { }
 
   async register(dto: CreateUserDto) {
+    const user ={
+            username: dto.username,
+            email : dto.email,
+            password: dto.password,
+        }
+        const existingUser = await this.userRepo.getByUsername(dto.username);
+        if(existingUser){
+            throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
+        }
+        const existingEmail = await this.userRepo.getByEmail(dto.email);
+        if(existingEmail){
+            throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
+        }
     dto.password = hashingPassword(dto.password);
     return await this.userRepo.create(dto)
   }
