@@ -34,15 +34,6 @@ export const handleExpress = async<A extends object | null>(res: Response, fn: (
       res.status(400).json(errorResponse((String(error.issues))));
     }
 
-    else if (error instanceof QueryFailedError) {
-
-      const pgError = error.driverError as { code?: string };
-
-      if (pgError.code === "23505") {
-        res.status(409).json(errorResponse("نام کاربری یا ایمیل تکراری است"));
-        return;
-      }
-    }
     res.status(500).json(errorResponse("خطای سرور"));
   }
 }

@@ -8,12 +8,22 @@ export interface CreateUser {
   password: string,
   email: string
 }
+
+export interface UpdateUser{
+  lastName?: string,
+  firstName?: string,
+  password?: string,
+  email?: string,
+  bio?: string  
+}
+
 export interface IUserRepository {
   getById(id: string): Promise<User | null>;
   getByUsername(username: string): Promise<User | null>;
   getByEmail(email: string): Promise<User | null>;
   getForLogin(usernameOrEmail: string): Promise<Login | null>;
   create(userDto: CreateUser): Promise<User | null>;
+  update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
 }
 export class UserRepository implements IUserRepository {
   userRepository: Repository<UserEntity>;
@@ -50,6 +60,13 @@ export class UserRepository implements IUserRepository {
     const userSaved = await this.userRepository.save(userDto);
     const { password, ...user } = userSaved;
     return user;
+  }
 
+  async update(id: string, updateUserDto: UpdateUser): Promise<User | null> {
+    await this.userRepository.update(id,updateUserDto);
+    const updateUser = await this.userRepository.findOne({ where: { id } });
+    if (!updateUser) return null;
+    const { password, ...user } = updateUser;
+    return user;
   }
 }
