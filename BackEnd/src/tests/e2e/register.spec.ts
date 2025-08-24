@@ -53,7 +53,7 @@ describe("User", () => {
         .send({
           username: "daleya",
           password: "Pssg@2gyl",
-          email: "testg@email.com"
+          email: "test@gmail.com"
         }).expect(200);
     })
 
