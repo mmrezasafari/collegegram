@@ -52,7 +52,7 @@ describe("User", () => {
         .post("/register")
         .send({
           username: "daleya",
-          password: "Pswd@@123",
+          password: "Pssg@2gyl",
           email: "test@gmail.com"
         }).expect(200);
     })
