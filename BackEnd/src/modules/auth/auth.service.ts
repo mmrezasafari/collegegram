@@ -21,24 +21,34 @@ export class AuthService {
 
   async login(dto: LoginRequestDto): Promise<LoginResponseDto> {
     const user = await this.userRepo.getForLogin(dto.usernameOrEmail);
-    if (!user) {
-      throw new HttpError(400, "نام کاربری یا ایمیل اشتباه است");
-    }
-    if (comparePassword(dto.password, user.password)) {
+    if (user && comparePassword(dto.password, user.password)) {
 
       const AccToken = encryptJWT(user, process.env.JWT_SECRET ?? "", "15m");
+      const session = await this.createSession(user.id);
 
-      const expireDate = new Date(new Date().getDay() + 30);
-      const session = await this.sessionRepo.create({
-        userId: user.id,
-        expireDate,
-      })
       return {
         accessToken: AccToken,
-        refreshToken: session.authCode
+        refreshToken: session.token
       };
     } else {
-      throw new HttpError(400, "رمز عبور اشتباه است")
+      throw new HttpError(400, "اطلاعات وارد شده اشتباه است")
     }
+  }
+
+  async getSessionByToken(token: string) {
+    if (!token) {
+      return null;
+    }
+    return await this.sessionRepo.getByToken(token);
+  }
+
+  async createSession(userId: string) {
+    const expireDate = new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days
+
+    const session = await this.sessionRepo.create({
+      userId: userId,
+      expireDate,
+    })
+    return session;
   }
 }

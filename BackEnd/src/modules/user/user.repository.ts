@@ -22,7 +22,14 @@ export class UserRepository implements IUserRepository {
   }
 
   async getById(id: string) {
-    return await this.userRepository.findOneBy({ id });
+
+    const existingUser = await this.userRepository.findOneBy({ id });
+    if (existingUser) {
+      const { password, ...user } = existingUser;
+      return user;
+    }
+    return null
+
   }
 
   async getByUsername(username: string) {
@@ -31,7 +38,7 @@ export class UserRepository implements IUserRepository {
   async getByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
-  async getForLogin(usernameOrEmail: string) {
+  async getForLogin(usernameOrEmail: string): Promise<Login | null> {
     return await this.userRepository.findOne({
       where: [
         { email: usernameOrEmail },
