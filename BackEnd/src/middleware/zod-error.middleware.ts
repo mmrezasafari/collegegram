@@ -4,6 +4,10 @@ import { errorResponse } from "../../utility/response";
 
 export const zodErrorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
   if (error instanceof ZodError) {
+    if (error.issues[0].message === "Invalid UUID") {
+      res.status(400).json(errorResponse("شناسه کاربر معتبر نیست"));
+      return;
+    }
 
     if (error.issues[0].path[0] === "password") {
       res.status(400).json(errorResponse("رمز عبور ایمن نیس"));

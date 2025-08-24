@@ -1,0 +1,64 @@
+paths:
+  /users/{id}: 
+    get: 
+      summary: Get user
+      tags:
+        - users
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string     
+      responses: 
+        '200': 
+          description: get successful user
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/User"
+                example: 
+                  success: true
+                  data: 
+                    id: "12gfafgs"
+                    username: "daleya"
+                    email: "test@gmail.com"
+                    firstName: ""
+                    lastName: ""
+                    bio: ""
+                    imageUrl: ""
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شناسه کاربر معتبر نیست"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"

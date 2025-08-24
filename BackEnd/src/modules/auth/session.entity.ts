@@ -8,7 +8,7 @@ export class SessionEntity {
 
   @Column()
   @Generated("uuid")
-  authCode!: string;
+  token!: string;
 
   @Column()
   expireDate!: Date;
