@@ -13,7 +13,6 @@ describe("User", () => {
   });
 
   afterAll(async () => {
-    // await AppDataSource.dropDatabase();
     await AppDataSource.destroy();
   });
 
@@ -74,7 +73,7 @@ describe("User", () => {
         .send({
           username: "daleya",
           password: "Pswd@@123",
-          email: "test2@gmail.com"
+          email: "test@gmail.com"
         }).expect(409);
     });
   });

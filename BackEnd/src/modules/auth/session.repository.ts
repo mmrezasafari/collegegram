@@ -3,7 +3,7 @@ import { SessionEntity } from "./session.entity";
 import { Session } from "./model/session";
 
 export interface ISessionRepository {
-  getByUserId(userId: string): Promise<Session | null>,
+  getByToken(token: string): Promise<Session | null>,
   create(session: createSession): Promise<Session>
 }
 
@@ -14,13 +14,13 @@ export interface createSession {
 export class SessionRepository implements ISessionRepository {
   sessionRepository: Repository<SessionEntity>
   constructor(appDataSource: DataSource) {
-    this.sessionRepository = appDataSource.getRepository(SessionEntity)
+    this.sessionRepository = appDataSource.getRepository(SessionEntity);
   }
 
-  async getByUserId(userId: string) {
+  async getByToken(token: string) {
     return await this.sessionRepository.findOne({
       where: {
-        user: { id: userId }
+        token
       },
       relations: {
         user: true,

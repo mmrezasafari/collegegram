@@ -18,7 +18,20 @@ export function setupSwagger(app: Express) {
         description: "API documentation for collegeGram"
       },
       paths: {},
-      components: {},
+      components: {
+        securitySchemes: {
+          AccessToken: {
+            type: "apiKey",
+            in: "cookie",
+            name: "accessToken",
+          },
+          RefreshToken: {
+            type: "apiKey",
+            in: "cookie",
+            name: "refreshToken",
+          }
+        },
+      }
     };
 
     files.forEach((file) => {

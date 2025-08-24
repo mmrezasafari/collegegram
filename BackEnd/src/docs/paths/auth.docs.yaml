@@ -49,15 +49,16 @@ paths:
             application/json: 
               schema: 
                 $ref: "#/components/schemas/Error"
-                examples: 
-                  UsernameIsNotCorrect:  
+              examples: 
+                UsernameIsNotCorrect:
+                  value:  
                     success: false
                     message: "نام‌کاربری باید حداقل ۵ کارکتر داشته باشد"
-
                 PasswordIsNotCorrect: 
+                  value:
                     success: false
                     message: "رمز عبور ایمن نیس"
-                EmailIsNotCorrect: 
+                EmailIsNotCorrect:
                   value: 
                     success: false
                     message: "ایمیل معتبر نیست"
@@ -68,9 +69,8 @@ paths:
               schema: 
                 $ref: "#/components/schemas/Error"
               example: 
-                UserAlreadyExist: 
-                    success: false
-                    message: "نام کاربری یا ایمیل تکراری است"
+                success: false
+                message: "نام کاربری یا ایمیل تکراری است"
         "500": 
           description: "Internal Server Error"
           content: 
@@ -124,20 +124,15 @@ paths:
             application/json: 
               schema: 
                $ref: "#/components/schemas/Error"
-            example:
-              UsernameOrEmailIsWrong: 
-                  success: false,
-                  message: نام کاربری یا ایمیل اشتباه است
-              PasswordIsWrong: 
-                  success: false,
-                  message: رمز عبور اشتباه است
-
+              example:
+                success: false,
+                message: "اطلاعات وارد شده اشتباه است"
         "500": 
           description: Internal Server Error
           content: 
             application/json: 
               schema: 
                 $ref: "#/components/schemas/Error"
-            example: 
-              success: false
-              message: "خطای سرور"
+              example: 
+                success: false
+                message: "خطای سرور"

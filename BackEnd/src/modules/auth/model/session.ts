@@ -2,7 +2,7 @@ import { User } from "../../user/model/user";
 
 export interface Session {
   id: string;
-  authCode: string;
+  token: string;
   expireDate: Date;
   user: User;
 }

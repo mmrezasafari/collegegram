@@ -5,14 +5,21 @@ import { Express } from "express";
 
 describe("User", () => {
   let app: Express;
+  let user: request.Response;
 
   beforeAll(async () => {
     const dataSource = await AppDataSource.initialize();
     app = makeApp(dataSource);
+    user = await request(app)
+      .post("/register")
+      .send({
+        username: "daleya3",
+        password: "Pswd@@123",
+        email: "test3@gmail.com"
+      })
   });
 
   afterAll(async () => {
-    // await AppDataSource.dropDatabase();
     await AppDataSource.destroy();
   });
 
@@ -39,7 +46,7 @@ describe("User", () => {
       await request(app)
         .post("/login")
         .send({
-          usernameOrEmail: "daleya",
+          usernameOrEmail: "daleya3",
           password: "Pswd@@1"
         }).expect(400);
     });
@@ -48,7 +55,7 @@ describe("User", () => {
       await request(app)
         .post("/login")
         .send({
-          usernameOrEmail: "daleya",
+          usernameOrEmail: "daleya3",
           password: "Pswd@@123"
         }).expect(200);
     });

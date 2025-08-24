@@ -38,7 +38,7 @@ export class UserRepository implements IUserRepository {
   async getByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
-  async getForLogin(usernameOrEmail: string) {
+  async getForLogin(usernameOrEmail: string): Promise<Login | null> {
     return await this.userRepository.findOne({
       where: [
         { email: usernameOrEmail },

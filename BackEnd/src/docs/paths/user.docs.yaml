@@ -2,6 +2,11 @@ paths:
   /users/{id}: 
     get: 
       summary: Get user
+      tags:
+        - users
+      security:
+        - accessToken: []
+        - refreshToken: []
       parameters: 
         - in: path
           name: id
@@ -36,24 +41,24 @@ paths:
             application/json:
               schema:
                   $ref: "#/components/schemas/Error"
-          example:
-            success: false
-            message: "شناسه کاربر معتبر نیست"
+              example:
+                success: false
+                message: "شناسه کاربر معتبر نیست"
         404:          
           description: User not found
           content:
             application/json:
               schema:
                   $ref: "#/components/schemas/Error"
-          example:
-            success: false
-            message: "کاربر یافت نشد"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
         500:
           description: Internal server error
           content:
             application/json:
               schema:
                   $ref: "#/components/schemas/Error"
-          example:
-            success: false
-            message: "خطای سرور"
+              example:
+                success: false
+                message: "خطای سرور"
