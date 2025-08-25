@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SessionEntity } from "../auth/session.entity";
+import { PostEntity } from "../post/post.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -26,6 +27,9 @@ export class UserEntity {
 
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions!: SessionEntity[]
+
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -3,6 +3,8 @@ DotenvFlow.config()
 import { DataSource } from "typeorm";
 import { UserEntity } from "./modules/user/user.entity";
 import { SessionEntity } from "./modules/auth/session.entity";
+import { PostEntity } from "./modules/post/post.entity";
+import { PostImagesEntity } from "./modules/post/post-images.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -14,7 +16,7 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: false,
   dropSchema: process.env.NODE_ENV === 'test',
-  entities: [UserEntity, SessionEntity],
+  entities: [UserEntity, SessionEntity, PostEntity, PostImagesEntity],
   subscribers: [],
   migrations: [],
 })
