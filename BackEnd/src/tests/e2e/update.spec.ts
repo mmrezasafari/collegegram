@@ -6,11 +6,13 @@ import { Express } from "express";
 describe("User", () => {
   let app: Express;
   let userId: string;
+  let accessToken: string;
+  let refreshToken: string;
 
   beforeAll(async () => {
     const dataSource = await AppDataSource.initialize();
     app = makeApp(dataSource);
-    
+
     const user = await request(app)
       .post("/register")
       .send({
@@ -23,12 +25,19 @@ describe("User", () => {
     const user1 = await request(app)
       .post("/register")
       .send({
-        username: "mona",
-        password: "Pon@32r",
+        username: "mona12",
+        password: "Pon@32r2454",
         email: "mona@email.com",
       })
       .expect(200);
-
+    const loginRes = await request(app)
+      .post("/login")
+      .send({
+        usernameOrEmail: user.body.data.username,
+        password: "Pssg@2gyl",
+      })
+    accessToken = loginRes.header["set-cookie"][0].split("=")[1];
+    refreshToken = loginRes.header["set-cookie"][0].split("=")[1];
     userId = user.body.data.id;
   });
 
@@ -46,7 +55,16 @@ describe("User", () => {
           email: "mobina.kheiri@gmail.com",
           bio: "Art lover, finding beauty in art gallery",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(200);
+    });
+    it("Should fail because user is not authorized", async () => {
+      await request(app)
+        .patch(`/users/${userId}`)
+        .send({
+          lastName: "mobinaaa",
+        })
+        .expect(401);
     });
 
     it("should fail because id is not valid", async () => {
@@ -56,6 +74,7 @@ describe("User", () => {
         .send({
           bio: "gol tar az gol",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(400);
     });
 
@@ -66,6 +85,7 @@ describe("User", () => {
           firstName: "mobina",
           password: "Pswd@",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(400);
     });
 
@@ -76,6 +96,7 @@ describe("User", () => {
           lastName: "kheiri",
           email: "tesgmaom",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(400);
     });
 
@@ -87,6 +108,7 @@ describe("User", () => {
           firstName: "mobina",
           lastName: "kheiri",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(404);
     });
 
@@ -96,6 +118,7 @@ describe("User", () => {
         .send({
           email: "mona@email.com",
         })
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(409);
     });
   });

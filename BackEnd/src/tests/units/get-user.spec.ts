@@ -18,6 +18,9 @@ class UserMock implements IUserRepository {
   getForLogin(usernameOrEmail: string): Promise<Login | null> {
     throw new Error("Method not implemented.");
   }
+  update(id: string, updateUserDto: any): Promise<User | null> {
+    throw new Error("Method not implemented.");
+  }
   create(userDto: CreateUserDto): Promise<User | null> {
     const user = {
       id: "1",
