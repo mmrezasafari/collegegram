@@ -15,6 +15,15 @@ export class UserEntity {
   @Column({ unique: true })
   email!: string;
 
+  @Column({ nullable: true })
+  firstName?: string;
+
+  @Column({ nullable: true })
+  lastName?: string;
+
+  @Column({ nullable: true, type: "text" })
+  bio?: string;
+
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions!: SessionEntity[]
 

@@ -13,6 +13,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
+  dropSchema: process.env.NODE_ENV === 'test',
   entities: [UserEntity, SessionEntity],
   subscribers: [],
   migrations: [],
