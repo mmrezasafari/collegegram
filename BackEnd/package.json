@@ -13,7 +13,7 @@
     "clean": "rimraf dist/",
     "copy-files": "cp -r src/docs dist/src/docs",
     "build": "npm run clean && tsc && npm run copy-files",
-    "start:production": "NODE_ENV=production npm run build && node ./dist/src/main.js",
+    "start:production": "npm run build && NODE_ENV=production node ./dist/src/main.js",
     "migration:run": "npx typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/data-source.ts",
     "migration:generate": " npx ts-node ./node_modules/typeorm/cli.js migration:generate -d ./src/data-source.ts"
