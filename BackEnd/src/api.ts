@@ -1,10 +1,10 @@
 import express from "express";
+import cors from "cors";
 import { DataSource } from "typeorm";
 import { UserRepository } from "./modules/user/user.repository";
 import { AuthService } from "./modules/auth/auth.service";
 import { authRouter } from "./routes/auth.route";
 import { errorMiddleware } from "./middleware/zod&multer-error.middleware";
-import swaggerUi from 'swagger-ui-express';
 import { setupSwagger } from "./config/swagger.config";
 import { errorResponse } from "../utility/response";
 import { SessionRepository } from "./modules/auth/session.repository";
@@ -13,9 +13,14 @@ import { UserService } from "./modules/user/user.service";
 import { userRouter } from "./routes/user.route";
 import { authMiddleware } from "./middleware/auth-middleware";
 
+
 export const makeApp = (dataSource: DataSource) => {
 
   const app = express();
+  app.use(cors({
+    credentials: true,
+    origin: process.env.FRONTEND_HOST,
+  }))
   app.use(express.json());
   app.use(cookieParser());
 
