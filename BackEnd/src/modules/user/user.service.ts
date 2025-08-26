@@ -19,10 +19,7 @@ export class UserService {
 
 
     async editProfile(id: string, dto: UpdateUserDto) {
-        const user = await this.userRepo.getById(id);
-        if (!user) {
-            throw new HttpError(404, "کاربر یافت نشد");
-        }
+        const user = this.getUser(id);
         if (dto.email) {
             const existingEmail = await this.userRepo.getByEmail(dto.email);
             if (existingEmail) {
@@ -33,6 +30,13 @@ export class UserService {
             dto.password = hashingPassword(dto.password);
         }
         return await this.userRepo.update(id, dto);
+    }
+
+    async saveUserImage(file: Express.Multer.File, userId: string) {
+        const user = this.getUser(userId);
+        const imagePath = `/uploads/${file.filename}`;
+        await this.userRepo.saveImage(userId, imagePath);
+        return file;
     }
 
 }

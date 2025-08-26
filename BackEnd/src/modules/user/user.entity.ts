@@ -25,6 +25,9 @@ export class UserEntity {
   @Column({ nullable: true, type: "text" })
   bio?: string;
 
+  @Column({nullable: true})
+  imagePath?: string;
+
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions!: SessionEntity[]
 

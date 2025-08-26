@@ -24,6 +24,7 @@ export interface IUserRepository {
   getForLogin(usernameOrEmail: string): Promise<Login | null>;
   create(userDto: CreateUser): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
+  saveImage(id: string , imagePath: string): Promise<void>;
 }
 export class UserRepository implements IUserRepository {
   userRepository: Repository<UserEntity>;
@@ -32,7 +33,6 @@ export class UserRepository implements IUserRepository {
   }
 
   async getById(id: string) {
-
     const existingUser = await this.userRepository.findOneBy({ id });
     if (existingUser) {
       const { password, ...user } = existingUser;
@@ -69,4 +69,10 @@ export class UserRepository implements IUserRepository {
     const { password, ...user } = updateUser;
     return user;
   }
+
+  async saveImage(id: string , imagePath: string): Promise<void>{
+    await this.userRepository.update(id,{imagePath});
+
+  }
+
 }
