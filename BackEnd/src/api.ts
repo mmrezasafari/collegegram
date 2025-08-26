@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 import { UserRepository } from "./modules/user/user.repository";
 import { AuthService } from "./modules/auth/auth.service";
 import { authRouter } from "./routes/auth.route";
-import { zodErrorMiddleware } from "./middleware/zod-error.middleware";
+import { errorMiddleware } from "./middleware/zod&multer-error.middleware";
 import swaggerUi from 'swagger-ui-express';
 import { setupSwagger } from "./config/swagger.config";
 import { errorResponse } from "../utility/response";
@@ -34,7 +34,7 @@ export const makeApp = (dataSource: DataSource) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
   })
 
-  app.use(zodErrorMiddleware)
+  app.use(errorMiddleware)
   return app;
 }
 

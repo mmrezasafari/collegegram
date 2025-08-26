@@ -1,8 +1,9 @@
 import { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
 import { errorResponse } from "../../utility/response";
+import { MulterError } from "multer";
 
-export const zodErrorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
+export const errorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
   if (error instanceof ZodError) {
     if (error.issues[0].message === "Invalid UUID") {
       res.status(400).json(errorResponse("شناسه کاربر معتبر نیست"));
@@ -27,6 +28,23 @@ export const zodErrorMiddleware: ErrorRequestHandler = (error, req, res, next) =
     res.status(400).json(errorResponse(String(error.issues)));
     return;
   }
+
+  if (error instanceof MulterError){
+     switch (error.code) {
+      case "LIMIT_FILE_SIZE":
+        return res.status(400).json(errorResponse("حجم فایل بیش از حد مجاز است"));
+
+      case "LIMIT_FILE_COUNT":
+        return res.status(400).json(errorResponse("تعداد فایل‌های آپلود شده بیش از حد مجاز است"));
+
+      case "LIMIT_UNEXPECTED_FILE":
+        return res.status(400).json(errorResponse("فرمت یا نام فیلد فایل صحیح نیست"));
+
+      default:
+        return res.status(400).json(errorResponse(error.message));
+    }
+  }
+
 
   res.status(500).json(errorResponse("خطای سرور"));
   return;
