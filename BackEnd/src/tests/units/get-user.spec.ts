@@ -21,6 +21,9 @@ class UserMock implements IUserRepository {
   update(id: string, updateUserDto: any): Promise<User | null> {
     throw new Error("Method not implemented.");
   }
+  saveImage(id: string, imagePath: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   create(userDto: CreateUserDto): Promise<User | null> {
     const user = {
       id: "1",
