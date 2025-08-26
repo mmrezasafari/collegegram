@@ -9,7 +9,8 @@
   "scripts": {
     "test": "NODE_ENV=test jest --testMatch **/tests/units/**/*.spec.ts -i",
     "test:e2e": "NODE_ENV=test jest --testMatch **/tests/e2e/**/*.spec.ts -i",
-    "start": "nodemon src/main.ts"
+    "start": "nodemon src/main.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
