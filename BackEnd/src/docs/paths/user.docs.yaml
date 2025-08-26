@@ -28,7 +28,7 @@ paths:
                 example: 
                   success: true
                   data: 
-                    id: "12gfafgs"
+                    id: "1"
                     username: "daleya"
                     email: "test@gmail.com"
                     firstName: ""
@@ -190,3 +190,119 @@ paths:
               example:
                 success: false
                 message: "خطای سرور"
+  /users/{id}/posts:
+    post:
+      summery: Create post
+      tags:
+        - users
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [images]
+            schema:
+              type: object
+              properties:
+                caption: 
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              example:
+                caption: "This is a caption"
+                images: "example.jpg"
+
+      responses: 
+        200:
+          description: Create successful post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Post"
+                example:
+                  success: true
+                  data:
+                    id: "1"
+                    caption: "This is a caption"
+                    user:
+                      id: "1"
+                      username: "daleya"
+                      email: "test@gmail.com"
+                      firstName: ""
+                      lastName: ""
+                      bio: ""
+                      imageUrl: ""
+                    images:
+                      id: "1"
+                      url: "example.jpg"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+                IdIsNotValid:
+                  value:
+                    success: false
+                    message: "شناسه کاربر معتبر نیست"
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500: 
+          description: "Internal Server Error"
+          content: 
+            "application/json": 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+
+                
+
+                  
+      
