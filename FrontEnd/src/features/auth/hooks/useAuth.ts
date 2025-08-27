@@ -16,7 +16,6 @@ async function loginUser(user: ILogin): Promise<ILoginRes> {
   return res.data
 }
 
-
 export function useRegister() {
   const queryClient = useQueryClient()
 
@@ -62,7 +61,7 @@ export function useLogin() {
       queryClient.setQueryData(['loginUser'], data)
       notify.success('خوش آمدید', {
         position: 'top-right',
-        duration: 10000
+        duration: 10000,
       })
     },
     onError: (error) => {

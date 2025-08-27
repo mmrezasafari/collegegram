@@ -1,10 +1,7 @@
-import { Toaster } from 'sonner'
-import { Authenticate } from '../features/auth/pages/AuthPage'
-import { AuthLayout } from '../layouts/AuthLayout'
+// App.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { SidebarProvider } from '@/features/common/components/ui/sidebar'
-import { ProfileSidebar } from '@/features/profile/components/profile-sidebar'
-import { TopBar } from '@/features/profile/components/top-bar'
+import Auth from '../features/auth/pages/Auth'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ProfilePage } from '@/features/profile/pages/profile-page'
 
 const queryClient = new QueryClient()
@@ -12,18 +9,12 @@ const queryClient = new QueryClient()
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <ProfileSidebar />
-        <main className="flex-1">
-          <TopBar />
-          <ProfilePage />
-        </main>
-      </SidebarProvider>
-
-      {/* <AuthLayout>
-        <Authenticate />
-        </AuthLayout>
-        <Toaster /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Auth />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   )
 }
