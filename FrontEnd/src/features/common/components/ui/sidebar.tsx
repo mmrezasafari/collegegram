@@ -1,12 +1,10 @@
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { PanelLeftIcon } from 'lucide-react'
-
-import { useIsMobile } from '@/hooks/use-mobile'
+import { PanelLeftIcon, PanelRightOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/features/common/components/ui/button'
-import { Input } from '@/features/common/components/ui/Input'
+import { Input } from '@/features/common/components/ui/input'
 import { Separator } from '@/features/common/components/ui/separator'
 import {
   Sheet,
@@ -22,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/features/common/components/ui/tooltip'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -64,7 +63,7 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
-  const isMobile = useIsMobile()
+  const isMobile = useMediaQuery('(max-width: 768px')
   const [openMobile, setOpenMobile] = React.useState(false)
 
   // This is the internal state of the sidebar.
@@ -205,7 +204,7 @@ function Sidebar({
 
   return (
     <div
-      className="group peer text-sidebar-foreground hidden md:block"
+      className="group peer text-sidebar-foreground hidden md:block h-full"
       data-state={state}
       data-collapsible={state === 'collapsed' ? collapsible : ''}
       data-variant={variant}
@@ -696,6 +695,18 @@ function SidebarMenuSubButton({
   )
 }
 
+const CustomeSideBarTrigger = ({
+  ...props
+}: React.ComponentProps<'button'>) => {
+  const { toggleSidebar } = useSidebar()
+
+  return (
+    <button {...props} onClick={toggleSidebar}>
+      {<PanelRightOpen color="grey" />}
+    </button>
+  )
+}
+
 export {
   Sidebar,
   SidebarContent,
@@ -721,4 +732,5 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
+  CustomeSideBarTrigger,
 }
