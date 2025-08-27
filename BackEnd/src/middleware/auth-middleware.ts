@@ -19,7 +19,7 @@ export const authMiddleware =
           res.status(401).json(errorResponse("توکن نامعتبر است"));
           return;
         }
-        const accToken = encryptJWT(session.user, process.env.JWT_SECRET ?? "", "15m");
+        const accToken = encryptJWT(session.user.id, session.user.username, process.env.JWT_SECRET ?? "", "15m");
         res.cookie("accessToken", accToken);
         res.cookie("refreshToken", req.cookies.refreshToken);
       }
