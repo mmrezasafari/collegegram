@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Auth from '../features/auth/pages/Auth'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ProfilePage } from '@/features/profile/pages/profile-page'
+import { ProfilePage } from '@/features/profile/pages/profilePage'
 import { Toaster } from 'sonner'
 
 const queryClient = new QueryClient()
