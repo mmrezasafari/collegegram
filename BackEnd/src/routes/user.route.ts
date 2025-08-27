@@ -57,5 +57,10 @@ export const userRouter = (userService: UserService) => {
 
   });
 
+  app.get("/:id/posts",(req, res) => {
+    const userId = zod.uuid().parse(req.params.id);
+    handleExpress(res, () => userService.getPosts(userId));
+  })
+
   return app;
 }
