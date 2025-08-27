@@ -15,19 +15,19 @@ export class AuthService {
   ) { }
 
   async register(dto: CreateUserDto) {
-    const user ={
-            username: dto.username,
-            email : dto.email,
-            password: dto.password,
-        }
-        const existingUser = await this.userRepo.getByUsername(dto.username);
-        if(existingUser){
-            throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
-        }
-        const existingEmail = await this.userRepo.getByEmail(dto.email);
-        if(existingEmail){
-            throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
-        }
+    const user = {
+      username: dto.username,
+      email: dto.email,
+      password: dto.password,
+    }
+    const existingUser = await this.userRepo.getByUsername(dto.username);
+    if (existingUser) {
+      throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
+    }
+    const existingEmail = await this.userRepo.getByEmail(dto.email);
+    if (existingEmail) {
+      throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
+    }
     dto.password = hashingPassword(dto.password);
     return await this.userRepo.create(dto)
   }
@@ -36,11 +36,11 @@ export class AuthService {
     const user = await this.userRepo.getForLogin(dto.usernameOrEmail);
     if (user && comparePassword(dto.password, user.password)) {
 
-      const AccToken = encryptJWT(user, process.env.JWT_SECRET ?? "", "15m");
+      const accToken = encryptJWT(user.id, user.username, process.env.JWT_SECRET ?? "", "15m");
       const session = await this.createSession(user.id);
 
       return {
-        accessToken: AccToken,
+        accessToken: accToken,
         refreshToken: session.token
       };
     } else {
