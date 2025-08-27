@@ -8,7 +8,8 @@ import { RegisterForm } from '@/features/auth/components/RegisterForm'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 import { Separator } from '@/features/common/components/ui/separator'
 import { useRegister } from '../hooks/useAuth'
-export const Authenticate = () => {
+
+export const AuthPage = () => {
   const { registerSuccess } = useRegister()
 
   return (
