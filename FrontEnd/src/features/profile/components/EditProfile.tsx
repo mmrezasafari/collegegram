@@ -17,7 +17,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/features/common/components/ui/drawer'
-import { Input } from '@/features/common/components/ui/Input'
+import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { Switch } from '@/features/common/components/ui/switch'
 import { Textarea } from '@/features/common/components/ui/textarea'
@@ -34,9 +34,9 @@ export const EditProfile = () => {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">Share</Button>
+          <Button>ویرایش پروفایل</Button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col gap-6">
+        <DialogContent className="flex flex-col gap-6 border-none">
           <DialogTitle className="flex flex-col text-2xl font-bold items-center justify-center">
             ویرایش حساب
             <DialogDescription hidden></DialogDescription>
@@ -49,7 +49,7 @@ export const EditProfile = () => {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
+          <Button className="w-full">ویرایش پروفایل</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader className="text-left">

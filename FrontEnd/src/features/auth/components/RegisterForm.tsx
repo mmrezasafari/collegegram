@@ -5,7 +5,7 @@ import {
   UserNameIcon,
 } from '@/assets/images/Icons'
 import { Button } from '@/features/common/components/ui/button'
-import { Input } from '@/features/common/components/ui/Input'
+import { Input } from '@/features/common/components/ui/input'
 import { useInput } from '@/features/common/hooks/useInput'
 import {
   emailSchema,
@@ -184,7 +184,11 @@ export const RegisterForm = () => {
           )}
         </div>
       </div>
-      <Button className="self-end" type="submit" loading={registerMutation.isPending}>
+      <Button
+        className="self-end"
+        type="submit"
+        loading={registerMutation.isPending}
+      >
         ثبت نام
       </Button>
     </form>
