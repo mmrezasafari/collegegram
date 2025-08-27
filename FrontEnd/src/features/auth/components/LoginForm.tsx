@@ -1,22 +1,31 @@
 import { EmailIcon, ErrorIcon, PasswordIcon } from '@/assets/images/Icons'
 import { Button } from '@/features/common/components/ui/button'
 import { Checkbox } from '@/features/common/components/ui/checkbox'
-import { Input } from '@/features/common/components/ui/Input'
+import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { useInput } from '@/features/common/hooks/useInput'
-import { emailSchema, loginFormSchema, passwordSchema, validateWithYup } from '@/utils/validation'
+import {
+  emailSchema,
+  loginFormSchema,
+  passwordSchema,
+  validateWithYup,
+} from '@/utils/validation'
 import { useState, type ComponentProps } from 'react'
 import { useLogin } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
 
 export const LoginForm = () => {
-  const email = useInput('email', '', (val) => validateWithYup(emailSchema, val))
-  const password = useInput('password', '', (val) => validateWithYup(passwordSchema, val))
+  const email = useInput('email', '', (val) =>
+    validateWithYup(emailSchema, val),
+  )
+  const password = useInput('password', '', (val) =>
+    validateWithYup(passwordSchema, val),
+  )
   const [rememberMe, setRememberMe] = useState(false)
   const { loginMutation } = useLogin()
 
   const onRememberMeClick: ComponentProps<'button'>['onClick'] = () => {
-    setRememberMe(value => !value)
+    setRememberMe((value) => !value)
   }
 
   const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
@@ -24,13 +33,13 @@ export const LoginForm = () => {
 
     const formValues = {
       usernameOrEmail: email.value,
-      password: password.value
+      password: password.value,
     }
 
     try {
       loginFormSchema.validateSync(formValues, { abortEarly: false })
       loginMutation.mutate({
-        ...formValues
+        ...formValues,
       })
     } catch (err) {
       if (err instanceof ValidationError) {
@@ -46,9 +55,7 @@ export const LoginForm = () => {
         if (errorMap.password) password.setError(errorMap.password)
 
         // focus the first invalid input
-        const firstErrorField = [email, password].find(
-          (f) => errorMap[f.name],
-        )
+        const firstErrorField = [email, password].find((f) => errorMap[f.name])
         firstErrorField?.ref.current?.focus()
       }
     }
@@ -110,10 +117,20 @@ export const LoginForm = () => {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <Checkbox id="rememberMe" onClick={onRememberMeClick} checked={rememberMe} />
+          <Checkbox
+            id="rememberMe"
+            onClick={onRememberMeClick}
+            checked={rememberMe}
+          />
           <Label htmlFor="rememberMe">مرا به خاطر بسپار</Label>
         </div>
-        <Button className="self-end" type="submit" loading={loginMutation.isPending}>ورود</Button>
+        <Button
+          className="self-end"
+          type="submit"
+          loading={loginMutation.isPending}
+        >
+          ورود
+        </Button>
       </form>
     </div>
   )
