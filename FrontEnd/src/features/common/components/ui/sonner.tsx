@@ -27,12 +27,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
 const createNotify =
   (className: string, icon: ReactNode) =>
-    (message: string, props?: ExternalToast) =>
-      toast(message, {
-        className,
-        icon,
-        ...props,
-      })
+  (message: string, props?: ExternalToast) =>
+    toast(message, {
+      className,
+      icon,
+      ...props,
+    })
 
 const notify = {
   success: createNotify(

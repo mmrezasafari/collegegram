@@ -17,7 +17,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/features/common/components/ui/drawer'
-import { Input } from '@/features/common/components/ui/Input'
+import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { Switch } from '@/features/common/components/ui/switch'
 import { Textarea } from '@/features/common/components/ui/textarea'
