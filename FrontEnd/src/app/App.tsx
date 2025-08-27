@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import Auth from '../features/auth/pages/Auth'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ProfilePage } from '@/features/profile/pages/profilePage'
 import { Toaster } from 'sonner'
+import { AuthLayout } from '@/layouts/AuthLayout'
+import ProfileLayout from '@/layouts/ProfileLayout'
 
 const queryClient = new QueryClient()
 
@@ -11,8 +11,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Auth />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/" element={<AuthLayout />} />
+          <Route path="/profile" element={<ProfileLayout />} />
         </Routes>
       </BrowserRouter>
       <Toaster />
