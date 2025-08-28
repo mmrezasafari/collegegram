@@ -21,7 +21,14 @@ import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { Switch } from '@/features/common/components/ui/switch'
 import { Textarea } from '@/features/common/components/ui/textarea'
+import { useInput } from '@/features/common/hooks/useInput'
 import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
+import {
+  emailSchema,
+  passwordSchema,
+  rePasswordSchema,
+  validateWithYup,
+} from '@/utils/validation'
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog'
 import { Camera, CircleX, Plus, RefreshCw } from 'lucide-react'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
@@ -69,6 +76,21 @@ const EditForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const name = useInput('name', 'Mohammad')
+  const lname = useInput('lname', 'Hadi')
+  const email = useInput('email', 'Mohammad@gmail.com', (val) =>
+    validateWithYup(emailSchema, val),
+  )
+  const password = useInput('password', 'password', (val) =>
+    validateWithYup(passwordSchema, val),
+  )
+  const repassword = useInput('repassword', 'password', (val) =>
+    validateWithYup(rePasswordSchema, val, {
+      context: { password: password.value },
+    }),
+  )
+  const isPrivate = useInput('isPrivate', 'false')
+  const bio = useInput('bio', 'bio')
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
@@ -159,7 +181,14 @@ const EditForm = () => {
         <div className="w-full flex flex-col gap-4">
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
-              <Input type="email" placeholder="نام" className="pr-9" />
+              <Input
+                type="text"
+                placeholder="نام"
+                className="pr-9"
+                onChange={name.onChange}
+                ref={name.ref}
+                value={name.value}
+              />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <UserIcon />
               </div>
@@ -167,7 +196,13 @@ const EditForm = () => {
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
-              <Input type="email" placeholder="نام خانوادگی" className="pr-9" />
+              <Input
+                type="text"
+                placeholder="نام خانوادگی"
+                className="pr-9"
+                value={lname.value}
+                onChange={lname.onChange}
+              />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <UserIcon />
               </div>
@@ -175,7 +210,14 @@ const EditForm = () => {
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
-              <Input type="email" placeholder="ایمیل" className="pr-9" />
+              <Input
+                type="email"
+                placeholder="ایمیل"
+                className="pr-9"
+                value={email.value}
+                onChange={email.onChange}
+                aria-invalid={!!email.error}
+              />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <EmailIcon />
               </div>
@@ -183,7 +225,14 @@ const EditForm = () => {
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
-              <Input type="email" placeholder="رمز عبور" className="pr-9" />
+              <Input
+                type="password"
+                placeholder="رمز عبور"
+                className="pr-9"
+                value={password.value}
+                onChange={password.onChange}
+                aria-invalid={!!password.error}
+              />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <PasswordIcon />
               </div>
@@ -192,9 +241,12 @@ const EditForm = () => {
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
               <Input
-                type="email"
+                type="password"
                 placeholder="تکرار رمز عبور"
                 className="pr-9"
+                value={repassword.value}
+                onChange={repassword.onChange}
+                aria-invalid={!!repassword.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <PasswordIcon />
@@ -202,14 +254,26 @@ const EditForm = () => {
             </div>
           </div>
           <div className="flex gap-2 mt-2">
-            <Switch id="beAPrivate" />
+            <Switch
+              id="beAPrivate"
+              type="button"
+              aria-checked={isPrivate.value}
+              // TODO
+              // onClick={(event) => isPrivate.setValue(event.target.value)}
+            />
             <Label htmlFor="beAPrivate">پیچ خصوصی باشه</Label>
           </div>
           <div className="flex flex-col gap-2 mt-2">
             <Label className="text-md" htmlFor="bioMessage">
               بایو
             </Label>
-            <Textarea className="max-h-20" id="bioMessage" />
+            <Textarea
+              className="max-h-20"
+              id="bioMessage"
+              value={bio.value}
+              // TODO
+              // onChange={(event) => bio.setValue(event.target.value)}
+            />
           </div>
         </div>
         <div className="flex w-full justify-end gap-2">
