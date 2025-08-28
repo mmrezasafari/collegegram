@@ -4,19 +4,16 @@ type ValidateFn<T> = (value: T) => string | null
 
 let inputIdCounter = 0
 
-export function useInput<
-  T extends string | boolean = string,
-  E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
->(
+export function useInput<T extends string = string>(
   name: string,
-  initialValue: T,
+  initialValue: T = '' as T,
   validateFn?: ValidateFn<T>,
 ) {
-  const [value, setValue] = useState<T>(initialValue as T)
+  const [value, setValue] = useState<T>(initialValue)
   const [edited, setEdited] = useState(false)
   const [error, setError] = useState<string>('')
   const idRef = useRef(`input-${++inputIdCounter}`)
-  const inputRef = useRef<E>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const validate = (val: T) => {
     if (!validateFn) return
@@ -24,15 +21,8 @@ export function useInput<
     setError(validationError || '')
   }
 
-  const onChange: React.ChangeEventHandler<E> = (e: ChangeEvent<E>) => {
-    let newValue: any
-
-    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
-      newValue = e.target.checked as T // checkbox → boolean
-    } else {
-      newValue = e.target.value as T   // text/textarea → string
-    }
-
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value as T
     setValue(newValue)
 
     if (edited && validateFn) {
@@ -40,24 +30,21 @@ export function useInput<
     }
   }
 
-  const onBlur: React.ChangeEventHandler<E> = (e: React.FocusEvent<E>) => {
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!edited) setEdited(true)
-    let val: any =
-      e.target instanceof HTMLInputElement && e.target.type === 'checkbox'
-        ? e.target.checked
-        : e.target.value
-    validate(val as T)
+
+    validate(e.target.value as T)
   }
 
   const reset = () => {
-    setValue(initialValue as T)
+    setValue(initialValue)
     setEdited(false)
     setError('')
   }
 
   return {
     name,
-    id: idRef.current,
+    id: idRef,
     ref: inputRef,
     value,
     edited,
