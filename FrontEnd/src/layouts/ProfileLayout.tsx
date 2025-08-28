@@ -8,7 +8,7 @@ import {
   CustomeSideBarTrigger,
   SidebarProvider,
 } from '@/features/common/components/ui/sidebar'
-import { ProfileSidebar } from '@/features/profile/components/ProfileSideBar'
+import { AppSidebar } from '@/features/profile/components/AppSideBar'
 import { ProfilePage } from '@/features/profile/pages/profilePage'
 import { Plus, UserRound } from 'lucide-react'
 
@@ -40,7 +40,7 @@ const ProfileLayout = () => {
           <CustomeSideBarTrigger />
         </div>
         <div className="md:flex-auto max-md:hidden col-start-1 row-start-2 col-end-2 row-end-3">
-          <ProfileSidebar />
+          <AppSidebar />
         </div>
         <div className="h-full col-start-1 row-start-2 col-end-2 row-end-3 md:col-start-2 md:row-start-2 md:col-end-3 md:row-end-3">
           <ProfilePage />

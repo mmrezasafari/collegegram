@@ -19,7 +19,7 @@ const links = [
   },
 ]
 
-export function ProfileSidebar() {
+export function AppSidebar() {
   return (
     <Sidebar
       side="right"
