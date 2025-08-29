@@ -15,7 +15,7 @@ export const AuthPage = () => {
   return (
     <div className="w-full h-full md:w-[500px] md:h-auto md:max-h-[700px] flex flex-col justify-center items-center bg-backgroundLight md:rounded-3xl py-16 max-md:px-6 md:shadow-formShadow gap-8">
       <img
-        src="src/assets/images/rahnema-college-logo-far 1.png"
+        src="src/assets/images/rahnema-college-logo.png"
         width="100px"
         height="61"
       />
