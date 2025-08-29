@@ -3,11 +3,12 @@ import { User } from "./model/user";
 import { hashingPassword } from "../../../utility/bcrypt-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { IUserRepository } from "./user.repository";
-
+import { IPostRepository } from "../post/post.repository";
 
 export class UserService {
     constructor(
-        private userRepo: IUserRepository
+        private userRepo: IUserRepository,
+        private postRepo: IPostRepository
     ) { }
     async getUser(id: string): Promise<User> {
         const user = await this.userRepo.getById(id);
@@ -32,11 +33,17 @@ export class UserService {
         return await this.userRepo.update(id, dto);
     }
 
-    async saveUserImage(file: Express.Multer.File, userId: string) {
+    async saveProfileImage(file: Express.Multer.File, userId: string) {
         const user = await this.getUser(userId);
         const imagePath = `/uploads/${file.filename}`;
         await this.userRepo.saveImage(userId, imagePath);
         return file;
+    }
+
+    async savePost(files: Express.Multer.File[], caption: string, userId: string) {
+        const imagePaths: string[] = files.map(file => file.path);
+        const post = await this.postRepo.createPost(userId, imagePaths, caption);
+        return post;
     }
 
 }

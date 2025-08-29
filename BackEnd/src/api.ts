@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import { UserService } from "./modules/user/user.service";
 import { userRouter } from "./routes/user.route";
 import { authMiddleware } from "./middleware/auth-middleware";
+import { PostRepository } from "./modules/post/post.repository";
 
 declare global {
   namespace Express {
@@ -32,9 +33,10 @@ export const makeApp = (dataSource: DataSource) => {
   app.use(cookieParser());
 
   const userRepo = new UserRepository(dataSource);
+  const postRepo = new PostRepository(dataSource);
   const sessionRepo = new SessionRepository(dataSource)
   const authService = new AuthService(userRepo, sessionRepo);
-  const userService = new UserService(userRepo);
+  const userService = new UserService(userRepo, postRepo);
 
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));

@@ -21,13 +21,40 @@ export const userRouter = (userService: UserService) => {
   })
 
 
-  app.post("/:id/upload",upload.single('avatar'), (req , res) =>{
+  app.post("/:id/uploadProfile",upload.single('avatar'), (req , res) =>{
     const userId = zod.uuid().parse(req.params.id);
     if (!req.file){
       res.status(400).json({message:"فایل ارسال نشده"});
       return;
     }
-    handleExpress(res,() => userService.saveUserImage(req.file! , userId))
+    handleExpress(res,() => userService.saveProfileImage(req.file! , userId))
+  });
+
+  app.post("/:id/uploadPost",upload.array('avatar', 10), (req , res) =>{
+    const userId = zod.uuid().parse(req.params.id);
+    if (!req.files){
+      res.status(400).json({message:"فایل ارسال نشده"});
+      return;
+    }
+    const caption = req.body;
+
+    // console.log("UserId:", userId);
+    // console.log("Files:", req.files);
+    // console.log("Caption:", req.body.caption);
+    // console.log(req)
+
+    ////???????
+    // if(Array.isArray(req.files) && req.files!== undefined) {
+    // handleExpress(res,() => userService.savePost(req.files, caption, userId))
+    // }
+    // else{
+    //   const avatarFiles = req.files["avatar"];
+    //   handleExpress(res,() => userService.savePost(avatarFiles, caption, userId))
+    // }
+
+    handleExpress(res, () => userService.savePost(req.files as Express.Multer.File[], caption, userId));
+
+
   });
 
   return app;
