@@ -36,19 +36,19 @@ const createNotify =
 
 const notify = {
   success: createNotify(
-    '!bg-backGroundSuccess !text-textSuccess !rounded-3xl !text-md !px-6',
+    '!bg-backGroundSuccess !text-textSuccess !rounded-3xl !text-md !px-6 !font-[IranSans]',
     <SuccessIcon />,
   ),
   error: createNotify(
-    '!bg-backGroundError !text-textError !rounded-3xl !text-md !px-6',
+    '!bg-backGroundError !text-textError !rounded-3xl !text-md !px-6 !font-[IranSans]',
     <ErrorIcon />,
   ),
   warning: createNotify(
-    '!bg-backGroundWarning !text-textWarning !rounded-3xl !text-md !px-6',
+    '!bg-backGroundWarning !text-textWarning !rounded-3xl !text-md !px-6 !font-[IranSans]',
     <WarningIcon />,
   ),
   info: createNotify(
-    '!bg-backGroundInfo !text-textInfo !rounded-3xl !text-md !px-6',
+    '!bg-backGroundInfo !text-textInfo !rounded-3xl !text-md !px-6 !font-[IranSans]',
     <InfoIcon />,
   ),
 }
