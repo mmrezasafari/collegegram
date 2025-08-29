@@ -3,6 +3,7 @@ import { AuthService } from "../modules/auth/auth.service";
 import { createUserDto } from "../modules/auth/dto/create-user.dto";
 import { handleExpress } from "../../utility/handle-express";
 import { loginRequestDto } from "../modules/auth/dto/login-request.dto";
+import { authMiddleware } from "../middleware/auth-middleware";
 
 export const authRouter = (authService: AuthService) => {
   const app = Router();
@@ -16,5 +17,15 @@ export const authRouter = (authService: AuthService) => {
     const dto = loginRequestDto.parse(req.body);
     handleExpress(res, () => authService.login(dto));
   })
+
+  app.get("/me", authMiddleware(authService), (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "احراز هویت انجام نشده است" });
+    }
+    res.json({
+      id: req.user.id,
+      username: req.user.username,
+    });
+  });
   return app;
 }
