@@ -3,7 +3,6 @@ import api from '@/lib/axios'
 import type { ILogin, ILoginRes, IRegister, IRegisterRes } from '@/types/auth'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
-// import { getUserFromCookie } from '@/utils/validation'
 
 async function registerUser(user: IRegister): Promise<IRegisterRes> {
   const res = await api.post<IRegisterRes>('/register', user)
@@ -59,13 +58,11 @@ export function useLogin() {
     mutationKey: ['loginUser'],
     mutationFn: loginUser,
     onSuccess: (data) => {
-      const dt = getUserFromCookie()
       queryClient.setQueryData(['loginUser'], data)
       notify.success('خوش آمدید', {
         position: 'top-right',
         duration: 10000,
       })
-      console.log(dt)
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

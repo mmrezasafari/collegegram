@@ -3,26 +3,25 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
-import { Button } from '@/features/common/components/ui/button'
 import {
   CustomeSideBarTrigger,
   SidebarProvider,
 } from '@/features/common/components/ui/sidebar'
-import { AppSidebar } from '@/features/profile/components/AppSideBar'
+import { AppSidebar } from '@/features/common/components/layout/AppSideBar'
 import { ProfilePage } from '@/features/profile/pages/profilePage'
-import { Plus, UserRound } from 'lucide-react'
+import { UserRound } from 'lucide-react'
+import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
 
 const ProfileLayout = () => {
   return (
-    <div className="bg-backgroundLight h-full py-4 px-8 md:py-12 md:px-14">
-      <SidebarProvider className="relative min-h-full h-auto grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[0.01fr_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
-        <Button className="hidden md:flex col-start-1 row-start-1 col-end-2 row-end-2">
-          <Plus />
-          پست جدید
-        </Button>
+    <div className="bg-backgroundLight min-h-screen py-4 px-8 md:py-12 md:px-14">
+      <SidebarProvider className="relative md:min-h-[850px] min-h-[800px] grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[0.01fr_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
+        <div className="hidden md:flex col-start-1 row-start-1 col-end-2 row-end-2">
+          <UploadPostWizard />
+        </div>
         <div className="hidden md:block col-start-2 row-start-1 col-end-3 row-end-2 justify-items-end">
           <img
-            src="src/assets/images/rahnema-college-logo-far 1.png"
+            src="src/assets/images/rahnema-college-logo.png"
             width="80px"
             height="50px"
           />
