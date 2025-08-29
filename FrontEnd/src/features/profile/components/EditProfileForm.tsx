@@ -1,21 +1,12 @@
-import { EmailIcon, PasswordIcon, UserIcon } from '@/assets/images/Icons'
+import { EmailIcon, PasswordIcon } from '@/assets/images/Icons'
 import { Button } from '@/features/common/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
   DialogClose,
   DialogFooter,
-  DialogTrigger,
 } from '@/features/common/components/ui/dialog'
 import {
-  Drawer,
   DrawerClose,
-  DrawerContent,
-  DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
 } from '@/features/common/components/ui/drawer'
 import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
@@ -29,68 +20,29 @@ import {
   rePasswordSchema,
   validateWithYup,
 } from '@/utils/validation'
-import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog'
 import { Camera, CircleX, Plus, RefreshCw } from 'lucide-react'
+import { UserIcon } from '@/assets/images/Icons'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 
-export const EditProfile = () => {
-  const [open, setOpen] = useState(false)
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>ویرایش پروفایل</Button>
-        </DialogTrigger>
-        <DialogContent className="flex flex-col gap-6 border-none">
-          <DialogTitle className="flex flex-col text-2xl font-bold items-center justify-center">
-            ویرایش حساب
-            <DialogDescription hidden></DialogDescription>
-          </DialogTitle>
-          <EditForm />
-        </DialogContent>
-      </Dialog>
-    )
-  } else {
-    return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button className="w-full">ویرایش پروفایل</Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader className="text-left">
-            <DrawerTitle className="flex flex-col text-xl font-bold items-center justify-center">
-              ویرایش حساب
-              <DrawerDescription hidden></DrawerDescription>
-            </DrawerTitle>
-          </DrawerHeader>
-          <EditForm />
-        </DrawerContent>
-      </Drawer>
-    )
-  }
-}
-
-const EditForm = () => {
+export const EditProfileForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const name = useInput('name', 'Mohammad')
-  const lname = useInput('lname', 'Hadi')
+  const lName = useInput('lname', 'Hadi')
   const email = useInput('email', 'Mohammad@gmail.com', (val) =>
     validateWithYup(emailSchema, val),
   )
   const password = useInput('password', 'password', (val) =>
     validateWithYup(passwordSchema, val),
   )
-  const repassword = useInput('repassword', 'password', (val) =>
+  const rePassword = useInput('repassword', 'password', (val) =>
     validateWithYup(rePasswordSchema, val, {
       context: { password: password.value },
     }),
   )
-  const isPrivate = useInput('isPrivate', 'false')
-  const bio = useInput('bio', 'bio')
+  const isPrivate = useInput<boolean>('isPrivate', false)
+  const bio = useInput<string, HTMLTextAreaElement>('bio', 'fds')
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
@@ -131,7 +83,7 @@ const EditForm = () => {
                 <img
                   src={previewUrl}
                   alt="پیش‌نمایش تصویر پروفایل"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover hover:object-contain"
                 />
               ) : (
                 <div className="relative flex items-center justify-center">
@@ -159,6 +111,7 @@ const EditForm = () => {
                   type="button"
                   onClick={() =>
                     setPreviewUrl((prev) => {
+                      fileInputRef.current!.value = ''
                       if (prev) URL.revokeObjectURL(prev)
                       return null
                     })
@@ -200,8 +153,8 @@ const EditForm = () => {
                 type="text"
                 placeholder="نام خانوادگی"
                 className="pr-9"
-                value={lname.value}
-                onChange={lname.onChange}
+                value={lName.value}
+                onChange={lName.onChange}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <UserIcon />
@@ -244,9 +197,9 @@ const EditForm = () => {
                 type="password"
                 placeholder="تکرار رمز عبور"
                 className="pr-9"
-                value={repassword.value}
-                onChange={repassword.onChange}
-                aria-invalid={!!repassword.error}
+                value={rePassword.value}
+                onChange={rePassword.onChange}
+                aria-invalid={!!rePassword.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <PasswordIcon />
@@ -256,10 +209,8 @@ const EditForm = () => {
           <div className="flex gap-2 mt-2">
             <Switch
               id="beAPrivate"
-              type="button"
-              aria-checked={isPrivate.value}
-              // TODO
-              // onClick={(event) => isPrivate.setValue(event.target.value)}
+              checked={isPrivate.value}
+              onCheckedChange={(checked) => isPrivate.setValue(checked)}
             />
             <Label htmlFor="beAPrivate">پیچ خصوصی باشه</Label>
           </div>
@@ -271,28 +222,25 @@ const EditForm = () => {
               className="max-h-20"
               id="bioMessage"
               value={bio.value}
-              // TODO
-              // onChange={(event) => bio.setValue(event.target.value)}
+              onChange={bio.onChange}
             />
           </div>
         </div>
         <div className="flex w-full justify-end gap-2">
           {isDesktop ? (
-            <>
-              <DrawerFooter className="flex-row p-0">
-                <DrawerClose asChild>
-                  <Button variant="secondary">پشیمون شدم</Button>
-                </DrawerClose>
-                <Button variant="default">ثبت تغییرات</Button>
-              </DrawerFooter>
-            </>
-          ) : (
             <DialogFooter className="flex-row p-0">
               <DialogClose asChild>
                 <Button variant="secondary">پشیمون شدم</Button>
               </DialogClose>
               <Button variant="default">ثبت تغییرات</Button>
             </DialogFooter>
+          ) : (
+            <DrawerFooter className="flex-row p-0">
+              <DrawerClose asChild>
+                <Button variant="secondary">پشیمون شدم</Button>
+              </DrawerClose>
+              <Button variant="default">ثبت تغییرات</Button>
+            </DrawerFooter>
           )}
         </div>
       </div>

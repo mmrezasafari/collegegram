@@ -1,9 +1,9 @@
-import { Button } from '@/features/common/components/ui/button'
 import { Separator } from '@/features/common/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
-import { Plus, UserRound } from 'lucide-react'
+import { UserRound } from 'lucide-react'
 import * as React from 'react'
-import { EditProfile } from '../components/EditProfile'
+import { EditProfileWizard } from '../components/EditProfileWizard'
+import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
 
 export function ProfilePage(): React.ReactElement {
   return (
@@ -37,7 +37,7 @@ export function ProfilePage(): React.ReactElement {
             Lover, not a fighter, spreading ✌️all over the 🌎
           </p>
         </div>
-        <EditProfile />
+        <EditProfileWizard />
       </div>
       <Separator className="bg-geryLight" />
       {/* Empty posts panel */}
@@ -48,10 +48,7 @@ export function ProfilePage(): React.ReactElement {
             <br />
             بجنب تا دیر نشده
           </div>
-          <Button className="w-full rounded-full bg-rose-400 text-white hover:bg-rose-500 h-8 md:h-9 text-sm">
-            <Plus />
-            پست جدید
-          </Button>
+          <UploadPostWizard />
         </div>
       </div>
     </div>

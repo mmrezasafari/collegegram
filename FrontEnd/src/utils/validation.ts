@@ -36,7 +36,7 @@ export const registerFormSchema = yup.object({
 
 export const loginFormSchema = yup.object({
   usernameOrEmail: emailSchema,
-  password: passwordSchema
+  password: passwordSchema,
 })
 
 export function validateWithYup<T>(
