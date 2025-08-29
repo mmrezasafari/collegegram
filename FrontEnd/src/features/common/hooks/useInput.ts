@@ -1,28 +1,37 @@
-import React, { useRef, useState, type ChangeEvent } from 'react'
-
-type ValidateFn<T> = (value: T) => string | null
+import React, {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FocusEvent,
+} from 'react'
 
 let inputIdCounter = 0
 
-export function useInput<T extends string = string>(
-  name: string,
-  initialValue: T = '' as T,
-  validateFn?: ValidateFn<T>,
-) {
+export function useInput<
+  T extends string | boolean,
+  E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement,
+>(name: string, initialValue: T, validateFn?: (value: T) => string | null) {
   const [value, setValue] = useState<T>(initialValue)
   const [edited, setEdited] = useState(false)
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string | undefined>(undefined)
   const idRef = useRef(`input-${++inputIdCounter}`)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<E>(null)
 
-  const validate = (val: T) => {
+  const validate = (v: T) => {
     if (!validateFn) return
-    const validationError = validateFn(val)
+    const validationError = validateFn(v)
     setError(validationError || '')
   }
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value as T
+  const onChange: React.ChangeEventHandler<E> = (e: ChangeEvent<E>) => {
+    let newValue: any
+
+    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+      newValue = e.target.checked as T
+    } else {
+      newValue = (e.target as HTMLInputElement | HTMLTextAreaElement).value as T
+    }
+
     setValue(newValue)
 
     if (edited && validateFn) {
@@ -30,10 +39,15 @@ export function useInput<T extends string = string>(
     }
   }
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onBlur: React.FocusEventHandler<E> = (e: FocusEvent<E>) => {
     if (!edited) setEdited(true)
 
-    validate(e.target.value as T)
+    let val: any =
+      e.target instanceof HTMLInputElement && e.target.type === 'checkbox'
+        ? e.target.checked
+        : e.target.value
+
+    validate(val as T)
   }
 
   const reset = () => {
@@ -44,7 +58,7 @@ export function useInput<T extends string = string>(
 
   return {
     name,
-    id: idRef,
+    id: idRef.current,
     ref: inputRef,
     value,
     edited,
@@ -56,4 +70,3 @@ export function useInput<T extends string = string>(
     setValue,
   }
 }
-
