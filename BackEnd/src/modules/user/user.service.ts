@@ -19,7 +19,7 @@ export class UserService {
 
 
     async editProfile(id: string, dto: UpdateUserDto) {
-        const user = this.getUser(id);
+        const user = await this.getUser(id);
         if (dto.email) {
             const existingEmail = await this.userRepo.getByEmail(dto.email);
             if (existingEmail) {
@@ -33,7 +33,7 @@ export class UserService {
     }
 
     async saveUserImage(file: Express.Multer.File, userId: string) {
-        const user = this.getUser(userId);
+        const user = await this.getUser(userId);
         const imagePath = `/uploads/${file.filename}`;
         await this.userRepo.saveImage(userId, imagePath);
         return file;
