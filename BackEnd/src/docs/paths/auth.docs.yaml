@@ -136,3 +136,45 @@ paths:
               example: 
                 success: false
                 message: "خطای سرور"
+
+  /me:
+    get:
+      summery: "get me"
+      security:
+        - accessToken: []
+        - refreshToken: [] 
+      responses: 
+        '200': 
+          description: get successful user
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/User"
+                example: 
+                  success: true
+                  data: 
+                    id: "1"
+                    username: "daleya"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        500:
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"

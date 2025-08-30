@@ -7,3 +7,7 @@ export interface User {
   bio?: string;
   imagePath?: string;
 }
+export interface UserWithoutEmail {
+  userId: string;
+  username: string
+}

@@ -13,6 +13,13 @@ import { UserService } from "./modules/user/user.service";
 import { userRouter } from "./routes/user.route";
 import { authMiddleware } from "./middleware/auth-middleware";
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { userId: string; username: string };
+    }
+  }
+}
 
 export const makeApp = (dataSource: DataSource) => {
 
@@ -30,7 +37,7 @@ export const makeApp = (dataSource: DataSource) => {
   const userService = new UserService(userRepo);
 
   app.use(authRouter(authService));
-  app.use("/users", authMiddleware(authService), userRouter(userService));
+  app.use("/users", authMiddleware, userRouter(userService));
 
 
   setupSwagger(app);
