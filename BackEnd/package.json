@@ -8,7 +8,7 @@
   "main": "main.ts",
   "scripts": {
     "test": "NODE_ENV=test jest --testMatch **/tests/units/**/*.spec.ts -i",
-    "test:e2e": "NODE_ENV=test jest --testMatch **/tests/e2e/**/*.spec.ts -i",
+    "test:e2e": "cross-env NODE_ENV=test jest --testMatch **/tests/e2e/**/*.spec.ts -i",
     "start": "nodemon src/main.ts",
     "clean": "rimraf dist/",
     "copy-files": "cp -r src/docs dist/src/docs",
@@ -52,6 +52,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
+    "cross-env": "^10.0.0",
     "jest": "^30.0.5",
     "rimraf": "^6.0.1",
     "supertest": "^7.1.4",
