@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 import { UserRepository } from "./modules/user/user.repository";
 import { AuthService } from "./modules/auth/auth.service";
 import { authRouter } from "./routes/auth.route";
-import { errorMiddleware } from "./middleware/zod&multer-error.middleware";
+import { errorMiddleware } from "./middleware/error.middleware";
 import { setupSwagger } from "./config/swagger.config";
 import { errorResponse } from "../utility/response";
 import { SessionRepository } from "./modules/auth/session.repository";
@@ -13,6 +13,7 @@ import { UserService } from "./modules/user/user.service";
 import { userRouter } from "./routes/user.route";
 import { authMiddleware } from "./middleware/auth-middleware";
 import { PostRepository } from "./modules/post/post.repository";
+import { profileRouter } from "./routes/profile.route";
 
 declare global {
   namespace Express {
@@ -41,6 +42,7 @@ export const makeApp = (dataSource: DataSource) => {
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));
 
+  app.use("/profile", authMiddleware, profileRouter(userService));
 
   setupSwagger(app);
 

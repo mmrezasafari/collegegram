@@ -1,0 +1,367 @@
+paths:
+  /profile/me: 
+    get: 
+      summary: Get user
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []  
+      responses: 
+        '200': 
+          description: get successful user
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/User"
+                example: 
+                  success: true
+                  data: 
+                    id: "1"
+                    username: "daleya"
+                    email: "test@gmail.com"
+                    firstName: ""
+                    lastName: ""
+                    bio: ""
+                    imageUrl: ""
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شناسه کاربر معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+    patch:
+      summary: Edit Profile
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      description: Update the details of an existing user by their ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastName:
+                  type: string
+                firstName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                bio:
+                  type: string
+              example:
+                lastName: "mobina"
+                firstName: "kheiri"
+                email: "mobina.kheiri@gmail.com"
+                password: "Mobin@123"
+                bio: "I am a software developer with a passion for open source."
+
+      responses:
+        200:
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/User"
+              example:
+                success: true
+                data:
+                  id: "12345"
+                  lastName: "mobina"
+                  firstName: "kheiri"
+                  email: "mobina.kheiri@gmail.com"
+                  bio: "Art lover, finding beauty in art gallery"
+                  imageUrl: ""
+
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                usernameInvalid:
+                  value:
+                    success: false
+                    message: "شناسه کاربر معتبر نیست"
+                passwordWeak:
+                  value:
+                    success: false
+                    message: "رمز عبور ایمن نیست"
+                emailInvalid:
+                  value:
+                    success: false
+                    message: "ایمیل معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "ایمیل تکراری است"
+
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+  /profile/posts:  
+    post:
+      summery: Create post
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [images]
+            schema:
+              type: object
+              properties:
+                caption: 
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              example:
+                caption: "This is a caption"
+                images: "example.jpg"
+
+      responses: 
+        200:
+          description: Create successful post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Post"
+                example:
+                  success: true
+                  data:
+                    id: "1"
+                    caption: "This is a caption"
+                    user:
+                      id: "1"
+                      username: "daleya"
+                      email: "test@gmail.com"
+                      firstName: ""
+                      lastName: ""
+                      bio: ""
+                      imageUrl: ""
+                    images:
+                      id: "1"
+                      path: "example.jpg"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+                IdIsNotValid:
+                  value:
+                    success: false
+                    message: "شناسه کاربر معتبر نیست"
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500: 
+          description: "Internal Server Error"
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /profile/image:
+    post:
+      summery: Create image user
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [avatar]
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+              example:
+                avatar: "example.jpg"
+
+      responses: 
+        200:
+          description: Create successful post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                example:
+                  success: true
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500: 
+          description: "Internal Server Error"
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+
+                  
+      

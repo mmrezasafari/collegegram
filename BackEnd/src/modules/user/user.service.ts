@@ -32,13 +32,13 @@ export class UserService {
     }
 
     async saveProfileImage(file: Express.Multer.File, userId: string) {
-        const user = await this.getUser(userId);
+        await this.getUser(userId);
         const imagePath = `/uploads/${file.filename}`;
         await this.userRepo.saveImage(userId, imagePath);
         return file;
     }
     async getPosts(userId: string) {
-        const user = this.getUser(userId);
+        await this.getUser(userId);
         return await this.postRepo.getPosts(userId)
     }
 

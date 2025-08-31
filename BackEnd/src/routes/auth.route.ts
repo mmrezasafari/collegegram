@@ -19,24 +19,5 @@ export const authRouter = (authService: AuthService) => {
     const dto = loginRequestDto.parse(req.body);
     handleExpress(res, () => authService.login(dto));
   })
-
-  app.get("/me", authMiddleware, (req, res) => {
-    try {
-      if (!req.user) {
-        res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
-        return;
-      }
-      res.status(200).json(successResponse(req.user))
-    } catch (error) {
-      if (error instanceof HttpError) {
-        res.status(error.status).json(errorResponse(error.message));
-        return;
-      }
-      res.status(500).json(errorResponse("خطای سرور"))
-      return;
-
-    }
-
-  })
   return app;
 }

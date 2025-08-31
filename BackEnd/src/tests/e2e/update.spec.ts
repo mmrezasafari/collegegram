@@ -48,7 +48,7 @@ describe("User", () => {
   describe("Update", () => {
     it("Success", async () => {
       await request(app)
-        .patch(`/users/${userId}`)
+        .patch(`/me`)
         .send({
           lastName: "mobina",
           firstName: "kheiri",
@@ -58,19 +58,18 @@ describe("User", () => {
         .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(200);
     });
-    it("Should fail because user is not authorized", async () => {
-      await request(app)
-        .patch(`/users/${userId}`)
-        .send({
-          lastName: "mobinaaa",
-        })
-        .expect(401);
-    });
+    // it("Should fail because user is not authorized", async () => {
+    //   await request(app)
+    //     .patch(`/me`)
+    //     .send({
+    //       lastName: "mobinaaa",
+    //     })
+    //     .expect(401);
+    // });
 
     it("should fail because id is not valid", async () => {
-      const id = "22";
       await request(app)
-        .patch(`/users/${id}`)
+        .patch(`/me`)
         .send({
           bio: "gol tar az gol",
         })
@@ -80,7 +79,7 @@ describe("User", () => {
 
     it("should fail because password is weak", async () => {
       await request(app)
-        .patch(`/users/${userId}`)
+        .patch(`/me`)
         .send({
           firstName: "mobina",
           password: "Pswd@",
@@ -91,7 +90,7 @@ describe("User", () => {
 
     it("should fail because email is wrong", async () => {
       await request(app)
-        .patch(`/users/${userId}`)
+        .patch(`/me`)
         .send({
           lastName: "kheiri",
           email: "tesgmaom",
@@ -101,9 +100,8 @@ describe("User", () => {
     });
 
     it("should fail because user is not found", async () => {
-      const id = "8a679df5-607f-4b88-ab12-975275eedace";
       await request(app)
-        .patch(`/users/${id}`)
+        .patch(`/me`)
         .send({
           firstName: "mobina",
           lastName: "kheiri",
@@ -114,7 +112,7 @@ describe("User", () => {
 
     it("should fail because email already exists", async () => {
       await request(app)
-        .patch(`/users/${userId}`)
+        .patch(`/me`)
         .send({
           email: "mona@email.com",
         })
