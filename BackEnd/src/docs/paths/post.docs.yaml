@@ -1,9 +1,9 @@
 paths:
-  /users/{id}: 
+  /users/{id}/posts: 
     get: 
-      summary: Get user
+      summary: Get posts 
       tags:
-        - users
+        - posts
       security:
         - accessToken: []
         - refreshToken: []
@@ -15,26 +15,29 @@ paths:
             type: string     
       responses: 
         '200': 
-          description: get successful user
+          description: get successful posts
           content:
             application/json: 
               schema:
-                type: object
+                type: array
                 properties: 
                   success: 
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/User"
+                    $ref: "#/components/schemas/Post"
                 example: 
                   success: true
-                  data: 
-                    id: "1"
-                    username: "daleya"
-                    email: "test@gmail.com"
-                    firstName: ""
-                    lastName: ""
-                    bio: ""
-                    imageUrl: ""
+                  example:
+                  - id: 1
+                    caption: "I don’t compete, I set the standard"
+                    images: 
+                      - "/uploads/1.jpg"
+                      - "/uploads/2.jpg"
+                  - id: 2
+                    caption: "Collecting memories, not things"
+                    images: 
+                      - "/uploads/3.jpg"
+
         400:
           description: Bad request
           content:
@@ -71,49 +74,40 @@ paths:
               example:
                 success: false
                 message: "خطای سرور"
-    patch:
-      summary: Edit Profile
+    post:
+      summery: Create post
       tags:
-        - users
+        - posts
       security:
         - accessToken: []
         - refreshToken: []
-      description: Update the details of an existing user by their ID.
-      parameters:
+      parameters: 
         - in: path
           name: id
           required: true
-          description: The unique identifier of the user to update.
           schema:
             type: string
       requestBody:
-        required: true
-        content:
-          application/json:
+        content: 
+          multipart/form-data:
+            required: [images]
             schema:
               type: object
               properties:
-                lastName:
+                caption: 
                   type: string
-                firstName:
-                  type: string
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                bio:
-                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
               example:
-                lastName: "mobina"
-                firstName: "kheiri"
-                email: "mobina.kheiri@gmail.com"
-                password: "Mobin@123"
-                bio: "I am a software developer with a passion for open source."
+                caption: "This is a caption"
+                images: "example.jpg"
 
-      responses:
+      responses: 
         200:
-          description: User updated successfully.
+          description: Create successful post
           content:
             application/json:
               schema:
@@ -122,36 +116,47 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/User"
-              example:
-                success: true
-                data:
-                  id: "12345"
-                  lastName: "mobina"
-                  firstName: "kheiri"
-                  email: "mobina.kheiri@gmail.com"
-                  bio: "Art lover, finding beauty in art gallery"
-                  imageUrl: ""
-
-        400:
-          description: Bad request
-          content:
-            application/json:
-              schema:
+                    $ref: "#/components/schemas/Post"
+                example:
+                  success: true
+                  data:
+                    id: "1"
+                    caption: "This is a caption"
+                    user:
+                      id: "1"
+                      username: "daleya"
+                      email: "test@gmail.com"
+                      firstName: ""
+                      lastName: ""
+                      bio: ""
+                      imageUrl: ""
+                    images:
+                      id: "1"
+                      path: "example.jpg"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
                 $ref: "#/components/schemas/Error"
-              examples:
-                usernameInvalid:
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+                IdIsNotValid:
                   value:
                     success: false
                     message: "شناسه کاربر معتبر نیست"
-                passwordWeak:
-                  value:
-                    success: false
-                    message: "رمز عبور ایمن نیست"
-                emailInvalid:
-                  value:
-                    success: false
-                    message: "ایمیل معتبر نیست"
+
         401:
           description: unauthorized
           content:
@@ -161,7 +166,7 @@ paths:
               example:
                 success: false
                 message: "احراز هویت انجام نشده است"
-        404:
+        404:          
           description: User not found
           content:
             application/json:
@@ -170,26 +175,14 @@ paths:
               example:
                 success: false
                 message: "کاربر یافت نشد"
-
-        409:
-          description: Conflict
-          content:
-            application/json:
-              schema:
+        500: 
+          description: "Internal Server Error"
+          content: 
+            application/json: 
+              schema: 
                 $ref: "#/components/schemas/Error"
-              example:
-                success: false
-                message: "ایمیل تکراری است"
-
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-              example:
+              example: 
                 success: false
                 message: "خطای سرور"
-  
-                  
-      
+
+                

@@ -13,7 +13,7 @@ export class PostEntity {
   @ManyToOne(() => UserEntity, (user) => user.posts, { eager: true })
   user!: UserEntity;
 
-  @OneToMany(() => PostImagesEntity, (image) => image.post, { cascade: true, eager: true })
+  @OneToMany(() => PostImagesEntity, (image) => image.post, { cascade: ['insert'], eager: true })
   images!: PostImagesEntity[];
 
 }

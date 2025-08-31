@@ -4,7 +4,6 @@ import { hashingPassword } from "../../../utility/bcrypt-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { IUserRepository } from "./user.repository";
 import { IPostRepository } from "../post/post.repository";
-
 export class UserService {
     constructor(
         private userRepo: IUserRepository,
@@ -17,7 +16,6 @@ export class UserService {
         }
         return user;
     }
-
 
     async editProfile(id: string, dto: UpdateUserDto) {
         const user = await this.getUser(id);
@@ -38,6 +36,10 @@ export class UserService {
         const imagePath = `/uploads/${file.filename}`;
         await this.userRepo.saveImage(userId, imagePath);
         return file;
+    }
+    async getPosts(userId: string) {
+        const user = this.getUser(userId);
+        return await this.postRepo.getPosts(userId)
     }
 
     async savePost(files: Express.Multer.File[], caption: string, userId: string) {
