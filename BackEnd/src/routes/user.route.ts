@@ -36,21 +36,7 @@ export const userRouter = (userService: UserService) => {
       res.status(400).json({ message: "فایل ارسال نشده" });
       return;
     }
-    const caption = req.body;
-    // console.log("UserId:", userId);
-    // console.log("Files:", req.files);
-    // console.log("Caption:", req.body.caption);
-    // console.log(req)
-
-    ////???????
-    // if(Array.isArray(req.files) && req.files!== undefined) {
-    // handleExpress(res,() => userService.savePost(req.files, caption, userId))
-    // }
-    // else{
-    //   const avatarFiles = req.files["avatar"];
-    //   handleExpress(res,() => userService.savePost(avatarFiles, caption, userId))
-    // }
-
+    const caption = req.body.caption;
     handleExpress(res, () => userService.savePost(req.files as Express.Multer.File[], caption, userId));
 
 
