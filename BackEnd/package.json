@@ -8,7 +8,7 @@
   "main": "main.ts",
   "scripts": {
     "test": "NODE_ENV=test jest --testMatch **/tests/units/**/*.spec.ts -i",
-    "test:e2e": "cross-env NODE_ENV=test jest --testMatch **/tests/e2e/**/*.spec.ts -i",
+    "test:e2e": "NODE_ENV=test jest --testMatch **/tests/e2e/**/*.spec.ts -i",
     "start": "nodemon src/main.ts",
     "clean": "rimraf dist/",
     "copy-files": "cp -r src/docs dist/src/docs",

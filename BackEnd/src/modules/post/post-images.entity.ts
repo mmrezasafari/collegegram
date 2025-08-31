@@ -7,7 +7,7 @@ export class PostImagesEntity {
   id!: string;
 
   @Column()
-  path!: string;
+  url!: string;
 
   @ManyToOne(() => PostEntity, (post) => post.images)
   post!: PostEntity;

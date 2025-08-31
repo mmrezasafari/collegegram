@@ -33,7 +33,7 @@ export const handleExpress = async<A extends object | null>(res: Response, fn: (
     else if (error instanceof ZodError) {
       res.status(400).json(errorResponse((String(error.issues))));
     }
-
+    console.log(error)
     res.status(500).json(errorResponse("خطای سرور"));
   }
 }

@@ -21,23 +21,22 @@ export const userRouter = (userService: UserService) => {
   })
 
 
-  app.post("/:id/uploadProfile",upload.single('avatar'), (req , res) =>{
+  app.post("/:id/uploadProfile", upload.single('avatar'), (req, res) => {
     const userId = zod.uuid().parse(req.params.id);
-    if (!req.file){
-      res.status(400).json({message:"فایل ارسال نشده"});
+    if (!req.file) {
+      res.status(400).json({ message: "فایل ارسال نشده" });
       return;
     }
-    handleExpress(res,() => userService.saveProfileImage(req.file! , userId))
+    handleExpress(res, () => userService.saveProfileImage(req.file!, userId))
   });
 
-  app.post("/:id/uploadPost",upload.array('avatar', 10), (req , res) =>{
+  app.post("/:id/posts", upload.array('images', 10), (req, res) => {
     const userId = zod.uuid().parse(req.params.id);
-    if (!req.files){
-      res.status(400).json({message:"فایل ارسال نشده"});
+    if (!req.files) {
+      res.status(400).json({ message: "فایل ارسال نشده" });
       return;
     }
     const caption = req.body;
-
     // console.log("UserId:", userId);
     // console.log("Files:", req.files);
     // console.log("Caption:", req.body.caption);
@@ -57,7 +56,7 @@ export const userRouter = (userService: UserService) => {
 
   });
 
-  app.get("/:id/posts",(req, res) => {
+  app.get("/:id/posts", (req, res) => {
     const userId = zod.uuid().parse(req.params.id);
     handleExpress(res, () => userService.getPosts(userId));
   })
