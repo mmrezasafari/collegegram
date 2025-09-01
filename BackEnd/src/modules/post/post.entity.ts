@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserEntity } from "../user/user.entity";
 import { PostImagesEntity } from "./post-images.entity";
+import { TagEntity } from "../tag/tag.entity";
 
 @Entity("posts")
 export class PostEntity {
@@ -13,7 +14,10 @@ export class PostEntity {
   @ManyToOne(() => UserEntity, (user) => user.posts, { eager: true })
   user!: UserEntity;
 
-  @OneToMany(() => PostImagesEntity, (image) => image.post, { cascade: ['insert'], eager: true })
+  @OneToMany(() => PostImagesEntity, (image) => image.post, { cascade: true, eager: true })
   images!: PostImagesEntity[];
 
+  @ManyToMany(() => TagEntity)
+  @JoinTable()
+  tags!: TagEntity[];
 }
