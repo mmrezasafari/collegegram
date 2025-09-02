@@ -10,7 +10,7 @@ let inputIdCounter = 0
 export function useInput<
   T extends string | boolean,
   E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement,
->(name: string, initialValue: T, validateFn?: (value: T) => string | null) {
+>(name: string, initialValue: T, validateFn?: (x: T) => string | null) {
   const [value, setValue] = useState<T>(initialValue)
   const [edited, setEdited] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
@@ -21,6 +21,7 @@ export function useInput<
     if (!validateFn) return
     const validationError = validateFn(v)
     setError(validationError || '')
+    if (!value) setError('')
   }
 
   const onChange: React.ChangeEventHandler<E> = (e: ChangeEvent<E>) => {
