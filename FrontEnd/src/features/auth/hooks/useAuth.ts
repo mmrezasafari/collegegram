@@ -1,7 +1,7 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import api from '@/lib/axios'
 import type { ILogin, ILoginRes, IRegister, IRegisterRes } from '@/types/auth'
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
 async function registerUser(user: IRegister): Promise<IRegisterRes> {
@@ -17,13 +17,10 @@ async function loginUser(user: ILogin): Promise<ILoginRes> {
 }
 
 export function useRegister() {
-  const queryClient = useQueryClient()
-
-  const registerMutation = useMutation({
+  return useMutation({
     mutationKey: ['registerUser'],
     mutationFn: registerUser,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['registerUser'], data)
+    onSuccess: () => {
       notify.success('اطلاعات با موفقیت ثبت شد', {
         position: 'top-right',
         duration: 10000,
@@ -40,25 +37,13 @@ export function useRegister() {
       }
     },
   })
-
-  const { data: registerSuccess } = useQuery({
-    queryKey: ['registerUser'],
-    initialData: false,
-    enabled: false,
-    queryFn: async () => false,
-  })
-
-  return { registerMutation, registerSuccess }
 }
 
 export function useLogin() {
-  const queryClient = useQueryClient()
-
-  const loginMutation = useMutation({
+  return useMutation({
     mutationKey: ['loginUser'],
     mutationFn: loginUser,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['loginUser'], data)
+    onSuccess: () => {
       notify.success('خوش آمدید', {
         position: 'top-right',
         duration: 10000,
@@ -75,13 +60,4 @@ export function useLogin() {
       }
     },
   })
-
-  const { data: loginSuccess } = useQuery({
-    queryKey: ['registerUser'],
-    initialData: false,
-    enabled: false,
-    queryFn: async () => false,
-  })
-
-  return { loginMutation, loginSuccess }
 }
