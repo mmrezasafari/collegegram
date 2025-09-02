@@ -179,7 +179,7 @@ paths:
                 message: "خطای سرور"
   /profile/posts:  
     post:
-      summery: Create post
+      summary: Create post
       tags:
         - profile
       security:
@@ -284,7 +284,7 @@ paths:
                 message: "خطای سرور"
   /profile/image:
     post:
-      summery: Create image user
+      summary: Create image user
       tags:
         - profile
       security:

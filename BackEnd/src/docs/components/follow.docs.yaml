@@ -1,0 +1,18 @@
+components:
+  schemas:
+    Follow:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: "Mobina"
+        imageUrl:
+          format: url
+          type: string
+          example: "example.png"
+        followersCount:
+          type: integer
+          example: 1000
