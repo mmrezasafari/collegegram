@@ -1,0 +1,21 @@
+components:
+  schemas:
+    like:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: "Mobina"
+        postId:
+          type: string
+          example: "3r4"
+        imageUrl:
+          format: url
+          type: string
+          example: "example.png"
+        likesCount:
+          type: integer
+          example: 100
