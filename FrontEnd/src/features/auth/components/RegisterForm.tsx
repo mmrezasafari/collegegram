@@ -15,11 +15,12 @@ import {
   userNameSchema,
   validateWithYup,
 } from '@/utils/validation'
-import type { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 import { useRegister } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
 
 export const RegisterForm = () => {
+  const { mutate: registerMutate, isPending } = useRegister()
   const userName = useInput('userName', '', (val) =>
     validateWithYup(userNameSchema, val),
   )
@@ -34,7 +35,6 @@ export const RegisterForm = () => {
       context: { password: password.value },
     }),
   )
-  const { registerMutation } = useRegister()
 
   const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
@@ -49,13 +49,14 @@ export const RegisterForm = () => {
     try {
       // all things goods
       registerFormSchema.validateSync(values, { abortEarly: false })
-      registerMutation.mutate({
+      registerMutate({
         username: userName.value,
         email: email.value,
         password: password.value,
       })
     } catch (err) {
       if (err instanceof ValidationError) {
+        console.log(err)
         const errorMap: Record<string, string> = {}
         // create mapError object
         err.inner.forEach((e) => {
@@ -184,11 +185,7 @@ export const RegisterForm = () => {
           )}
         </div>
       </div>
-      <Button
-        className="self-end"
-        type="submit"
-        loading={registerMutation.isPending}
-      >
+      <Button className="self-end" type="submit" loading={isPending}>
         ثبت نام
       </Button>
     </form>
