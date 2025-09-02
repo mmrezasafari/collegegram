@@ -1,6 +1,10 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SessionEntity } from "../auth/session.entity";
 import { PostEntity } from "../post/post.entity";
+import { MentionEntity } from "../mention/mention.entity";
+import { LikeEntity } from "../like/like.entity";
+import { SavedPostEntity } from "../savedPost/saved-posts.entity";
+import { FollowEntity } from "../follow/follow.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -25,7 +29,7 @@ export class UserEntity {
   @Column({ nullable: true, type: "text" })
   bio?: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   imagePath?: string;
 
   @OneToMany(() => SessionEntity, (session) => session.user)
@@ -39,4 +43,22 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => MentionEntity, (mention) => mention.user)
+  mentions!: MentionEntity[];
+
+  @OneToMany(() => LikeEntity, (like) => like.user)
+  likedPosts!: LikeEntity[];
+
+  @OneToMany(() => SavedPostEntity, (savedPost) => savedPost.user)
+  savedPosts!: SavedPostEntity[];
+
+  //کاربرانی که این یوزر رو فالو کردن 
+  @OneToMany(() => FollowEntity, (follow) => follow.following)
+  following!: FollowEntity[];
+
+  //کاربرانی که این یوزر فالو کرده
+  @OneToMany(() => FollowEntity, (follow) => follow.follower)
+  followers!: FollowEntity[];
+
 }
