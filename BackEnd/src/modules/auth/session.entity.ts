@@ -13,7 +13,7 @@ export class SessionEntity {
   @Column()
   expireDate!: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.sessions)
+  @ManyToOne(() => UserEntity, (user) => user.sessions, { onDelete: "CASCADE", onUpdate: "CASCADE" })
   user!: UserEntity;
 
   @CreateDateColumn()
