@@ -10,11 +10,18 @@ import {
   passwordSchema,
   validateWithYup,
 } from '@/utils/validation'
-import { useState, type ComponentProps } from 'react'
+import { useEffect, useState, type ComponentProps } from 'react'
 import { useLogin } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
+import { useNavigate } from 'react-router-dom'
 
 export const LoginForm = () => {
+  const {
+    data: loginData,
+    mutate: loginMutation,
+    isPending: loginIsPending,
+  } = useLogin()
+  const navigate = useNavigate()
   const email = useInput('email', '', (val) =>
     validateWithYup(emailSchema, val),
   )
@@ -22,11 +29,16 @@ export const LoginForm = () => {
     validateWithYup(passwordSchema, val),
   )
   const [rememberMe, setRememberMe] = useState(false)
-  const { loginMutation } = useLogin()
 
   const onRememberMeClick: ComponentProps<'button'>['onClick'] = () => {
     setRememberMe((value) => !value)
   }
+
+  useEffect(() => {
+    if (loginData?.success) {
+      navigate('/profile')
+    }
+  }, [loginData?.success, navigate])
 
   const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
@@ -38,7 +50,7 @@ export const LoginForm = () => {
 
     try {
       loginFormSchema.validateSync(formValues, { abortEarly: false })
-      loginMutation.mutate({
+      loginMutation({
         ...formValues,
       })
     } catch (err) {
@@ -46,17 +58,12 @@ export const LoginForm = () => {
         const errorMap: Record<string, string> = {}
         // create mapError object
         err.inner.forEach((e) => {
-          console.log(e.path)
           if (e.path) errorMap[e.path] = e.message
         })
 
         //set errors
         if (errorMap.usernameOrEmail) email.setError(errorMap.usernameOrEmail)
         if (errorMap.password) password.setError(errorMap.password)
-
-        // focus the first invalid input
-        const firstErrorField = [email, password].find((f) => errorMap[f.name])
-        firstErrorField?.ref.current?.focus()
       }
     }
   }
@@ -124,11 +131,7 @@ export const LoginForm = () => {
           />
           <Label htmlFor="rememberMe">مرا به خاطر بسپار</Label>
         </div>
-        <Button
-          className="self-end"
-          type="submit"
-          loading={loginMutation.isPending}
-        >
+        <Button className="self-end" type="submit" loading={loginIsPending}>
           ورود
         </Button>
       </form>

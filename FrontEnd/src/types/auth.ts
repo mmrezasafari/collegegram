@@ -18,7 +18,5 @@ export interface ILogin {
 
 export interface ILoginRes {
   success: boolean
-  data: {
-    message: string
-  }
+  message: string
 }

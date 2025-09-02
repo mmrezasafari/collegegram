@@ -36,7 +36,7 @@ export const EditProfileWizard = () => {
               <DialogDescription hidden></DialogDescription>
             </DialogTitle>
           </DialogHeader>
-          <EditProfileForm />
+          <EditProfileForm onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     )
@@ -53,7 +53,7 @@ export const EditProfileWizard = () => {
               <DrawerDescription hidden></DrawerDescription>
             </DrawerTitle>
           </DrawerHeader>
-          <EditProfileForm />
+          <EditProfileForm onSuccess={() => setOpen(false)} />
         </DrawerContent>
       </Drawer>
     )

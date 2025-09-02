@@ -1,4 +1,4 @@
-import { EmailIcon, PasswordIcon } from '@/assets/images/Icons'
+import { EmailIcon, ErrorIcon, PasswordIcon } from '@/assets/images/Icons'
 import { Button } from '@/features/common/components/ui/button'
 import {
   DialogClose,
@@ -17,32 +17,65 @@ import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
 import {
   emailSchema,
   passwordSchema,
+  profileEditInfo,
+  profileEditPassword,
   rePasswordSchema,
+  userNameSchema,
   validateWithYup,
 } from '@/utils/validation'
 import { Camera, CircleX, Plus, RefreshCw } from 'lucide-react'
 import { UserIcon } from '@/assets/images/Icons'
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ComponentProps,
+} from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import type { IRegisteredUser } from '@/types/user'
+import { ValidationError } from 'yup'
+import { useEditProfile } from '../hooks/useProfile'
 
-export const EditProfileForm = () => {
+export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { mutate: formMutate } = useEditProfile()
+  const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const user = queryClient.getQueryData<IRegisteredUser>(['me'])?.data
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  const name = useInput('name', 'Mohammad')
-  const lName = useInput('lname', 'Hadi')
-  const email = useInput('email', 'Mohammad@gmail.com', (val) =>
-    validateWithYup(emailSchema, val),
+  const firstName = useInput(
+    'name',
+    user && user.firstName ? user.firstName : '',
+    (val) => validateWithYup(userNameSchema, val),
   )
-  const password = useInput('password', 'password', (val) =>
-    validateWithYup(passwordSchema, val),
+  const lastName = useInput(
+    'lname',
+    user && user.lastName ? user.lastName : ''
   )
-  const rePassword = useInput('repassword', 'password', (val) =>
-    validateWithYup(rePasswordSchema, val, {
+  const email = useInput(
+    'email',
+    user && user.email ? user.email : '',
+    (val) => validateWithYup(emailSchema, val),
+  )
+  const password = useInput(
+    'password',
+    '',
+    (val) => validateWithYup(passwordSchema, val),
+  )
+  const rePassword = useInput(
+    'repassword',
+    '',
+    (val) => validateWithYup(rePasswordSchema, val, {
       context: { password: password.value },
     }),
   )
   const isPrivate = useInput<boolean>('isPrivate', false)
-  const bio = useInput<string, HTMLTextAreaElement>('bio', 'fds')
+  const bio = useInput<string, HTMLTextAreaElement>(
+    'bio',
+    user && user.bio ? user.bio : '',
+  )
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
@@ -52,10 +85,57 @@ export const EditProfileForm = () => {
     const file = e.target.files?.[0]
     if (!file) return
     const url = URL.createObjectURL(file)
+    setAvatar(file)
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev)
       return url
     })
+  }
+
+  const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
+    e.preventDefault()
+
+    const infoValuesForValidate = {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+    }
+
+    const passwordValuesForValidate = {
+      password: password.value,
+      rePassword: rePassword.value
+    }
+
+    const values = {
+      ...(firstName.value !== user?.firstName ? { firstName: firstName.value } : {}),
+      ...(lastName.value !== user?.lastName ? { lastName: firstName.value } : {}),
+      ...(email.value !== user?.email ? { email: email.value } : {}),
+      ...(password.value ? { password: password.value } : {}),
+      ...(bio.value !== user?.bio ? { bio: bio.value } : {}),
+    }
+
+    try {
+      profileEditInfo.validateSync(infoValuesForValidate, { abortEarly: false })
+      if (password.value || rePassword.value) {
+        profileEditPassword.validateSync(passwordValuesForValidate, { abortEarly: false })
+      }
+      formMutate({ values, avatar }, { onSuccess: () => onSuccess?.() })
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        const errorMap: Record<string, string> = {}
+        // create mapError object
+        err.inner.forEach((e) => {
+          if (e.path) errorMap[e.path] = e.message
+        })
+
+        //set errors
+        if (errorMap.firstName) firstName.setError(errorMap.firstName)
+        if (errorMap.lastName) lastName.setError(errorMap.lastName)
+        if (errorMap.email) email.setError(errorMap.email)
+        if (errorMap.password) password.setError(errorMap.password)
+        if (errorMap.rePassword) rePassword.setError(errorMap.rePassword)
+      }
+    }
   }
 
   useEffect(() => {
@@ -131,21 +211,29 @@ export const EditProfileForm = () => {
           </div>
           <p>تصویر پروفایل</p>
         </div>
-        <div className="w-full flex flex-col gap-4">
+        <form onSubmit={onFormSubmit} className="w-full flex flex-col gap-4">
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
               <Input
                 type="text"
                 placeholder="نام"
                 className="pr-9"
-                onChange={name.onChange}
-                ref={name.ref}
-                value={name.value}
+                name={firstName.name}
+                onChange={firstName.onChange}
+                ref={firstName.ref}
+                value={firstName.value}
+                aria-invalid={!!firstName.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <UserIcon />
               </div>
             </div>
+            {firstName.error && (
+              <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
+                <ErrorIcon />
+                {firstName.error}
+              </div>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
@@ -153,13 +241,22 @@ export const EditProfileForm = () => {
                 type="text"
                 placeholder="نام خانوادگی"
                 className="pr-9"
-                value={lName.value}
-                onChange={lName.onChange}
+                name={lastName.name}
+                ref={lastName.ref}
+                value={lastName.value}
+                onChange={lastName.onChange}
+                aria-invalid={!!lastName.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <UserIcon />
               </div>
             </div>
+            {lastName.error && (
+              <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
+                <ErrorIcon />
+                {lastName.error}
+              </div>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
@@ -167,6 +264,8 @@ export const EditProfileForm = () => {
                 type="email"
                 placeholder="ایمیل"
                 className="pr-9"
+                name={email.name}
+                ref={email.ref}
                 value={email.value}
                 onChange={email.onChange}
                 aria-invalid={!!email.error}
@@ -175,6 +274,12 @@ export const EditProfileForm = () => {
                 <EmailIcon />
               </div>
             </div>
+            {email.error && (
+              <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
+                <ErrorIcon />
+                {email.error}
+              </div>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
@@ -182,14 +287,23 @@ export const EditProfileForm = () => {
                 type="password"
                 placeholder="رمز عبور"
                 className="pr-9"
+                name={password.name}
+                ref={password.ref}
                 value={password.value}
                 onChange={password.onChange}
+                onBlur={password.onBlur}
                 aria-invalid={!!password.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <PasswordIcon />
               </div>
             </div>
+            {password.error && (
+              <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
+                <ErrorIcon />
+                {password.error}
+              </div>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="relative w-full max-w-sm">
@@ -197,14 +311,23 @@ export const EditProfileForm = () => {
                 type="password"
                 placeholder="تکرار رمز عبور"
                 className="pr-9"
+                name={rePassword.name}
+                ref={rePassword.ref}
                 value={rePassword.value}
                 onChange={rePassword.onChange}
+                onBlur={rePassword.onBlur}
                 aria-invalid={!!rePassword.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
                 <PasswordIcon />
               </div>
             </div>
+            {rePassword.error && (
+              <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
+                <ErrorIcon />
+                {rePassword.error}
+              </div>
+            )}
           </div>
           <div className="flex gap-2 mt-2">
             <Switch
@@ -225,24 +348,28 @@ export const EditProfileForm = () => {
               onChange={bio.onChange}
             />
           </div>
-        </div>
-        <div className="flex w-full justify-end gap-2">
-          {isDesktop ? (
-            <DialogFooter className="flex-row p-0">
-              <DialogClose asChild>
-                <Button variant="secondary">پشیمون شدم</Button>
-              </DialogClose>
-              <Button variant="default">ثبت تغییرات</Button>
-            </DialogFooter>
-          ) : (
-            <DrawerFooter className="flex-row p-0">
-              <DrawerClose asChild>
-                <Button variant="secondary">پشیمون شدم</Button>
-              </DrawerClose>
-              <Button variant="default">ثبت تغییرات</Button>
-            </DrawerFooter>
-          )}
-        </div>
+          <div className="flex w-full justify-end gap-2 mt-4">
+            {isDesktop ? (
+              <DialogFooter className="flex-row p-0">
+                <DialogClose asChild>
+                  <Button variant="secondary">پشیمون شدم</Button>
+                </DialogClose>
+                <Button variant="default" type="submit">
+                  ثبت تغییرات
+                </Button>
+              </DialogFooter>
+            ) : (
+              <DrawerFooter className="flex-row p-0">
+                <DrawerClose asChild>
+                  <Button variant="secondary">پشیمون شدم</Button>
+                </DrawerClose>
+                <Button variant="default" type="submit">
+                  ثبت تغییرات
+                </Button>
+              </DrawerFooter>
+            )}
+          </div>
+        </form>
       </div>
     </div>
   )
