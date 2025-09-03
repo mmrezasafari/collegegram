@@ -1,5 +1,6 @@
 import { HttpError } from "../../../utility/http-error";
 import { UserService } from "../user/user.service";
+import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
 import { FollowRepository } from "./follow.repository";
 
 export class FollowService {
@@ -28,5 +29,58 @@ export class FollowService {
       throw new HttpError(400, "شما این کاربر را دنبال نمی‌کردید")
     }
     return await this.followRepository.deleteFollow(followerId, following.id)
+  }
+  async getFollowers(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
+    const user = await this.userService.getUserByUsername(username);
+    if (!user) {
+      throw new HttpError(404, "کاربر یافت نشد")
+    }
+    //TODO When added private page
+
+    // const follow = await this.followRepository.isFollowing(userId, user.id);
+    // if (userId != user.id && !follow) {
+    //   throw new HttpError(403, "شما این کاربر را دنبال نمی‌کنید")
+    // }
+    const follows = await this.followRepository.getFollows(user.id, "followers");
+    const response = [];
+    for (const follow of follows) {
+      const followerCount = await this.followRepository.countFollow(follow.followerId, "followers");
+      response.push({
+        id: follow.followerId,
+        username: follow.follower.username,
+        imageUrl: follow.follower.imagePath,
+        followerCount,
+      })
+    }
+    return response;
+  }
+  async getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
+    const user = await this.userService.getUserByUsername(username);
+    if (!user) {
+      throw new HttpError(404, "کاربر یافت نشد")
+    }
+    //TODO When added private page
+
+    // const follow = await this.followRepository.isFollowing(userId, user.id);
+    // if (userId != user.id && !follow) {
+    //   throw new HttpError(403, "شما این کاربر را دنبال نمی‌کنید")
+    // }
+    const follows = await this.followRepository.getFollows(user.id, "followings");
+
+    const response = [];
+    for (const follow of follows) {
+      const followerCount = await this.followRepository.countFollow(follow.followingId, "followers");
+      response.push({
+        id: follow.followingId,
+        username: follow.following.username,
+        imageUrl: follow.following.imagePath,
+        followerCount,
+      })
+
+    }
+    return response;
+  }
+  async countFollow(userId: string, type: "followers" | "followings") {
+    return await this.followRepository.countFollow(userId, type);
   }
 }

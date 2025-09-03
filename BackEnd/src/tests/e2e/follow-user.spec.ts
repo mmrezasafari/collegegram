@@ -81,4 +81,38 @@ describe("follow", () => {
         .expect(401)
     });
   })
+  describe("List Of Followers", () => {
+    it("should be success", async () => {
+      await request(app).get(`/users/${user.body.data.username}/followers`)
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
+        .expect(200);
+    })
+
+    it("should failed because username not valid", async () => {
+      await request(app).get(`/users/dadas/followers`)
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
+        .expect(404);
+    })
+    it("should failed because tokens not found", async () => {
+      await request(app).get(`/users/${user.body.data.username}/followers`)
+        .expect(401);
+    })
+  })
+  describe("List Of Followings", () => {
+    it("should be success", async () => {
+      await request(app).get(`/users/${user.body.data.username}/followings`)
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
+        .expect(200);
+    })
+
+    it("should failed because username not valid", async () => {
+      await request(app).get(`/users/dadas/followings`)
+        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
+        .expect(404);
+    })
+    it("should failed because tokens not found", async () => {
+      await request(app).get(`/users/${user.body.data.username}/followings`)
+        .expect(401);
+    })
+  })
 })

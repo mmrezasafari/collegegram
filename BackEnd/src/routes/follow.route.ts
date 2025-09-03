@@ -26,5 +26,25 @@ export const followRouter = (followService: FollowService) => {
     }
     handleExpress(res, () => followService.unfollowUser(user.userId, username))
   })
+
+  app.get("/:username/followers", async (req, res) => {
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    const username = zod.string().nonempty().parse(req.params.username);
+    handleExpress(res, () => followService.getFollowers(user.userId, username))
+  });
+
+  app.get("/:username/followings", async (req, res) => {
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    const username = zod.string().nonempty().parse(req.params.username);
+    handleExpress(res, () => followService.getFollowings(user.userId, username))
+  })
   return app;
 }
