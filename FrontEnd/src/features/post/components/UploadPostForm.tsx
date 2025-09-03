@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ComponentProps } from 'react'
 import { StepImages } from './steps/StepImages'
 import { StepCaption } from './steps/StepCaption'
 import { StepSettings } from './steps/StepSettings'
@@ -12,20 +12,34 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
 import { CircleCheck, CircleDot } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useUploadPost } from '../hooks/usePosts'
 
 type StepKey = 0 | 1 | 2
 
-export const UploadPostForm = () => {
+export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { mutate: uploadMutate } = useUploadPost()
   const [step, setStep] = useState<StepKey>(0)
-  const [images, setImages] = useState<string[]>([])
+  const [fileImages, setFileImages] = useState<File[]>([])
+  const [previewImages, setPreviewImages] = useState<string[]>([])
   const [caption, setCaption] = useState('')
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
   const goPrev = () => setStep((s) => (s > 0 ? ((s - 1) as StepKey) : s))
 
+  const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
+    e.preventDefault()
+    uploadMutate(
+      { caption: caption, images: fileImages },
+      { onSuccess: () => onSuccess?.() },
+    )
+  }
+
   return (
-    <div className="min-h-[450px] flex flex-col justify-between items-center">
+    <form
+      className="min-h-[450px] flex flex-col justify-between items-center"
+      onSubmit={onUploadPost}
+    >
       {/* Stepper */}
       <div className="flex">
         <div className="flex items-center">
@@ -92,7 +106,11 @@ export const UploadPostForm = () => {
         {step === 0 && (
           <div className="w-full flex flex-col gap-4">
             <p className="text-base">عکس‌های مورد نظرت رو آپلود کن:</p>
-            <StepImages images={images} setImages={setImages} />
+            <StepImages
+              setFileImages={setFileImages}
+              previewImages={previewImages}
+              setPreviewImages={setPreviewImages}
+            />
           </div>
         )}
         {step === 1 && (
@@ -106,40 +124,80 @@ export const UploadPostForm = () => {
 
       {/* Footer actions */}
       <div className="flex w-full justify-end gap-2">
-        {isDesktop ? (
+        {!isDesktop ? (
           <>
             <DrawerFooter className="flex-row p-0">
-              {step === 0 ? (
-                <DrawerClose asChild>
-                  <Button variant="secondary">پشیمون شدم</Button>
-                </DrawerClose>
-              ) : (
-                <Button variant="secondary" onClick={goPrev}>
-                  مرحله قبل
-                </Button>
+              {step === 0 && (
+                <>
+                  <DrawerClose asChild>
+                    <Button type="button" variant="secondary">
+                      پشیمون شدم
+                    </Button>
+                  </DrawerClose>
+                  <Button type="button" onClick={goNext} disabled={step !== 0}>
+                    بعدی
+                  </Button>
+                </>
               )}
-              <Button onClick={goNext} disabled={step === 2 || !images.length}>
-                بعدی
-              </Button>
+              {step === 1 && (
+                <>
+                  <Button type="button" onClick={goNext} disabled={step !== 1}>
+                    بعدی
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={goPrev}>
+                    مرحله قبل
+                  </Button>
+                </>
+              )}
+              {step === 2 && (
+                <>
+                  <Button type="submit" disabled={step !== 2}>
+                    بارگذاری
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={goPrev}>
+                    مرحله قبل
+                  </Button>
+                </>
+              )}
             </DrawerFooter>
           </>
         ) : (
           <DialogFooter className="flex-row p-0">
-            {step === 0 ? (
-              <DialogClose asChild>
-                <Button variant="secondary">پشیمون شدم</Button>
-              </DialogClose>
-            ) : (
-              <Button variant="secondary" onClick={goPrev}>
-                مرحله قبل
-              </Button>
+            {step === 0 && (
+              <>
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary">
+                    پشیمون شدم
+                  </Button>
+                </DialogClose>
+                <Button type="button" onClick={goNext} disabled={step !== 0}>
+                  بعدی
+                </Button>
+              </>
             )}
-            <Button onClick={goNext} disabled={step === 2 || !images.length}>
-              بعدی
-            </Button>
+            {step === 1 && (
+              <>
+                <Button type="button" variant="secondary" onClick={goPrev}>
+                  مرحله قبل
+                </Button>
+                <Button type="button" onClick={goNext} disabled={step !== 1}>
+                  بعدی
+                </Button>
+              </>
+            )}
+            {step === 2 && (
+              <>
+                <Button type="button" variant="secondary" onClick={goPrev}>
+                  مرحله قبل
+                </Button>
+                <Button type="submit" disabled={step !== 2}>
+                  بارگذاری
+                </Button>
+              </>
+            )}
           </DialogFooter>
         )}
       </div>
-    </div>
+    </form>
   )
 }
