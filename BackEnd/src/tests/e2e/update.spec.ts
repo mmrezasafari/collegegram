@@ -48,7 +48,7 @@ describe("User", () => {
   describe("Update", () => {
     it("Success", async () => {
       await request(app)
-        .patch(`/me`)
+        .patch(`/profile/me`)
         .send({
           lastName: "mobina",
           firstName: "kheiri",
@@ -58,28 +58,28 @@ describe("User", () => {
         .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
         .expect(200);
     });
-    // it("Should fail because user is not authorized", async () => {
-    //   await request(app)
-    //     .patch(`/me`)
-    //     .send({
-    //       lastName: "mobinaaa",
-    //     })
-    //     .expect(401);
-    // });
-
-    it("should fail because id is not valid", async () => {
+    it("Should fail because user is not authorized", async () => {
       await request(app)
-        .patch(`/me`)
+        .patch(`/profile/me`)
+        .send({
+          lastName: "mobinaaa",
+        })
+        .expect(401);
+    });
+
+    it("should success", async () => {
+      await request(app)
+        .patch(`/profile/me`)
         .send({
           bio: "gol tar az gol",
         })
         .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
-        .expect(400);
+        .expect(200);
     });
 
     it("should fail because password is weak", async () => {
       await request(app)
-        .patch(`/me`)
+        .patch(`/profile/me`)
         .send({
           firstName: "mobina",
           password: "Pswd@",
@@ -90,7 +90,7 @@ describe("User", () => {
 
     it("should fail because email is wrong", async () => {
       await request(app)
-        .patch(`/me`)
+        .patch(`/profile/me`)
         .send({
           lastName: "kheiri",
           email: "tesgmaom",
@@ -99,20 +99,9 @@ describe("User", () => {
         .expect(400);
     });
 
-    it("should fail because user is not found", async () => {
-      await request(app)
-        .patch(`/me`)
-        .send({
-          firstName: "mobina",
-          lastName: "kheiri",
-        })
-        .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
-        .expect(404);
-    });
-
     it("should fail because email already exists", async () => {
       await request(app)
-        .patch(`/me`)
+        .patch(`/profile/me`)
         .send({
           email: "mona@email.com",
         })
