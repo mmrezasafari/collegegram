@@ -14,6 +14,9 @@ import { userRouter } from "./routes/user.route";
 import { authMiddleware } from "./middleware/auth-middleware";
 import { PostRepository } from "./modules/post/post.repository";
 import { profileRouter } from "./routes/profile.route";
+import { FollowRepository } from "./modules/follow/follow.repository";
+import { FollowService } from "./modules/follow/follow.service";
+import { followRouter } from "./routes/follow.route";
 
 declare global {
   namespace Express {
@@ -35,14 +38,19 @@ export const makeApp = (dataSource: DataSource) => {
 
   const userRepo = new UserRepository(dataSource);
   const postRepo = new PostRepository(dataSource);
-  const sessionRepo = new SessionRepository(dataSource)
+  const sessionRepo = new SessionRepository(dataSource);
+  const followRepo = new FollowRepository(dataSource);
+
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo, postRepo);
+  const followService = new FollowService(followRepo, userService);
 
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));
 
   app.use("/profile", authMiddleware, profileRouter(userService));
+
+  app.use("/users", authMiddleware, followRouter(followService))
 
   setupSwagger(app);
 

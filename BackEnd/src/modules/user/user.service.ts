@@ -17,6 +17,14 @@ export class UserService {
         return user;
     }
 
+    async getUserByUsername(username: string): Promise<User> {
+        const user = await this.userRepo.getByUsername(username);
+        if (!user) {
+            throw new HttpError(404, "کاربر یافت نشد");
+        }
+        return user;
+    }
+
     async editProfile(id: string, dto: UpdateUserDto) {
         const user = await this.getUser(id);
         if (dto.email) {
