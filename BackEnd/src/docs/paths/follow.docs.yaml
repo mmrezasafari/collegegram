@@ -187,7 +187,7 @@ paths:
               example:
                 success: false
                 message: "خطای سرور"            
-  users/{username}/followings:
+  /users/{username}/followings:
     get:
       summary: "List of followings"
       tags:

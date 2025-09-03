@@ -38,6 +38,9 @@ export class FollowRepository implements IFollowRepository {
         where: {
           followingId: userId,
         },
+        relations: {
+          follower: true,
+        },
         order: {
           createdAt: "desc"
         }
@@ -46,6 +49,9 @@ export class FollowRepository implements IFollowRepository {
       return await this.followRepository.find({
         where: {
           followerId: userId,
+        },
+        relations: {
+          following: true
         },
         order: {
           createdAt: "desc"
