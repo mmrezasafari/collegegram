@@ -7,11 +7,13 @@ import {
 import { Camera, Plus, X } from 'lucide-react'
 
 export const StepImages = ({
-  images,
-  setImages,
+  setFileImages,
+  previewImages,
+  setPreviewImages,
 }: {
-  images: string[]
-  setImages: Dispatch<SetStateAction<string[]>>
+  setFileImages: Dispatch<SetStateAction<File[]>>
+  previewImages: string[]
+  setPreviewImages: Dispatch<SetStateAction<string[]>>
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -19,17 +21,24 @@ export const StepImages = ({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
+    setFileImages(files)
     if (files.length === 0) return
     const urls = files.map((f) => URL.createObjectURL(f))
-    setImages((prev) => [...prev, ...urls])
+    setPreviewImages((prev) => [...prev, ...urls])
   }
 
   const removeAt = (idx: number) => {
-    setImages((prev) => {
+    if (inputRef.current) inputRef.current!.value = ''
+    setPreviewImages((prev) => {
       const next = [...prev]
       const [removed] = next.splice(idx, 1)
-      if (inputRef.current) inputRef.current!.value = ''
       if (removed) URL.revokeObjectURL(removed)
+      return next
+    })
+    setFileImages((prev) => {
+      const next = [...prev]
+      const [_removed] = next.splice(idx, 1)
+
       return next
     })
   }
@@ -48,7 +57,7 @@ export const StepImages = ({
             <Plus className="w-4 h-4 text-orange-500 absolute -right-2 -top-2" />
           </div>
         </button>
-        {images.map((src, idx) => (
+        {previewImages.map((src, idx) => (
           <div
             key={src}
             className="relative w-20 md:w-24 aspect-square overflow-hidden"
