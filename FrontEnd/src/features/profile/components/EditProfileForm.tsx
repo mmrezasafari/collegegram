@@ -27,6 +27,7 @@ import { Camera, CircleX, Plus, RefreshCw } from 'lucide-react'
 import { UserIcon } from '@/assets/images/Icons'
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -42,7 +43,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState<File | null>(null)
   const user = queryClient.getQueryData<IRegisteredUser>(['me'])?.data
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const firstName = useInput(
@@ -50,36 +51,48 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
     user && user.firstName ? user.firstName : '',
     (val) => validateWithYup(userNameSchema, val),
   )
-  const lastName = useInput(
-    'lname',
-    user && user.lastName ? user.lastName : ''
+  const lastName = useInput('lname', user && user.lastName ? user.lastName : '')
+  const email = useInput('email', user && user.email ? user.email : '', (val) =>
+    validateWithYup(emailSchema, val),
   )
-  const email = useInput(
-    'email',
-    user && user.email ? user.email : '',
-    (val) => validateWithYup(emailSchema, val),
+  const password = useInput('password', '', (val) =>
+    validateWithYup(passwordSchema, val),
   )
-  const password = useInput(
-    'password',
-    '',
-    (val) => validateWithYup(passwordSchema, val),
-  )
-  const rePassword = useInput(
-    'repassword',
-    '',
-    (val) => validateWithYup(rePasswordSchema, val, {
+  const rePassword = useInput('rePassword', '', (val) =>
+    validateWithYup(rePasswordSchema, val, {
       context: { password: password.value },
     }),
   )
-  const isPrivate = useInput<boolean>('isPrivate', false)
   const bio = useInput<string, HTMLTextAreaElement>(
     'bio',
     user && user.bio ? user.bio : '',
   )
+  const isPrivate = useInput<boolean>('isPrivate', false)
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
   }
+
+  const changedValues = useMemo(() => {
+    if (!user) return {}
+
+    const diff: Record<string, string> = {}
+
+    if (firstName.value !== user.firstName) diff.firstName = firstName.value
+    if (lastName.value !== user.lastName) diff.lastName = lastName.value
+    if (email.value !== user.email) diff.email = email.value
+    if (bio.value !== user.bio) diff.bio = bio.value
+    if (password.value) diff.password = password.value
+
+    return diff
+  }, [
+    firstName.value,
+    lastName.value,
+    email.value,
+    bio.value,
+    password.value,
+    user,
+  ])
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -94,6 +107,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
+    if (Object.keys(changedValues).length === 0 && !avatar) return
 
     const infoValuesForValidate = {
       firstName: firstName.value,
@@ -103,23 +117,20 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const passwordValuesForValidate = {
       password: password.value,
-      rePassword: rePassword.value
-    }
-
-    const values = {
-      ...(firstName.value !== user?.firstName ? { firstName: firstName.value } : {}),
-      ...(lastName.value !== user?.lastName ? { lastName: firstName.value } : {}),
-      ...(email.value !== user?.email ? { email: email.value } : {}),
-      ...(password.value ? { password: password.value } : {}),
-      ...(bio.value !== user?.bio ? { bio: bio.value } : {}),
+      rePassword: rePassword.value,
     }
 
     try {
       profileEditInfo.validateSync(infoValuesForValidate, { abortEarly: false })
       if (password.value || rePassword.value) {
-        profileEditPassword.validateSync(passwordValuesForValidate, { abortEarly: false })
+        profileEditPassword.validateSync(passwordValuesForValidate, {
+          abortEarly: false,
+        })
       }
-      formMutate({ values, avatar }, { onSuccess: () => onSuccess?.() })
+      formMutate(
+        { values: changedValues, avatar },
+        { onSuccess: () => onSuccess?.() },
+      )
     } catch (err) {
       if (err instanceof ValidationError) {
         const errorMap: Record<string, string> = {}
@@ -219,9 +230,9 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 placeholder="نام"
                 className="pr-9"
                 name={firstName.name}
-                onChange={firstName.onChange}
                 ref={firstName.ref}
                 value={firstName.value}
+                onChange={firstName.onChange}
                 aria-invalid={!!firstName.error}
               />
               <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
@@ -344,6 +355,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
             <Textarea
               className="max-h-20"
               id="bioMessage"
+              name={bio.name}
               value={bio.value}
               onChange={bio.onChange}
             />
@@ -354,7 +366,11 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 <DialogClose asChild>
                   <Button variant="secondary">پشیمون شدم</Button>
                 </DialogClose>
-                <Button variant="default" type="submit">
+                <Button
+                  variant="default"
+                  type="submit"
+                  disabled={Object.keys(changedValues).length === 0 && !avatar}
+                >
                   ثبت تغییرات
                 </Button>
               </DialogFooter>
@@ -363,7 +379,11 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 <DrawerClose asChild>
                   <Button variant="secondary">پشیمون شدم</Button>
                 </DrawerClose>
-                <Button variant="default" type="submit">
+                <Button
+                  variant="default"
+                  type="submit"
+                  disabled={Object.keys(changedValues).length === 0 && !avatar}
+                >
                   ثبت تغییرات
                 </Button>
               </DrawerFooter>

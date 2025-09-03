@@ -4,8 +4,12 @@ import { UserRound } from 'lucide-react'
 import * as React from 'react'
 import { EditProfileWizard } from '../components/EditProfileWizard'
 import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
+import { useMe } from '@/features/common/hooks/users/useGetMe'
 
 export function ProfilePage(): React.ReactElement {
+  const { data } = useMe()
+  const user = data?.data
+
   return (
     <div className="h-full flex flex-col md:gap-8 gap-4">
       <h2 className="md:text-2xl text-xl font-bold">صفحه من</h2>
@@ -25,16 +29,22 @@ export function ProfilePage(): React.ReactElement {
             </Avatar>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <p className="md:text-2xl text-xl font-bold">مهشید منز</p>
-                <p className="md:text-base text-sm font-normal">@mahmz</p>
+                <p className="md:text-2xl text-xl font-bold">
+                  <span>{user?.firstName} </span>
+                  <span>{user?.lastName}</span>
+                </p>
+                <p className="md:text-base text-sm font-normal">
+                  <span>{user?.username}</span>
+                  <span>@</span>
+                </p>
               </div>
               <p className="hidden md:block text-base text-gray-400 text-justify">
-                Lover, not a fighter, spreading ✌️all over the 🌎
+                {user?.bio}
               </p>
             </div>
           </div>
           <p className="md:hidden w-full text-sm text-gray-400 text-justify">
-            Lover, not a fighter, spreading ✌️all over the 🌎
+            {user?.bio}
           </p>
         </div>
         <EditProfileWizard />

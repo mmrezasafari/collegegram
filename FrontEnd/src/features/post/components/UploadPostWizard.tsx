@@ -42,7 +42,7 @@ export const UploadPostWizard = () => {
             <DialogTitle hidden></DialogTitle>
             <DialogDescription hidden></DialogDescription>
           </DialogHeader>
-          <UploadPostForm />
+          <UploadPostForm onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     )
@@ -65,7 +65,7 @@ export const UploadPostWizard = () => {
               <DrawerDescription hidden></DrawerDescription>
             </DrawerTitle>
           </DrawerHeader>
-          <UploadPostForm />
+          <UploadPostForm onSuccess={() => setOpen(false)} />
         </DrawerContent>
       </Drawer>
     )

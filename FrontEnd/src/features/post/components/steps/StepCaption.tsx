@@ -36,7 +36,7 @@ export const StepCaption = ({
         </button>
       </div>
       {open && (
-        <div className="grid grid-cols-8 gap-2 text-xl bg-light shadow-sm p-4 rounded-3xl">
+        <div className="max-h-20 grid grid-cols-8 gap-2 text-xl bg-light rounded-md shadow-sm p-4 overflow-x-auto">
           {[
             '😀',
             '😂',
@@ -44,16 +44,20 @@ export const StepCaption = ({
             '😍',
             '😎',
             '🤩',
+            '😭',
+            '😴',
             '🙌',
             '👏',
             '👍',
+            '🖕',
+            '🧠',
             '🔥',
             '💯',
             '🎉',
             '✨',
+            '💩',
             '💡',
-            '🧠',
-            '😴',
+            '🌊',
           ].map((e) => (
             <button
               key={e}

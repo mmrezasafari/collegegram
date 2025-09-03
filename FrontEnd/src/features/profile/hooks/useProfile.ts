@@ -1,22 +1,24 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import api from '@/lib/axios'
-import type { IProfileEditForm } from '@/types/profile'
-import type { IUser } from '@/types/user'
+import type { IProfileEditForm, IProfileImagesRes } from '@/types/profile'
+import type { IRegisteredUser } from '@/types/user'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
-export async function editProfileInfo(value: IProfileEditForm): Promise<IUser> {
-  const res = await api.patch<IUser>('/profile/me/', value)
+export async function editProfileInfo(
+  value: IProfileEditForm,
+): Promise<IRegisteredUser> {
+  const res = await api.patch<IRegisteredUser>('/profile/me/', value)
 
   return res.data
 }
 
-export async function editProfileImg(value: File): Promise<IUser> {
+export async function editProfileImg(value: File): Promise<IProfileImagesRes> {
   const formData = new FormData()
   formData.append('avatar', value)
 
-  const res = await api.post<IUser>('/profile/image/', formData, {
-    headers: { "Content-Type": "multipart/form-data" }
+  const res = await api.post<IProfileImagesRes>('/profile/image/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   })
 
   return res.data
@@ -27,7 +29,13 @@ export function useEditProfile() {
 
   return useMutation({
     mutationKey: ['editProfile'],
-    mutationFn: async ({ values, avatar }: { values: IProfileEditForm, avatar: File | null }) => {
+    mutationFn: async ({
+      values,
+      avatar,
+    }: {
+      values: IProfileEditForm
+      avatar: File | null
+    }) => {
       if (Object.keys(values).length) await editProfileInfo(values)
       if (avatar) await editProfileImg(avatar)
     },
