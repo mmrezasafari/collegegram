@@ -51,7 +51,7 @@ export const makeApp = (dataSource: DataSource) => {
   const userService = new UserService(userRepo, postRepo);
   const followService = new FollowService(followRepo, userService);
   const postService = new PostService(postRepo)
-  const likeService = new LikeService(likeRepo)
+  const likeService = new LikeService(likeRepo,postService)
 
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));
