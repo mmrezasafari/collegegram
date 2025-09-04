@@ -1,8 +1,10 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import api from '@/lib/axios'
-import type { IUploadedPostsRes, IUploadPosts } from '@/types/posts'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
+import type { IRegisteredUser } from '@/types/user'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 export async function uploadPosts(
   value: IUploadPosts,
@@ -19,6 +21,29 @@ export async function uploadPosts(
   })
 
   return res.data
+}
+
+export async function getPosts(userName: string): Promise<IPostsRes> {
+  const res = await api.get<IPostsRes>(`/users/${userName}/posts`)
+
+  return res.data
+}
+
+export function usegetPosts() {
+  const querClient = useQueryClient()
+  const params = useParams()
+  const catchedUser = querClient.getQueryData<IRegisteredUser>(['me'])
+
+  const effectiveUsername = params.username || catchedUser?.data.username
+
+  return useQuery({
+    queryKey: ['posts', effectiveUsername],
+    queryFn: async () => {
+      if (!effectiveUsername) throw new Error('Username is not available yet!')
+      return getPosts(effectiveUsername)
+    },
+    enabled: !!effectiveUsername // run if userName exists
+  })
 }
 
 export function useUploadPost() {
