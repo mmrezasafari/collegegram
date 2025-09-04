@@ -4,6 +4,7 @@ import { Post } from "./model/post";
 export interface IPostRepository {
   createPost(id: string, imagesUrls: string[], caption: string): Promise<Post | null>;
   getPosts(userId: string): Promise<Post[] | null>;
+  getById(postId: string):Promise<Post | null>
 }
 
 export class PostRepository implements IPostRepository {
@@ -30,6 +31,10 @@ export class PostRepository implements IPostRepository {
       where: { user: { id: userId } },
       relations: ["images", "user"],
     });
+  }
+
+  async getById(postId: string){
+    return await this.postRepository.findOneBy({id:postId});
   }
 
 }

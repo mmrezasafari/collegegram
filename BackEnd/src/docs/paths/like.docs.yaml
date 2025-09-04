@@ -1,5 +1,5 @@
 paths:
-  /posts/{postId:id}/likes:
+  /posts/{id}/like:
     post:
       summary: Like post
       tags:
@@ -65,7 +65,7 @@ paths:
               example: 
                 success: false
                 message: "خطای سرور"
-  /posts/{postId:id}/dislikes:
+  /posts/{id}/unlike:
     delete:
       summary: Dislike post
       tags:
