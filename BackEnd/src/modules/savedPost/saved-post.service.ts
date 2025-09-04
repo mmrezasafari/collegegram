@@ -30,7 +30,7 @@ export class SaveService {
 
     }
 
-    async getLikesCount(postId: string){
+    async getSaveCount(postId: string){
     return await this.saveRepo.countSave(postId);
   }
 }
