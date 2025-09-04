@@ -1,8 +1,6 @@
 import { HttpError } from "../../../utility/http-error";
 import { Post } from "./model/post";
 import { UserService } from "../user/user.service";
-import { HttpError } from "../../../utility/http-error";
-import { Post } from "./model/post";
 import { IPostRepository } from "./post.repository";
 
 export class PostService {
@@ -11,13 +9,6 @@ export class PostService {
         private userService: UserService
     ) { }
 
-    async getPostById(postId: string): Promise<Post> {
-        const post = await this.postRepo.getById(postId)
-        if (!post) {
-            throw new HttpError(404, "پست یافت نشد");
-        }
-        return post;
-    }
     async getPosts(username: string) {
         const user = await this.userService.getUserByUsername(username);
         return await this.postRepo.getPosts(user.id)
