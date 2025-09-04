@@ -1,5 +1,5 @@
 paths:
-  /users/{id}/posts: 
+  /users/{username}/posts: 
     get: 
       summary: Get posts 
       tags:
@@ -9,7 +9,7 @@ paths:
         - refreshToken: []
       parameters: 
         - in: path
-          name: id
+          name: username
           required: true
           schema:
             type: string     
@@ -19,25 +19,13 @@ paths:
           content:
             application/json: 
               schema:
-                type: array
                 properties: 
                   success: 
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/Post"
-                example: 
-                  success: true
-                  example:
-                  - id: 1
-                    caption: "I don’t compete, I set the standard"
-                    images: 
-                      - "/uploads/1.jpg"
-                      - "/uploads/2.jpg"
-                  - id: 2
-                    caption: "Collecting memories, not things"
-                    images: 
-                      - "/uploads/3.jpg"
-
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Post"
         400:
           description: Bad request
           content:
@@ -46,7 +34,7 @@ paths:
                   $ref: "#/components/schemas/Error"
               example:
                 success: false
-                message: "شناسه کاربر معتبر نیست"
+                message: "نام کاربری معتبر نیست"
         401:
           description: unauthorized
           content:

@@ -5,8 +5,10 @@ components:
       properties:
         id:
           type: string
+          example: "0508df1e-91da-4a9b-85f7-6191d416b876"
         caption:
           type: string
+          example: "This is caption"
         user:
           $ref: "#/components/schemas/User"
         images:
@@ -16,6 +18,14 @@ components:
             properties:
               id: 
                 type: string
+                example: "0508df1e-91da-4a9b-85f7-6191d416b876"
               url: 
                 type: string
+                example: "example.png"
+        createAt:
+          type: string
+          example: 2025-09-04T05:33:18.772Z
+        updateAt:
+          type: string
+          example: 2025-09-04T05:33:18.772Z
       

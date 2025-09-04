@@ -19,16 +19,6 @@ paths:
                     type: boolean
                   data:
                     $ref: "#/components/schemas/User"
-                example: 
-                  success: true
-                  data: 
-                    id: "1"
-                    username: "daleya"
-                    email: "test@gmail.com"
-                    firstName: ""
-                    lastName: ""
-                    bio: ""
-                    imageUrl: ""
         400:
           description: Bad request
           content:
@@ -110,16 +100,6 @@ paths:
                     type: boolean
                   data:
                     $ref: "#/components/schemas/User"
-              example:
-                success: true
-                data:
-                  id: "12345"
-                  lastName: "mobina"
-                  firstName: "kheiri"
-                  email: "mobina.kheiri@gmail.com"
-                  bio: "Art lover, finding beauty in art gallery"
-                  imageUrl: ""
-
         400:
           description: Bad request
           content:
@@ -214,23 +194,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/Post"
-                example:
-                  success: true
-                  data:
-                    id: "1"
-                    caption: "This is a caption"
-                    user:
-                      id: "1"
-                      username: "daleya"
-                      email: "test@gmail.com"
-                      firstName: ""
-                      lastName: ""
-                      bio: ""
-                      imageUrl: ""
-                    images:
-                      id: "1"
-                      path: "example.jpg"
+                    $ref: "#/components/schemas/Post"              
         400: 
           description: Bad Request
           content: 
@@ -313,8 +277,6 @@ paths:
                 properties:
                   success:
                     type: boolean
-                example:
-                  success: true
         400: 
           description: Bad Request
           content: 

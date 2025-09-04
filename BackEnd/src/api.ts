@@ -48,21 +48,21 @@ export const makeApp = (dataSource: DataSource) => {
   const likeRepo = new LikeRepository(dataSource)
 
   const authService = new AuthService(userRepo, sessionRepo);
-  const userService = new UserService(userRepo, postRepo);
+  const userService = new UserService(userRepo);
   const followService = new FollowService(followRepo, userService);
-  const postService = new PostService(postRepo)
-  const likeService = new LikeService(likeRepo,postService)
+  const postService = new PostService(postRepo, userService);
+  const likeService = new LikeService(likeRepo, postService);
 
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));
 
-  app.use("/profile", authMiddleware, profileRouter(userService));
+  app.use("/profile", authMiddleware, profileRouter(userService, postService));
 
   app.use("/users", authMiddleware, followRouter(followService))
 
-  app.use("/posts",authMiddleware, postRouter(postService));
+  app.use("", authMiddleware, postRouter(postService));
 
-  app.use("/posts",authMiddleware, likeRouter(likeService));
+  app.use("/posts", authMiddleware, likeRouter(likeService));
 
   setupSwagger(app);
 

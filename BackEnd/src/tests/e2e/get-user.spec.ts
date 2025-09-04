@@ -34,26 +34,20 @@ describe("user", () => {
 
   describe("get user", () => {
     it("should fail because user is not authorized", async () => {
-      const id = user.body.data.id;
-      await request(app).get(`/users/${id}`)
+      const username = user.body.data.username;
+      await request(app).get(`/users/${username}`)
         .expect(401)
     }),
-      it("should get user by id", async () => {
-        const id = user.body.data.id;
+      it("should get user by username", async () => {
+        const username = user.body.data.username;
         await request(app)
-          .get(`/users/${id}`)
+          .get(`/users/${username}`)
           .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
           .expect(200)
       }),
-      it("should fail because id is not valid", async () => {
-        const id = "22";
-        await request(app).get(`/users/${id}`)
-          .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
-          .expect(400)
-      }),
       it("should fail because user is not found", async () => {
-        const id = "8a679df5-607f-4b88-ab12-975275eedace";
-        await request(app).get(`/users/${id}`)
+        const username = "mobina";
+        await request(app).get(`/users/${username}`)
           .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
           .expect(404)
       })

@@ -30,6 +30,9 @@ export class PostRepository implements IPostRepository {
     return await this.postRepository.find({
       where: { user: { id: userId } },
       relations: ["images", "user"],
+      order: {
+        createdAt: "DESC"
+      }
     });
   }
 
