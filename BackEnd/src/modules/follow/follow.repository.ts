@@ -42,7 +42,7 @@ export class FollowRepository implements IFollowRepository {
           follower: true,
         },
         order: {
-          createdAt: "desc"
+          createdAt: "DESC"
         }
       })
     } else {

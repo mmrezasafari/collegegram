@@ -5,9 +5,10 @@ import { errorResponse } from "../../utility/response";
 import zod from "zod";
 import { updateUserDto } from "../modules/user/dto/update-user.dto";
 import { upload } from "../middleware/upload-image.middleware";
+import { PostService } from "../modules/post/post.service";
 
 
-export const profileRouter = (userService: UserService) => {
+export const profileRouter = (userService: UserService, postService: PostService) => {
   const app = Router();
 
   app.get("/me", (req, res) => {
@@ -53,7 +54,7 @@ export const profileRouter = (userService: UserService) => {
       return;
     }
     const caption = req.body.caption;
-    handleExpress(res, () => userService.savePost(req.files as Express.Multer.File[], caption, user.userId));
+    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId));
   });
   return app;
 }

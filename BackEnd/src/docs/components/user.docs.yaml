@@ -5,15 +5,28 @@ components:
       properties:
         id:
           type: string
+          example: "0508df1e-91da-4a9b-85f7-6191d416b876"
         username:
           type: string
+          example: "daleya"
         firstName:
           type: string
+          example: "test"
         lastName:
           type: string
+          example: "testy"
         email:
           type: string
+          example: "test@gmail.com"
         bio:
           type: string
+          example: "This is bio"
         imageUrl:
           type: string
+          example: "example.jpg"
+        createAt:
+          type: string
+          example: 2025-09-04T05:33:18.772Z
+        updateAt:
+          type: string
+          example: 2025-09-04T05:33:18.772Z

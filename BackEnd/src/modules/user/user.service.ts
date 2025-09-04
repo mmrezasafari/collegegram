@@ -7,7 +7,6 @@ import { IPostRepository } from "../post/post.repository";
 export class UserService {
     constructor(
         private userRepo: IUserRepository,
-        private postRepo: IPostRepository
     ) { }
     async getUser(id: string): Promise<User> {
         const user = await this.userRepo.getById(id);
@@ -45,15 +44,6 @@ export class UserService {
         await this.userRepo.saveImage(userId, imagePath);
         return file;
     }
-    async getPosts(userId: string) {
-        await this.getUser(userId);
-        return await this.postRepo.getPosts(userId)
-    }
 
-    async savePost(files: Express.Multer.File[], caption: string, userId: string) {
-        const imagePaths: string[] = files.map(file => file.path);
-        const post = await this.postRepo.createPost(userId, imagePaths, caption);
-        return post;
-    }
 
 }

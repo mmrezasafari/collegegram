@@ -32,17 +32,6 @@ paths:
                     type: boolean
                   data: 
                     $ref: "#/components/schemas/User"
-
-              example: 
-                success: true,
-                data: 
-                  id: "12gfafgs"
-                  username: "daleya"
-                  email: "test@gmail.com"
-                  firstName: ""
-                  lastName: ""
-                  bio: ""
-                  imageUrl: ""
         "400": 
           description: Bad Request
           content: 
