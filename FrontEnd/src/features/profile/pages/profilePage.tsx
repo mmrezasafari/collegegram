@@ -3,12 +3,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { UserRound } from 'lucide-react'
 import * as React from 'react'
 import { EditProfileWizard } from '../components/EditProfileWizard'
-import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
+import { PostArea } from '@/features/post/components/PostArea'
 
 export function ProfilePage(): React.ReactElement {
-  const { data } = useMe()
-  const user = data?.data
+  const { data: me } = useMe()
+  const user = me?.data
 
   return (
     <div className="h-full flex flex-col md:gap-8 gap-4">
@@ -50,17 +50,7 @@ export function ProfilePage(): React.ReactElement {
         <EditProfileWizard />
       </div>
       <Separator className="bg-geryLight" />
-      {/* Empty posts panel */}
-      <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
-        <div className="flex flex-col text-center gap-4">
-          <div className="font-semibold text-sm md:text-base">
-            هنوز هیچ پستی توی صفحت نذاشتی!
-            <br />
-            بجنب تا دیر نشده
-          </div>
-          <UploadPostWizard />
-        </div>
-      </div>
+      <PostArea />
     </div>
   )
 }
