@@ -6,4 +6,5 @@ export interface Post {
   caption?: string;
   user?: User;
   images: PostImage[];
+  createdAt: Date;
 }

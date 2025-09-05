@@ -32,5 +32,10 @@ export class SaveService {
 
     async getSaveCount(postId: string){
     return await this.saveRepo.countSave(postId);
-  }
+    }
+
+    async saved(postId:string ,userId:string){
+        const existingSave = await this.saveRepo.isSaved(postId,userId)
+        return !!existingSave;
+    }
 }
