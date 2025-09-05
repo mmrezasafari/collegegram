@@ -64,6 +64,6 @@ export const AuthPage = () => {
           </div>
         </TabsContent>
       </Tabs>
-    </div >
+    </div>
   )
 }
