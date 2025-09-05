@@ -10,10 +10,10 @@ export class SavedPostEntity {
   @PrimaryColumn()
   postId!: string;
 
-  @ManyToOne(() => PostEntity, (post) => post.likes, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+  @ManyToOne(() => PostEntity, (post) => post.savedPosts, { onDelete: "CASCADE", onUpdate: "CASCADE" })
   post!: PostEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.likedPosts, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+  @ManyToOne(() => UserEntity, (user) => user.savedPosts, { onDelete: "CASCADE", onUpdate: "CASCADE" })
   user!: UserEntity;
 
   @CreateDateColumn()

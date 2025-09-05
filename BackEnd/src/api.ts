@@ -22,6 +22,9 @@ import { PostService } from "./modules/post/post.service";
 import { likeRouter } from "./routes/like.route";
 import { LikeService } from "./modules/like/like.service";
 import { LikeRepository } from "./modules/like/like.repository";
+import { saveRouter } from "./routes/save.route";
+import { SaveService } from "./modules/savedPost/saved-post.service";
+import { SaveRepository } from "./modules/savedPost/saved-post.repository";
 
 declare global {
   namespace Express {
@@ -46,13 +49,17 @@ export const makeApp = (dataSource: DataSource) => {
   const sessionRepo = new SessionRepository(dataSource);
   const followRepo = new FollowRepository(dataSource);
   const likeRepo = new LikeRepository(dataSource)
+  const saveRepo = new SaveRepository(dataSource)
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
   const followService = new FollowService(followRepo, userService);
   const postService = new PostService(postRepo, userService);
   const likeService = new LikeService(likeRepo, postService);
+  const saveService = new SaveService(saveRepo, postService);
 
+  setupSwagger(app);
+  
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService));
 
@@ -64,7 +71,9 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, likeRouter(likeService));
 
-  setupSwagger(app);
+  app.use("/posts", authMiddleware, saveRouter(saveService));
+
+
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
