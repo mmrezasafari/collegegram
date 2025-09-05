@@ -25,6 +25,8 @@ import { LikeRepository } from "./modules/like/like.repository";
 import { saveRouter } from "./routes/save.route";
 import { SaveService } from "./modules/savedPost/saved-post.service";
 import { SaveRepository } from "./modules/savedPost/saved-post.repository";
+import { MentionService } from "./modules/mention/mention.service";
+import { MentionRepository } from "./modules/mention/mention.repository";
 
 declare global {
   namespace Express {
@@ -50,11 +52,13 @@ export const makeApp = (dataSource: DataSource) => {
   const followRepo = new FollowRepository(dataSource);
   const likeRepo = new LikeRepository(dataSource)
   const saveRepo = new SaveRepository(dataSource)
+  const mentionRepo = new MentionRepository(dataSource)
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
   const followService = new FollowService(followRepo, userService);
-  const postService = new PostService(postRepo, userService);
+  const mentionService = new MentionService(mentionRepo, userService)
+  const postService = new PostService(postRepo, userService, mentionService);
   const likeService = new LikeService(likeRepo, postService);
   const saveService = new SaveService(saveRepo, postService);
 

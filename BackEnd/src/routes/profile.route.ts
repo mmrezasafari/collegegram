@@ -67,7 +67,8 @@ export const profileRouter = (userService: UserService, postService: PostService
       return;
     }
     const caption = req.body.caption;
-    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId));
+    const mention = req.body.mention;
+    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId, mention));
   });
   return app;
 }

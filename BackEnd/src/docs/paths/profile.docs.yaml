@@ -174,6 +174,8 @@ paths:
               properties:
                 caption: 
                   type: string
+                mention:
+                  type: string
                 images:
                   type: array
                   items:
@@ -181,7 +183,8 @@ paths:
                     format: binary
               example:
                 caption: "This is a caption"
-                images: "example.jpg"
+                mention: "@Mobinakh @roozaa"
+                images: ["example.jpg", "example2.png"]
 
       responses: 
         200:
@@ -194,7 +197,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/Post"              
+                    $ref: "#/components/schemas/CreatePostResponse"              
         400: 
           description: Bad Request
           content: 
