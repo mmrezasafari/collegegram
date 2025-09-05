@@ -7,7 +7,7 @@ import { handleExpress } from "../../utility/handle-express";
 export const postRouter = (postService: PostService) => {
   const app = Router();
 
-  app.get("/users/:username/posts", (req, res) => {
+  app.get("/:username/posts", (req, res) => {
     const username = zod.string().parse(req.params.username);
     handleExpress(res, () => postService.getPosts(username));
   })

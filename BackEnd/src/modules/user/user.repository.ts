@@ -9,12 +9,12 @@ export interface CreateUser {
   email: string
 }
 
-export interface UpdateUser{
+export interface UpdateUser {
   lastName?: string,
   firstName?: string,
   password?: string,
   email?: string,
-  bio?: string  
+  bio?: string
 }
 
 export interface IUserRepository {
@@ -24,7 +24,7 @@ export interface IUserRepository {
   getForLogin(usernameOrEmail: string): Promise<Login | null>;
   create(userDto: CreateUser): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
-  saveImage(id: string , imagePath: string): Promise<void>;
+  saveImage(id: string, imagePath: string): Promise<void>;
 }
 export class UserRepository implements IUserRepository {
   userRepository: Repository<UserEntity>;
@@ -43,10 +43,20 @@ export class UserRepository implements IUserRepository {
   }
 
   async getByUsername(username: string) {
-    return await this.userRepository.findOneBy({ username });
+    const existingUser = await this.userRepository.findOneBy({ username });
+    if (existingUser) {
+      const { password, ...user } = existingUser;
+      return user;
+    }
+    return null
   }
   async getByEmail(email: string) {
-    return await this.userRepository.findOneBy({ email });
+    const existingUser = await this.userRepository.findOneBy({ email });
+    if (existingUser) {
+      const { password, ...user } = existingUser;
+      return user;
+    }
+    return null
   }
   async getForLogin(usernameOrEmail: string): Promise<Login | null> {
     return await this.userRepository.findOne({
@@ -63,15 +73,15 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(id: string, updateUserDto: UpdateUser): Promise<User | null> {
-    await this.userRepository.update(id,updateUserDto);
+    await this.userRepository.update(id, updateUserDto);
     const updateUser = await this.userRepository.findOne({ where: { id } });
     if (!updateUser) return null;
     const { password, ...user } = updateUser;
     return user;
   }
 
-  async saveImage(id: string , imagePath: string): Promise<void>{
-    await this.userRepository.update(id,{imagePath});
+  async saveImage(id: string, imagePath: string): Promise<void> {
+    await this.userRepository.update(id, { imagePath });
 
   }
 

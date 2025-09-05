@@ -3,7 +3,6 @@ import { User } from "./model/user";
 import { hashingPassword } from "../../../utility/bcrypt-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { IUserRepository } from "./user.repository";
-import { IPostRepository } from "../post/post.repository";
 export class UserService {
     constructor(
         private userRepo: IUserRepository,

@@ -1,15 +1,9 @@
 import { Response } from "express";
 import { HttpError } from "./http-error";
 import { ZodError } from "zod";
-import { DatabaseError } from "pg";
-import { QueryFailedError } from "typeorm";
 import { errorResponse, successResponse } from "./response";
-import { loginResponseDto, LoginResponseDto } from "../src/modules/auth/dto/login-response.dto";
-interface HasToken {
-  accessToken?: string;
-  refreshToken?: string;
-}
-export const handleExpress = async<A extends object | null>(res: Response, fn: () => Promise<A>) => {
+
+export const handleExpress = async<A extends object | null>(res: Response, fn: () => Promise<A> | A) => {
 
   try {
     const data = await fn();
@@ -21,8 +15,6 @@ export const handleExpress = async<A extends object | null>(res: Response, fn: (
     } else {
       res.status(200).json(successResponse<A>(data));
     }
-
-
   } catch (error) {
 
     if (error instanceof HttpError) {
