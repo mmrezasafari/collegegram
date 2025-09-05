@@ -24,16 +24,22 @@ paths:
                   success: 
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/User"
-        400:
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                  $ref: "#/components/schemas/Error"
-              example:
-                success: false
-                message: "نام‌ کاربری معتبر نیست"
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - type: object
+                        properties:
+                          followerCount:
+                            type: integer
+                            example: 123
+                          followingCount:
+                            type: integer
+                            example: 45
+                          postCount:
+                            type: integer
+                            example: 12
+                          isFollowing:
+                            type: boolean
+                            example: true
         401:
           description: unauthorized
           content:

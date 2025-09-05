@@ -26,4 +26,7 @@ export class PostService {
         }
         return post;
     }
+    async countPost(userId: string): Promise<number> {
+        return await this.postRepo.countPost(userId);
+    }
 }

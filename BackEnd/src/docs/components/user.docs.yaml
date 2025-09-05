@@ -21,7 +21,7 @@ components:
         bio:
           type: string
           example: "This is bio"
-        imageUrl:
+        imagePath:
           type: string
           example: "example.jpg"
         createAt:

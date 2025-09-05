@@ -2,6 +2,7 @@ import { HttpError } from "../../../utility/http-error";
 import { UserService } from "../user/user.service";
 import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
 import { FollowRepository } from "./follow.repository";
+import { Follow } from "./models/follow";
 
 export class FollowService {
   constructor(
@@ -10,9 +11,6 @@ export class FollowService {
   ) { }
   async followUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
-    if (!following) {
-      throw new HttpError(404, "کاربر یافت نشد")
-    }
     const userExists = await this.followRepository.isFollowing(followerId, following.id);
     if (userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال می‌کردید")
@@ -21,9 +19,6 @@ export class FollowService {
   }
   async unfollowUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
-    if (!following) {
-      throw new HttpError(404, "کاربر یافت نشد")
-    }
     const userExists = await this.followRepository.isFollowing(followerId, following.id);
     if (!userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال نمی‌کردید")
@@ -32,9 +27,6 @@ export class FollowService {
   }
   async getFollowers(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
     const user = await this.userService.getUserByUsername(username);
-    if (!user) {
-      throw new HttpError(404, "کاربر یافت نشد")
-    }
     //TODO When added private page
 
     // const follow = await this.followRepository.isFollowing(userId, user.id);
@@ -56,9 +48,6 @@ export class FollowService {
   }
   async getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
     const user = await this.userService.getUserByUsername(username);
-    if (!user) {
-      throw new HttpError(404, "کاربر یافت نشد")
-    }
     //TODO When added private page
 
     // const follow = await this.followRepository.isFollowing(userId, user.id);
@@ -82,5 +71,9 @@ export class FollowService {
   }
   async countFollow(userId: string, type: "followers" | "followings") {
     return await this.followRepository.countFollow(userId, type);
+  }
+  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    const following = await this.followRepository.isFollowing(followerId, followingId);
+    return following ? true : false;
   }
 }
