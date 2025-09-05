@@ -14,7 +14,7 @@ export class PostEntity {
   @Column()
   caption?: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts, { eager: true, onDelete: "CASCADE", onUpdate: "CASCADE" })
+  @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: "CASCADE", onUpdate: "CASCADE" })
   user!: UserEntity;
 
   @OneToMany(() => PostImagesEntity, (image) => image.post, { cascade: true, eager: true })

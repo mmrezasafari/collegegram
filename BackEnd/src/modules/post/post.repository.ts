@@ -30,7 +30,7 @@ export class PostRepository implements IPostRepository {
   async getPosts(userId: string) {
     return await this.postRepository.find({
       where: { user: { id: userId } },
-      relations: ["images", "user"],
+      relations: ["images"],
       order: {
         createdAt: "DESC"
       }
