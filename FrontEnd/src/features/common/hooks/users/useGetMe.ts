@@ -18,10 +18,8 @@ export function useMe() {
   const query = useQuery<IRegisteredUser, Error>({
     queryKey: ['me'],
     queryFn: getMe,
-    retry: 1,
-    refetchInterval: 5 * 60 * 1000,
+    retry: false,
     staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
   })
 
   // Handle unauthorized errors
@@ -33,12 +31,12 @@ export function useMe() {
     queryClient.removeQueries({ queryKey: ['me'] })
     queryClient.removeQueries({ queryKey: ['loginUser'] })
     queryClient.removeQueries({ queryKey: ['registerUser'] })
-    notify.error('توکن شما منقضی شده دوباره وارد شوید', {
+    notify.error('ابتدا وارد شوید', {
       position: 'top-right',
       duration: 5000,
     })
 
-    navigate('/')
+    navigate('/', { replace: true })
   }
 
   return query

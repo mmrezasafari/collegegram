@@ -1,13 +1,16 @@
 import type { IRegisteredUser } from '@/types/user'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
+import { getMe } from './useGetMe'
 
-export function UseGetUserName() {
-  const querClient = useQueryClient()
+export function useGetUserName() {
   const params = useParams()
-  const catchedUser = querClient.getQueryData<IRegisteredUser>(['me'])
 
-  const effectiveUsername = params.username || catchedUser?.data.username
+  const { data: me } = useQuery<IRegisteredUser>({
+    queryKey: ['me'],
+    queryFn: getMe,
+    staleTime: Infinity,
+  })
 
-  return effectiveUsername
+  return params.username || me?.data.username
 }

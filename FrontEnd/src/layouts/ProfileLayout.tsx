@@ -8,11 +8,11 @@ import {
   SidebarProvider,
 } from '@/features/common/components/ui/sidebar'
 import { AppSidebar } from '@/features/common/components/layout/AppSideBar'
-import { ProfilePage } from '@/features/profile/pages/profilePage'
 import { UserRound } from 'lucide-react'
 import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
+import { Outlet } from 'react-router-dom'
 
-const ProfileLayout = () => {
+export const ProfileLayout = () => {
   return (
     <div className="bg-backgroundLight min-h-screen py-4 px-8 md:py-12 md:px-14">
       <SidebarProvider className="relative md:min-h-[850px] min-h-[800px] grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[0.01fr_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
@@ -42,11 +42,9 @@ const ProfileLayout = () => {
           <AppSidebar />
         </div>
         <div className="h-full col-start-1 row-start-2 col-end-2 row-end-3 md:col-start-2 md:row-start-2 md:col-end-3 md:row-end-3">
-          <ProfilePage />
+          <Outlet />
         </div>
       </SidebarProvider>
     </div>
   )
 }
-
-export default ProfileLayout

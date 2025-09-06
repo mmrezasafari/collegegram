@@ -1,20 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
-import { EllipsisVertical, UserRound } from 'lucide-react'
-
-interface IProps {
-  name: string
-  followerCount: number
-  image: string
-}
+import { UserRound } from 'lucide-react'
+import { ProfileDropdownShortcut } from '@/features/profile/components/ProfileDropdownShortcut'
+import type { IFollower, IFollowing } from '@/types/relations'
 
 // TODO: replace userName to firstName and lastName
 
-export const RelationsRow = ({ name, followerCount, image }: IProps) => {
+export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
+  const data = user?.user
   return (
     <div className="flex flex-row-reverse w-full justify-between items-center">
       <div className="flex flex-row-reverse items-center gap-4">
         <Avatar className="w-[56px] h-[56px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
-          <AvatarImage src={image} className="w-full h-full" alt="avatar" />
+          <AvatarImage
+            src={data.imageUrl}
+            className="w-full h-full"
+            alt="avatar"
+          />
           <AvatarFallback className="w-[45px] h-auto">
             <UserRound
               className="w-full h-full object-cover"
@@ -25,14 +26,14 @@ export const RelationsRow = ({ name, followerCount, image }: IProps) => {
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-end gap-2">
-          <p className="md:text-base text-sm font-bold">{name}</p>
-          <p className="md:text-base text-xs font-normal text-grey">
+          <p className="md:text-base text-sm font-bold">{data.username}</p>
+          <div className="md:text-base text-xs font-normal text-grey felx">
             <span>دنبال کننده </span>
-            <span>{followerCount}</span>
-          </p>
+            <span>{data.followerCount}</span>
+          </div>
         </div>
       </div>
-      <EllipsisVertical color="#ea5a69" />
+      <ProfileDropdownShortcut user={data} />
     </div>
   )
 }
