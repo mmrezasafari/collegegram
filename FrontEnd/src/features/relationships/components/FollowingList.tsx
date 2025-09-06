@@ -22,20 +22,19 @@ import {
   DrawerTrigger,
 } from '@/features/common/components/ui/drawer'
 import { ScrollArea } from '@/features/common/components/ui/scroll-area'
-import { useState } from 'react'
 import { Separator } from '@/features/common/components/ui/separator'
 import { useGetFollowings } from '../hooks/useRelations'
 
 export const FollowingsList = () => {
   const { data: followingsRes } = useGetFollowings()
   const followingList = followingsRes?.data
-  const [open, setOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   return isDesktop ? (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="text-sm md:text-base text-secondary cursor-pointer hover:text-secondary/80">
-        دنبال‌کننده‌
+    <Dialog>
+      <DialogTrigger className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1">
+        <span>{followingList?.length}</span>
+        <span>دنبال‌کننده‌</span>
       </DialogTrigger>
       <DialogContent className="flex flex-col items-center gap-8">
         <DialogHeader>
@@ -46,19 +45,20 @@ export const FollowingsList = () => {
         </DialogHeader>
         <div className="w-[350px] flex flex-col gap-8">
           <ScrollArea className="h-[400px]">
-            {followingList?.map((friend) => (
-              <>
-                <RelationsRow
-                  key={friend.id}
-                  name={friend.username}
-                  followerCount={friend.followerCount}
-                  image={friend.imageUrl}
-                />
-                <Separator className="bg-geryLight h-1 my-4" />
-              </>
-            ))}
+            {followingList?.length ? (
+              followingList?.map((friend) => (
+                <div key={friend.id}>
+                  <RelationsRow key={friend.id} user={friend} />
+                  <Separator className="bg-geryLight h-1 my-4" />
+                </div>
+              ))
+            ) : (
+              <p className="h-full text-center text-bold">
+                فردی را دنبال نمی‌کنید
+              </p>
+            )}
           </ScrollArea>
-          <DialogFooter className="pl-4">
+          <DialogFooter>
             <DialogClose asChild>
               <Button className="" type="button">
                 بستن
@@ -69,9 +69,10 @@ export const FollowingsList = () => {
       </DialogContent>
     </Dialog>
   ) : (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger className="text-sm text-secondary">
-        دنبال‌کننده‌ها
+    <Drawer>
+      <DrawerTrigger className="text-sm text-secondary cursor-pointer hover:text-secondary/80 space-x-1">
+        <span>{followingList?.length}</span>
+        <span>دنبال‌کننده‌</span>
       </DrawerTrigger>
       <DrawerContent className="h-[90%]">
         <DrawerHeader className="text-xl font-bold py-4">
@@ -80,14 +81,13 @@ export const FollowingsList = () => {
         </DrawerHeader>
         <ScrollArea className="h-full">
           <div className="px-8 pt-4 gap-4 flex flex-col">
-            {followingList?.map((friend) => (
-              <RelationsRow
-                key={friend.id}
-                name={friend.username}
-                followerCount={friend.followerCount}
-                image={friend.imageUrl}
-              />
-            ))}
+            {followingList?.length ? (
+              followingList?.map((friend) => (
+                <RelationsRow key={friend.id} user={friend} />
+              ))
+            ) : (
+              <p className="text-center">فردی را دنبال نمی‌کنید</p>
+            )}
           </div>
         </ScrollArea>
       </DrawerContent>
