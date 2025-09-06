@@ -7,19 +7,32 @@ import {
   SidebarHeader,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/features/common/components/ui/sidebar'
 import { Avatar, AvatarImage } from '@/features/common/components/ui/avatar'
 import { PinIcon, UserRound } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useMe } from '../../hooks/users/useGetMe'
 
 const links = [
   {
     title: 'صفحه من',
-    url: '#',
+    url: '/profile',
     icon: PinIcon,
   },
 ]
 
 export function AppSidebar() {
+  const { data: me } = useMe()
+  const user = me?.data
+  const { toggleSidebar } = useSidebar()
+  const navigate = useNavigate()
+
+  const onNavigate = (url: string) => {
+    navigate(url)
+    toggleSidebar()
+  }
+
   return (
     <Sidebar
       side="right"
@@ -39,14 +52,18 @@ export function AppSidebar() {
                   <UserRound color="#A5A5A5" strokeWidth={1.5} />
                 </AvatarFallback>
               </Avatar>
-              <span className="text-base font-normal">mahmz</span>
+              <span className="text-base font-normal">{user?.username}</span>
             </div>
           </div>
         </SidebarHeader>
         <SidebarGroup>
           <SidebarGroupContent>
             {links.map((item, index) => (
-              <SidebarMenuItem key={index} className="list-none">
+              <SidebarMenuItem
+                key={index}
+                className="list-none"
+                onClick={() => onNavigate(item.url)}
+              >
                 <SidebarMenuButton className="rounded-[75px] !py-4 !px-8 w-full h-min justify-start gap-4 cursor-pointer hover:bg-geryVeryLight">
                   <item.icon />
                   <span className="group-data-[collapsible=icon]:hidden text-base">

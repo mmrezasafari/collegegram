@@ -1,4 +1,5 @@
-import { UseGetUserName } from '@/features/common/hooks/users/useGetUserName'
+import { useMe } from '@/features/common/hooks/users/useGetMe'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type {
   IFollowersListRes,
@@ -6,7 +7,7 @@ import type {
   IFollowRes,
   IUnfollowRes,
 } from '@/types/relations'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export async function getFollowers(
   userName: string,
@@ -31,13 +32,13 @@ export async function followAction(userName: string): Promise<IFollowRes> {
 }
 
 export async function unfollowAction(userName: string): Promise<IUnfollowRes> {
-  const res = await api.post(`users/${userName}/unfollow`)
+  const res = await api.delete(`users/${userName}/unfollow`)
 
   return res.data
 }
 
 export function useGetFollowers() {
-  const userName = UseGetUserName()
+  const userName = useGetUserName()
 
   return useQuery({
     queryKey: ['followersList', userName],
@@ -45,12 +46,13 @@ export function useGetFollowers() {
       if (!userName) throw new Error('Username is not available yet!')
       return getFollowers(userName)
     },
-    enabled: !!userName,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   })
 }
 
 export function useGetFollowings() {
-  const userName = UseGetUserName()
+  const userName = useGetUserName()
 
   return useQuery({
     queryKey: ['followingsList', userName],
@@ -58,12 +60,15 @@ export function useGetFollowings() {
       if (!userName) throw new Error('Username is not available yet!')
       return getFollowings(userName)
     },
-    enabled: !!userName,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   })
 }
 
 export function useFollowAction() {
-  const userName = UseGetUserName()
+  const queryClient = useQueryClient()
+  const userName = useGetUserName()
+  const { data: me } = useMe()
 
   return useMutation({
     mutationKey: ['follow', userName],
@@ -71,17 +76,33 @@ export function useFollowAction() {
       if (!userName) throw new Error('Username is not available yet!')
       return followAction(userName)
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', userName] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingsList', me?.data.username],
+      })
+      queryClient.invalidateQueries({ queryKey: ['followersList', userName] })
+    },
   })
 }
 
 export function useUnfollowAction() {
-  const userName = UseGetUserName()
+  const queryClient = useQueryClient()
+  const userName = useGetUserName()
+  const { data: me } = useMe()
 
   return useMutation({
     mutationKey: ['unfollow', userName],
     mutationFn: async () => {
       if (!userName) throw new Error('Username is not available yet!')
       return unfollowAction(userName)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', userName] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingsList', me?.data.username],
+      })
+      queryClient.invalidateQueries({ queryKey: ['followersList', userName] })
     },
   })
 }

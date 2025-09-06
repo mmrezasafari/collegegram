@@ -1,8 +1,13 @@
 import { notify } from '@/features/common/components/ui/sonner'
-import { UseGetUserName } from '@/features/common/hooks/users/useGetUserName'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type { IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
 export async function uploadPosts(
@@ -14,6 +19,8 @@ export async function uploadPosts(
   value.images.forEach((file) => {
     formData.append('images', file)
   })
+
+  formData.append('mention', '')
 
   const res = await api.post<IUploadedPostsRes>('/profile/posts', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -29,7 +36,7 @@ export async function getPosts(userName: string): Promise<IPostsRes> {
 }
 
 export function useGetPosts() {
-  const userName = UseGetUserName()
+  const userName = useGetUserName()
 
   return useQuery({
     queryKey: ['posts', userName],
@@ -37,7 +44,9 @@ export function useGetPosts() {
       if (!userName) throw new Error('Username is not available yet!')
       return getPosts(userName)
     },
-    enabled: !!userName,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   })
 }
 

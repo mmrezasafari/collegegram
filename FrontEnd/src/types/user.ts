@@ -13,4 +13,8 @@ export interface IUser {
   imagePath: string
   createdAt: string
   updatedAt: string
+  followerCount: number
+  followingCount: number
+  postCount: number
+  isFollowing?: boolean
 }
