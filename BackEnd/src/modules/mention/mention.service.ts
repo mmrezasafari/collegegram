@@ -22,5 +22,9 @@ export class MentionService {
 
     }
 
+    async getMentionedUsernames(postId: string):Promise<string[]> {
+        return this.mentionRepo.getUsernames(postId);
+    }
+
 
 }
