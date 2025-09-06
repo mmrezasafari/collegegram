@@ -9,6 +9,12 @@ components:
         username:
           type: string
           example: "Mobina"
+        firstName:
+          type: string
+          example: "Daleya"
+        lastName:
+          type: string
+          example: "Mobiny"
         imageUrl:
           format: url
           type: string

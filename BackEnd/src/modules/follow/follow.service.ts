@@ -40,6 +40,8 @@ export class FollowService {
       response.push({
         id: follow.followerId,
         username: follow.follower.username,
+        firstName: follow.follower.firstName,
+        lastName: follow.follower.lastName,
         imageUrl: follow.follower.imagePath,
         followerCount,
       })
@@ -62,6 +64,8 @@ export class FollowService {
       response.push({
         id: follow.followingId,
         username: follow.following.username,
+        firstName: follow.following.firstName,
+        lastName: follow.following.lastName,
         imageUrl: follow.following.imagePath,
         followerCount,
       })
