@@ -1,29 +1,25 @@
-import { useState } from 'react'
+import { Textarea } from '@/features/common/components/ui/textarea'
 
-export const StepSettings = () => {
-  const [allowComments, setAllowComments] = useState(true)
-  const [showLikes, setShowLikes] = useState(true)
+interface IProps {
+  mention: string
+  setMention: (users: string) => void
+}
 
+export const StepSettings = ({ mention, setMention }: IProps) => {
   return (
     <div className="w-full max-w-[360px] flex flex-col gap-4 text-sm">
-      <label className="flex items-center justify-between gap-3">
-        <span>اجازه ثبت نظر</span>
-        <input
-          type="checkbox"
-          checked={allowComments}
-          onChange={(e) => setAllowComments(e.target.checked)}
-          className="h-4 w-4 accent-primary"
+      <div className="w-full flex flex-col items-stretch gap-3">
+        <div className="flex items-center gap-2 text-sm justify-center">
+          <span>اینجا می‌تونی دوستانت رو منشن کنی:</span>
+        </div>
+        <Textarea
+          className="w-full h-30 outline-none placeholder:text-right"
+          style={{ direction: 'ltr' }}
+          value={mention}
+          onChange={(e) => setMention(e.target.value)}
+          placeholder="دوستات رو با فاصله از هم منشن کن"
         />
-      </label>
-      <label className="flex items-center justify-between gap-3">
-        <span>نمایش تعداد لایک‌ها</span>
-        <input
-          type="checkbox"
-          checked={showLikes}
-          onChange={(e) => setShowLikes(e.target.checked)}
-          className="h-4 w-4 accent-primary"
-        />
-      </label>
+      </div>
     </div>
   )
 }
