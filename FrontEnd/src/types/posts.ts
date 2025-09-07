@@ -1,6 +1,7 @@
 export interface IUploadPosts {
   caption: string
   images: File[]
+  mention: string
 }
 
 export interface IUploadedImages {
