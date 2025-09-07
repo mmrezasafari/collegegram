@@ -14,13 +14,12 @@ export async function uploadPosts(
   value: IUploadPosts,
 ): Promise<IUploadedPostsRes> {
   const formData = new FormData()
-  formData.append('caption', value.caption)
 
+  formData.append('caption', value.caption)
   value.images.forEach((file) => {
     formData.append('images', file)
   })
-
-  formData.append('mention', '')
+  formData.append('mention', value.mention)
 
   const res = await api.post<IUploadedPostsRes>('/profile/posts', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
