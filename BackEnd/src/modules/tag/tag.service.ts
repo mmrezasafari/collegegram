@@ -12,7 +12,7 @@ export class HashtagService {
     async savePostHashtags(hashtags:string[], postId:string){
         const savedHashtags: string[] = [];
         for (const hashtag of hashtags) {
-            await this.tagRepo.saveHashtag(hashtag, postId)
+            await this.tagRepo.saveHashtag(postId, hashtag)
             savedHashtags.push(hashtag);
         }
         return savedHashtags;
