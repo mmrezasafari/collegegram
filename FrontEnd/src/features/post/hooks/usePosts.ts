@@ -1,20 +1,25 @@
 import { notify } from '@/features/common/components/ui/sonner'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type { IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
-import type { IRegisteredUser } from '@/types/user'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
 
 export async function uploadPosts(
   value: IUploadPosts,
 ): Promise<IUploadedPostsRes> {
   const formData = new FormData()
-  formData.append('caption', value.caption)
 
+  formData.append('caption', value.caption)
   value.images.forEach((file) => {
     formData.append('images', file)
   })
+  formData.append('mention', value.mention)
 
   const res = await api.post<IUploadedPostsRes>('/profile/posts', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -29,20 +34,18 @@ export async function getPosts(userName: string): Promise<IPostsRes> {
   return res.data
 }
 
-export function usegetPosts() {
-  const querClient = useQueryClient()
-  const params = useParams()
-  const catchedUser = querClient.getQueryData<IRegisteredUser>(['me'])
-
-  const effectiveUsername = params.username || catchedUser?.data.username
+export function useGetPosts() {
+  const userName = useGetUserName()
 
   return useQuery({
-    queryKey: ['posts', effectiveUsername],
+    queryKey: ['posts', userName],
     queryFn: async () => {
-      if (!effectiveUsername) throw new Error('Username is not available yet!')
-      return getPosts(effectiveUsername)
+      if (!userName) throw new Error('Username is not available yet!')
+      return getPosts(userName)
     },
-    enabled: !!effectiveUsername // run if userName exists
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   })
 }
 

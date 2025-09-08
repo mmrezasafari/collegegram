@@ -6,7 +6,7 @@ import { MulterError } from "multer";
 export const errorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
   if (error instanceof ZodError) {
     if (error.issues[0].message === "Invalid UUID") {
-      res.status(400).json(errorResponse("شناسه کاربر معتبر نیست"));
+      res.status(400).json(errorResponse("شناسه معتبر نیست"));
       return;
     }
 

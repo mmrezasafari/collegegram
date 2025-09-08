@@ -13,6 +13,10 @@ export const followRouter = (followService: FollowService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
+    if (user.username === username) {
+      res.status(400).json(errorResponse("درخواست شما اشتباه است"))
+      return;
+    }
     handleExpress(res, () => followService.followUser(user.userId, username))
   })
 

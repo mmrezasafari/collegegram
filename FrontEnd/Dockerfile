@@ -1,8 +1,15 @@
-# Use official Node image based on Ubuntu
-FROM node:20-bullseye
+# Use official Ubuntu image
+FROM ubuntu:22.04
 
-# Install git
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Install curl, git, and Node.js
+RUN apt-get update && \
+    apt-get install -y curl git && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install pnpm globally
+RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /home/collegegram/FrontEnd
@@ -13,20 +20,20 @@ RUN git clone git@hamgit.ir:rc-dev-1404/groot/collegegram.git .
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies using pnpm
+RUN pnpm install
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the React app
-RUN npm run build
+RUN pnpm run build
 
 # Expose the port the app runs on
 EXPOSE 5173
 
 # Start the application
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]
 
 
 # Install and Run Nginx on server:

@@ -22,6 +22,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [fileImages, setFileImages] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
   const [caption, setCaption] = useState('')
+  const [mention, setMention] = useState('')
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
@@ -30,7 +31,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
     uploadMutate(
-      { caption: caption, images: fileImages },
+      { caption: caption, images: fileImages, mention: mention },
       { onSuccess: () => onSuccess?.() },
     )
   }
@@ -119,7 +120,9 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
             <StepCaption caption={caption} setCaption={setCaption} />
           </div>
         )}
-        {step === 2 && <StepSettings />}
+        {step === 2 && (
+          <StepSettings mention={mention} setMention={setMention} />
+        )}
       </div>
 
       {/* Footer actions */}

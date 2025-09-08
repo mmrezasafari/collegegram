@@ -27,6 +27,8 @@ import { SaveService } from "./modules/savedPost/saved-post.service";
 import { SaveRepository } from "./modules/savedPost/saved-post.repository";
 import { MentionService } from "./modules/mention/mention.service";
 import { MentionRepository } from "./modules/mention/mention.repository";
+import { feedRouter } from "./routes/feed.route";
+import { FeedService } from "./modules/feed.service";
 import { HashtagService } from "./modules/tag/tag.service";
 import { HashtagRepository } from "./modules/tag/tag.repository";
 
@@ -65,6 +67,8 @@ export const makeApp = (dataSource: DataSource) => {
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService);
   const saveService = new SaveService(saveRepo, postService);
+  const feedService = new FeedService(userService, postService, mentionService, likeService,saveService)
+
   setupSwagger(app);
   
   app.use(authRouter(authService));
@@ -79,6 +83,9 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/posts", authMiddleware, likeRouter(likeService));
 
   app.use("/posts", authMiddleware, saveRouter(saveService));
+
+  app.use("/posts", authMiddleware, feedRouter(feedService))
+
 
 
 

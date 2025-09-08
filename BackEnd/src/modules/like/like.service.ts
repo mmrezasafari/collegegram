@@ -33,5 +33,11 @@ export class LikeService {
 
     async getLikesCount(postId: string){
     return await this.likeRepo.countLike(postId);
-  }
+    }
+
+    async liked(postId:string ,userId:string){
+        const existingLike = await this.likeRepo.liked(postId,userId)
+        return !!existingLike;
+    }
+
 }

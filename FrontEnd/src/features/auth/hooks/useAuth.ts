@@ -1,7 +1,7 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import api from '@/lib/axios'
 import type { ILogin, ILoginRes, IRegister, IRegisterRes } from '@/types/auth'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
 async function registerUser(user: IRegister): Promise<IRegisterRes> {
@@ -40,14 +40,18 @@ export function useRegister() {
 }
 
 export function useLogin() {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationKey: ['loginUser'],
     mutationFn: loginUser,
-    onSuccess: () => {
+    onSuccess: async () => {
       notify.success('خوش آمدید', {
         position: 'top-right',
         duration: 10000,
       })
+
+      await queryClient.invalidateQueries({ queryKey: ['me'] }) // immediately fetch me after login
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

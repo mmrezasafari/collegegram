@@ -1,8 +1,7 @@
-import type { IUser } from "./user"
-
 export interface IUploadPosts {
   caption: string
   images: File[]
+  mention: string
 }
 
 export interface IUploadedImages {
@@ -23,9 +22,6 @@ export interface IPost {
   createdAt: string
   updatedAt: string
   images: Array<IUploadedImages>
-  user: IUser & {
-    password: string
-  }
 }
 
 export interface IUploadedPostsRes {
