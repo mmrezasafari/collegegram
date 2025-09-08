@@ -8,16 +8,28 @@ import {
   SidebarProvider,
 } from '@/features/common/components/ui/sidebar'
 import { AppSidebar } from '@/features/common/components/layout/AppSideBar'
-import { UserRound } from 'lucide-react'
-import { UploadPostWizard } from '@/features/post/components/UploadPostWizard'
+import { Plus, UserRound } from 'lucide-react'
 import { Outlet } from 'react-router-dom'
+import { useState } from 'react'
+import { Button } from '@/features/common/components/ui/button'
+import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { UploadPostForm } from '@/features/post/components/UploadPostForm'
 
 export const ProfileLayout = () => {
+  const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
+
   return (
     <div className="bg-backgroundLight min-h-screen py-4 px-8 md:py-12 md:px-14">
       <SidebarProvider className="relative md:min-h-[850px] min-h-[800px] grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[0.01fr_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
         <div className="hidden md:flex col-start-1 row-start-1 col-end-2 row-end-2">
-          <UploadPostWizard />
+          <Button className="w-full max-md:hidden" onClick={() => setUploadPostWizardOpen(true)}>
+            <Plus />
+            پست جدید
+          </Button>
+          <Button className='md:hidden'>
+            <Plus />
+            پست جدید
+          </Button>
         </div>
         <div className="hidden md:block col-start-2 row-start-1 col-end-3 row-end-2 justify-items-end">
           <img
@@ -45,6 +57,12 @@ export const ProfileLayout = () => {
           <Outlet />
         </div>
       </SidebarProvider>
+      {
+        uploadPostWizardOpen &&
+        <DialogAndModalWizard open={uploadPostWizardOpen} setOpen={setUploadPostWizardOpen}>
+          <UploadPostForm onSuccess={() => setUploadPostWizardOpen(false)} />
+        </DialogAndModalWizard>
+      }
     </div>
   )
 }

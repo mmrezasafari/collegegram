@@ -1,7 +1,7 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
-import type { IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
+import type { IGetPostRes, IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
 import {
   keepPreviousData,
   useMutation,
@@ -30,6 +30,12 @@ export async function uploadPosts(
 
 export async function getPosts(userName: string): Promise<IPostsRes> {
   const res = await api.get<IPostsRes>(`/users/${userName}/posts`)
+
+  return res.data
+}
+
+export async function getPost(postId: string): Promise<IGetPostRes> {
+  const res = await api.get<IGetPostRes>(`/posts/${postId}`)
 
   return res.data
 }
@@ -71,5 +77,16 @@ export function useUploadPost() {
         })
       }
     },
+  })
+}
+
+export function useGetPost(postId: string) {
+  return useQuery({
+    queryKey: ['post', postId],
+    queryFn: async () => {
+      if (!postId) throw new Error('Username is not available yet!')
+      return getPost(postId)
+    },
+    enabled: !!postId
   })
 }

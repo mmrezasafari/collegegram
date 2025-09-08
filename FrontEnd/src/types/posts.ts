@@ -4,24 +4,11 @@ export interface IUploadPosts {
   mention: string
 }
 
-export interface IUploadedImages {
+export interface IUploadedImage {
   url: string
   id: string
   createdAt: string
   updatedAt: string
-}
-
-export interface IPostsRes {
-  success: string
-  data: Array<IPost>
-}
-
-export interface IPost {
-  id: string
-  caption: string
-  createdAt: string
-  updatedAt: string
-  images: Array<IUploadedImages>
 }
 
 export interface IUploadedPostsRes {
@@ -31,9 +18,42 @@ export interface IUploadedPostsRes {
     user: {
       id: string
     }
-    images: IUploadedImages[]
+    images: IUploadedImage[]
   }
   id: string
   createdAt: string
   updatedAt: string
+}
+
+export interface IPosts {
+  id: string
+  caption: string
+  createdAt: string
+  updatedAt: string
+  images: Array<IUploadedImage>
+}
+
+export interface IPostsRes {
+  success: string
+  data: Array<IPosts>
+}
+
+export interface IGetPostRes {
+  success: boolean,
+  data: {
+    user: {
+      username: string
+      imagePath: string
+    }
+    post: {
+      caption: string
+      images: Array<IUploadedImage>
+    }
+    createdAt: string
+  },
+  mentionedUsernames: string,
+  likeCount: string,
+  liked: boolean,
+  saveCount: string,
+  saved: boolean
 }
