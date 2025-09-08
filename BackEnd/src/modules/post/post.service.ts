@@ -4,12 +4,15 @@ import { UserService } from "../user/user.service";
 import { IPostRepository } from "./post.repository";
 import { extract } from "../../../utility/extract";
 import { MentionService } from "../mention/mention.service";
+import { HashtagService } from "../tag/tag.service";
+import { string } from "zod";
 
 export class PostService {
     constructor(
         private postRepo: IPostRepository,
         private userService: UserService,
-        private mentionService: MentionService
+        private mentionService: MentionService,
+        private hashtagSarvice: HashtagService
     ) { }
 
     async getPosts(username: string) {
@@ -20,12 +23,14 @@ export class PostService {
     async savePost(files: Express.Multer.File[], caption: string, userId: string, mention: string) {
         const imagePaths: string[] = files.map(file => file.path);
         const usernames = extract(mention, "mention");
+        const hashtags = extract(caption, "hashtag");
         const post = await this.postRepo.createPost(userId, imagePaths, caption);
         if (!post){
             throw new HttpError(404, "پست  ایجاد نشد")
         }
-        const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id)
-        return {post, mentionedUsernames};
+        const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
+        const savedhashtags = await this.hashtagSarvice.savePostHashtags(hashtags, post.id)
+        return {post, mentionedUsernames, savedhashtags};
     }
     async getPostById(postId: string): Promise<Post> {
         const post = await this.postRepo.getById(postId)

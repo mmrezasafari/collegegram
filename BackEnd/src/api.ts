@@ -27,6 +27,8 @@ import { SaveService } from "./modules/savedPost/saved-post.service";
 import { SaveRepository } from "./modules/savedPost/saved-post.repository";
 import { MentionService } from "./modules/mention/mention.service";
 import { MentionRepository } from "./modules/mention/mention.repository";
+import { HashtagService } from "./modules/tag/tag.service";
+import { HashtagRepository } from "./modules/tag/tag.repository";
 
 declare global {
   namespace Express {
@@ -53,15 +55,16 @@ export const makeApp = (dataSource: DataSource) => {
   const likeRepo = new LikeRepository(dataSource)
   const saveRepo = new SaveRepository(dataSource)
   const mentionRepo = new MentionRepository(dataSource)
+  const hashtagRepo = new HashtagRepository(dataSource);
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
   const followService = new FollowService(followRepo, userService);
-  const mentionService = new MentionService(mentionRepo, userService)
-  const postService = new PostService(postRepo, userService, mentionService);
+  const mentionService = new MentionService(mentionRepo, userService);
+  const hashtagService = new HashtagService(hashtagRepo, userService);
+  const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService);
   const saveService = new SaveService(saveRepo, postService);
-
   setupSwagger(app);
   
   app.use(authRouter(authService));
