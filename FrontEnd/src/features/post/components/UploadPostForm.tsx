@@ -28,6 +28,9 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
   const goPrev = () => setStep((s) => (s > 0 ? ((s - 1) as StepKey) : s))
 
+
+  { fileImages.length ? console.log('afsd') : console.log('123') }
+
   const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
     uploadMutate(
@@ -38,7 +41,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   return (
     <form
-      className="min-h-[450px] flex flex-col justify-between items-center"
+      className="min-h-[450px] flex flex-col justify-between items-center px-8 md:px-20"
       onSubmit={onUploadPost}
     >
       {/* Stepper */}
@@ -106,7 +109,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
       <div className="w-full min-h-[200px] flex items-start justify-center">
         {step === 0 && (
           <div className="w-full flex flex-col gap-4">
-            <p className="text-base">عکس‌های مورد نظرت رو آپلود کن:</p>
+            <p className="text-base text-center">عکس‌های مورد نظرت رو آپلود کن:</p>
             <StepImages
               setFileImages={setFileImages}
               previewImages={previewImages}
@@ -124,7 +127,6 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
           <StepSettings mention={mention} setMention={setMention} />
         )}
       </div>
-
       {/* Footer actions */}
       <div className="flex w-full justify-end gap-2">
         {!isDesktop ? (
@@ -137,7 +139,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                       پشیمون شدم
                     </Button>
                   </DrawerClose>
-                  <Button type="button" onClick={goNext} disabled={step !== 0}>
+                  <Button type="button" onClick={goNext} disabled={fileImages.length === 0}>
                     بعدی
                   </Button>
                 </>
@@ -173,7 +175,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                     پشیمون شدم
                   </Button>
                 </DialogClose>
-                <Button type="button" onClick={goNext} disabled={step !== 0}>
+                <Button type="button" onClick={goNext} disabled={fileImages.length === 0}>
                   بعدی
                 </Button>
               </>

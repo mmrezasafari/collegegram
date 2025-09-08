@@ -1,8 +1,6 @@
-import { Button } from '@/features/common/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
   DialogDescription,
   DialogTitle,
   DialogHeader,
@@ -13,47 +11,55 @@ import {
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from '@/features/common/components/ui/drawer'
 import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
-import { useState } from 'react'
-import { EditProfileForm } from './EditProfileForm'
+import { cn } from '@/lib/utils'
+import type { ReactNode } from 'react'
 
-export const EditProfileWizard = () => {
-  const [open, setOpen] = useState(false)
+interface Iprops {
+  open: boolean
+  setOpen: (state: boolean) => void
+  title?: string
+  className?: string
+  children: ReactNode
+}
+
+export const DialogAndModalWizard = ({ open, setOpen, title, className, children }: Iprops) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>ویرایش پروفایل</Button>
-        </DialogTrigger>
-        <DialogContent className="flex flex-col gap-6 border-none">
+        <DialogContent
+          className={cn(className)}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="flex flex-col text-2xl font-bold items-center justify-center">
-              ویرایش حساب
+              {title}
               <DialogDescription hidden></DialogDescription>
             </DialogTitle>
           </DialogHeader>
-          <EditProfileForm onSuccess={() => setOpen(false)} />
+          {children}
         </DialogContent>
       </Dialog>
     )
   } else {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button className="w-full">ویرایش پروفایل</Button>
-        </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent
+          className={cn(className)}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <DrawerHeader className="text-left">
             <DrawerTitle className="flex flex-col text-xl font-bold items-center justify-center">
-              ویرایش حساب
+              {title}
               <DrawerDescription hidden></DrawerDescription>
             </DrawerTitle>
           </DrawerHeader>
-          <EditProfileForm onSuccess={() => setOpen(false)} />
+          {children}
         </DrawerContent>
       </Drawer>
     )
