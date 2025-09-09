@@ -1,13 +1,20 @@
 import { HttpError } from "../../../utility/http-error";
+import { LikeService } from "../like/like.service";
+import { PostService } from "../post/post.service";
+import { SaveService } from "../savedPost/saved-post.service";
 import { UserService } from "../user/user.service";
 import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
+import { HomePageResponseDto } from "./dto/home-page-response";
 import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
 
 export class FollowService {
   constructor(
     private followRepository: FollowRepository,
-    private userService: UserService
+    private postService: PostService,
+    private userService: UserService,
+    private likeService: LikeService,
+    private saveService: SaveService
   ) { }
   async followUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
@@ -80,4 +87,42 @@ export class FollowService {
     const following = await this.followRepository.isFollowing(followerId, followingId);
     return following ? true : false;
   }
+  async getHomePage(userId: string, offset: number, limit: number, sort: string) {
+    const followings = await this.followRepository.getFollows(userId, "followings")
+    if (!followings) {
+      return [];
+    }
+    let followingsId = followings.map(following => following.followingId);
+    const posts = await this.postService.getFollowingPosts(followingsId, offset, limit, sort);
+    let data: HomePageResponseDto[] = [];
+    if (!posts) {
+      return [];
+    }
+    for (const post of posts) {
+      if (!post.user) {
+        throw new HttpError(500, "خطای سرور");
+      }
+      const followerCount = await this.countFollow(post.user.id, "followers");
+      const likeCount = await this.likeService.getLikesCount(post.id);
+      const savedCount = await this.saveService.getSaveCount(post.id);
+      data.push({
+        username: post.user.username,
+        firstName: post.user.firstName,
+        lastName: post.user.lastName,
+        imagePath: post.user.imagePath,
+        post: {
+          id: post.id,
+          images: post.images,
+          caption: post.caption,
+          createdAt: post.createdAt,
+        },
+        followerCount: followerCount ?? 0,
+        likeCount: likeCount ?? 0,
+        savedCount: savedCount ?? 0,
+        commentCount: 20
+      })
+    }
+    return data;
+  }
+
 }

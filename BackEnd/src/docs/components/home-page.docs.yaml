@@ -1,0 +1,42 @@
+components:
+  schemas:
+    HomePage:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "daleya"
+        firstName:
+          type: string
+          example: "test"
+        lastName:
+          type: string
+          example: "testy"
+        imagePath:
+          type: string
+          example: "example.jpg"
+        post:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "0508df1e-91da-4a9b-85f7-6191d416b876"
+            caption:
+              type: string
+              example: this is caption
+            images:
+              type: array
+              items:
+                $ref: "#/components/schemas/PostImage"
+        followCount:
+          type: number
+          example: 20
+        likeCount:
+          type: number
+          example: 20
+        savedCount:
+          type: number
+          example: 20
+        commentCount:
+          type: number
+          example: 20
