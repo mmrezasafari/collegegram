@@ -1,17 +1,22 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Repository, UpdateResult } from "typeorm";
 import { PostEntity } from "./post.entity";
 import { Post } from "./model/post";
+import { PostImagesEntity } from "./post-images.entity";
 export interface IPostRepository {
   createPost(id: string, imagesUrls: string[], caption: string): Promise<Post | null>;
   getPosts(userId: string): Promise<Post[] | null>;
   getById(postId: string): Promise<Post | null>;
   countPost(userId: string): Promise<number>;
+  updatePost(postId: string, userId:string, imageUrls?: string[], caption?: string):Promise<Post | null>
 }
 
 export class PostRepository implements IPostRepository {
   postRepository: Repository<PostEntity>;
+  postImagesRepository: Repository<PostImagesEntity>;
+
   constructor(appDataSource: DataSource) {
     this.postRepository = appDataSource.getRepository(PostEntity);
+    this.postImagesRepository = appDataSource.getRepository(PostImagesEntity);
   }
 
   async createPost(id: string, imageUrls: string[], caption: string) {
@@ -50,5 +55,28 @@ export class PostRepository implements IPostRepository {
       }
     })
   }
+
+  async updatePost(postId: string, userId:string, imageUrls?: string[], caption?: string) {
+    const existingPost: Post | null = await this.postRepository.findOne({
+      where: { id: postId, user: { id: userId } },
+      relations: ["images"]
+    });
+    if (!existingPost) return null;
+
+    if (imageUrls && imageUrls.length > 0) {
+      await this.postImagesRepository.delete({ post: { id: postId } });
+      existingPost.images = imageUrls.map((url) =>
+        this.postImagesRepository.create({ url })
+      );
+    }
+
+    if (caption !== undefined) {
+      existingPost.caption = caption;
+    }
+
+    return await this.postRepository.save(existingPost)
+
+  }
+
 
 }

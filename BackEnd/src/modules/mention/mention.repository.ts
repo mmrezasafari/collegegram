@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, DeleteResult, Repository } from "typeorm";
 import { MentionEntity } from "./mention.entity";
 import { Mention } from "./models/mention";
 
@@ -6,6 +6,7 @@ import { Mention } from "./models/mention";
 export interface IMentionRepository {
     saveMention(userId: string, postId: string):Promise<Mention | null>;
     getUsernames(postId: string): Promise<string[]>;
+    deleteMentionsByPostId(postId: string): Promise<DeleteResult>
 }
 
 export class MentionRepository implements IMentionRepository {
@@ -31,4 +32,9 @@ export class MentionRepository implements IMentionRepository {
 
     return rows.map(r => r.username);
   }
+
+  async deleteMentionsByPostId(postId: string) {
+    return await this.mentionRepository.delete({ postId });
+  }
+
 }

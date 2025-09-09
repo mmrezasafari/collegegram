@@ -78,7 +78,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/users", authMiddleware, followRouter(followService))
 
-  app.use("/users", authMiddleware, postRouter(postService));
+  app.use("", authMiddleware, postRouter(postService));
 
   app.use("/posts", authMiddleware, likeRouter(likeService));
 

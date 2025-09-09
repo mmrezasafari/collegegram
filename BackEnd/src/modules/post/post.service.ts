@@ -6,6 +6,7 @@ import { extract } from "../../../utility/extract";
 import { MentionService } from "../mention/mention.service";
 import { HashtagService } from "../tag/tag.service";
 import { string } from "zod";
+import { PostDto } from "./dto/post.dto";
 
 export class PostService {
     constructor(
@@ -41,5 +42,20 @@ export class PostService {
     }
     async countPost(userId: string): Promise<number> {
         return await this.postRepo.countPost(userId);
+    }
+
+    async editPost(postId: string, userId:string , files: Express.Multer.File[], dto: PostDto){
+        const imagePaths: string[] = files.map(file => file.path);
+        const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption)
+        if (!updatedPost) {
+            throw new HttpError(404, "پست یافت نشد یا ویرایش انجام نشد");
+        }
+        const usernames = dto.mention ? extract(dto.mention, "mention") : null;
+        if (usernames) {
+            await this.mentionService.removePostMentions(postId);
+            await this.mentionService.savePostMention(usernames, postId);
+        }
+        return {updatedPost ,usernames}
+
     }
 }
