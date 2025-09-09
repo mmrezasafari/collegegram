@@ -48,12 +48,12 @@ export interface IGetPostRes {
     post: {
       caption: string
       images: Array<IUploadedImage>
+      createdAt: string
     }
-    createdAt: string
+    mentionedUsernames: Array<string>
+    likeCount: string
+    liked: boolean
+    saveCount: string
+    saved: boolean
   },
-  mentionedUsernames: string,
-  likeCount: string,
-  liked: boolean,
-  saveCount: string,
-  saved: boolean
 }

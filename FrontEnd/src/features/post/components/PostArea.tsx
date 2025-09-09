@@ -61,7 +61,10 @@ export const PostArea = () => {
         </DialogAndModalWizard>
       }
       {
-        postModalOpen && <PostDetailsModal open={postModalOpen} setOpen={setPostModalOpen} postId={postId} />
+        postModalOpen &&
+        <DialogAndModalWizard open={postModalOpen} setOpen={setPostModalOpen} className='h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12'>
+          <PostDetailsModal postId={postId} />
+        </DialogAndModalWizard>
       }
     </>
   )
