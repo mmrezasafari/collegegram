@@ -39,7 +39,7 @@ export interface IPostsRes {
 }
 
 export interface IGetPostRes {
-  success: boolean,
+  success: boolean
   data: {
     user: {
       username: string
@@ -55,5 +55,5 @@ export interface IGetPostRes {
     liked: boolean
     saveCount: string
     saved: boolean
-  },
+  }
 }

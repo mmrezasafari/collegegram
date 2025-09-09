@@ -28,8 +28,9 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
   const goPrev = () => setStep((s) => (s > 0 ? ((s - 1) as StepKey) : s))
 
-
-  { fileImages.length ? console.log('afsd') : console.log('123') }
+  {
+    fileImages.length ? console.log('afsd') : console.log('123')
+  }
 
   const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
@@ -109,7 +110,9 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
       <div className="w-full min-h-[200px] flex items-start justify-center">
         {step === 0 && (
           <div className="w-full flex flex-col gap-4">
-            <p className="text-base text-center">عکس‌های مورد نظرت رو آپلود کن:</p>
+            <p className="text-base text-center">
+              عکس‌های مورد نظرت رو آپلود کن:
+            </p>
             <StepImages
               setFileImages={setFileImages}
               previewImages={previewImages}
@@ -139,7 +142,11 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                       پشیمون شدم
                     </Button>
                   </DrawerClose>
-                  <Button type="button" onClick={goNext} disabled={fileImages.length === 0}>
+                  <Button
+                    type="button"
+                    onClick={goNext}
+                    disabled={fileImages.length === 0}
+                  >
                     بعدی
                   </Button>
                 </>
@@ -175,7 +182,11 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                     پشیمون شدم
                   </Button>
                 </DialogClose>
-                <Button type="button" onClick={goNext} disabled={fileImages.length === 0}>
+                <Button
+                  type="button"
+                  onClick={goNext}
+                  disabled={fileImages.length === 0}
+                >
                   بعدی
                 </Button>
               </>

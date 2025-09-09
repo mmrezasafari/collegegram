@@ -15,57 +15,69 @@ export const PostArea = () => {
 
   return (
     <>
-      {
-        images?.length ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 h-auto overflow-y-auto">
-            {images?.map((data, i) => (
-              <div key={i} className="overflow-hidden rounded-2xl" onClick={() => {
+      {images?.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 h-auto overflow-y-auto">
+          {images?.map((data, i) => (
+            <div
+              key={i}
+              className="overflow-hidden rounded-2xl"
+              onClick={() => {
                 setPostModalOpen(true)
                 setPostId(data.id)
-              }
-              }>
-                <img
-                  src={`http://localhost:3000/BackEnd/${data.images[0].url}`}
-                  alt="Image 1"
-                  className="w-full h-64 object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          // TODO: seperate post areas me from user
-          <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
-            <div className="flex flex-col text-center gap-4">
-              <div className="font-semibold text-sm md:text-base">
-                هنوز هیچ پستی توی صفحت نذاشتی!
-                <br />
-                بجنب تا دیر نشده
-              </div>
-              {/* upload post button tirgger */}
-              <Button className="w-full max-md:hidden" onClick={() => setUploadPostWizardOpen(true)}>
-                <Plus />
-                پست جدید
-              </Button>
-              <Button className='md:hidden' onClick={() => setUploadPostWizardOpen(true)}>
-                <Plus />
-                پست جدید
-              </Button>
+              }}
+            >
+              <img
+                src={`http://localhost:3000/BackEnd/${data.images[0].url}`}
+                alt="Image 1"
+                className="w-full h-64 object-cover"
+              />
             </div>
+          ))}
+        </div>
+      ) : (
+        // TODO: seperate post areas me from user
+        <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
+          <div className="flex flex-col text-center gap-4">
+            <div className="font-semibold text-sm md:text-base">
+              هنوز هیچ پستی توی صفحت نذاشتی!
+              <br />
+              بجنب تا دیر نشده
+            </div>
+            {/* upload post button tirgger */}
+            <Button
+              className="w-full max-md:hidden"
+              onClick={() => setUploadPostWizardOpen(true)}
+            >
+              <Plus />
+              پست جدید
+            </Button>
+            <Button
+              className="md:hidden"
+              onClick={() => setUploadPostWizardOpen(true)}
+            >
+              <Plus />
+              پست جدید
+            </Button>
           </div>
-        )
-      }
-      {
-        uploadPostWizardOpen &&
-        <DialogAndModalWizard open={uploadPostWizardOpen} setOpen={setUploadPostWizardOpen}>
+        </div>
+      )}
+      {uploadPostWizardOpen && (
+        <DialogAndModalWizard
+          open={uploadPostWizardOpen}
+          setOpen={setUploadPostWizardOpen}
+        >
           <UploadPostForm onSuccess={() => setUploadPostWizardOpen(false)} />
         </DialogAndModalWizard>
-      }
-      {
-        postModalOpen &&
-        <DialogAndModalWizard open={postModalOpen} setOpen={setPostModalOpen} className='h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12'>
+      )}
+      {postModalOpen && (
+        <DialogAndModalWizard
+          open={postModalOpen}
+          setOpen={setPostModalOpen}
+          className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
+        >
           <PostDetailsModal postId={postId} />
         </DialogAndModalWizard>
-      }
+      )}
     </>
   )
 }
