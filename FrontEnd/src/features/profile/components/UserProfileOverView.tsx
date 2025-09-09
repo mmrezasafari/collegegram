@@ -83,12 +83,18 @@ export const UserProfileOverView = () => {
                 <EllipsisVertical className="md:hidden" color="#ea5a69" />
               </div>
               <div className="hidden md:flex space-x-4 items-center h-4">
-                <div className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1" onClick={() => setFollowingsListOpen(true)}>
+                <div
+                  className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                  onClick={() => setFollowingsListOpen(true)}
+                >
                   <span>{user?.followingCount}</span>
                   <span>دنبال‌شونده</span>
                 </div>
                 <Separator orientation="vertical" className="bg-black " />
-                <div className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1" onClick={() => setFollowersListOpen(true)}>
+                <div
+                  className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                  onClick={() => setFollowersListOpen(true)}
+                >
                   <span>{user?.followerCount}</span>
                   <span>دنبال‌کننده‌</span>
                 </div>
@@ -105,12 +111,18 @@ export const UserProfileOverView = () => {
           </div>
           <div className="md:hidden flex flex-col gap-4">
             <div className="flex space-x-4 justify-center h-4">
-              <div className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1" onClick={() => setFollowingsListOpen(true)}>
+              <div
+                className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                onClick={() => setFollowingsListOpen(true)}
+              >
                 <span>{user?.followingCount}</span>
                 <span>دنبال‌شونده</span>
               </div>
               <Separator orientation="vertical" className="bg-black " />
-              <div className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1" onClick={() => setFollowersListOpen(true)}>
+              <div
+                className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                onClick={() => setFollowersListOpen(true)}
+              >
                 <span>{user?.followerCount}</span>
                 <span>دنبال‌کننده‌</span>
               </div>
@@ -145,20 +157,30 @@ export const UserProfileOverView = () => {
             </div>
           </div>
         </div>
-        <EllipsisVertical className="hidden md:block cursor-pointer" color="#ea5a69" size={40} />
+        <EllipsisVertical
+          className="hidden md:block cursor-pointer"
+          color="#ea5a69"
+          size={40}
+        />
       </div>
-      {
-        followingsListOpen &&
-        <DialogAndModalWizard open={followingsListOpen} setOpen={setFollowingsListOpen} title="دنبال شونده‌‌ها">
+      {followingsListOpen && (
+        <DialogAndModalWizard
+          open={followingsListOpen}
+          setOpen={setFollowingsListOpen}
+          title="دنبال شونده‌‌ها"
+        >
           <FollowingsList onClose={() => setFollowingsListOpen(false)} />
         </DialogAndModalWizard>
-      }
-      {
-        followersListOpen &&
-        <DialogAndModalWizard open={followersListOpen} setOpen={setFollowersListOpen} title="دنبال‌کننده‌ها">
+      )}
+      {followersListOpen && (
+        <DialogAndModalWizard
+          open={followersListOpen}
+          setOpen={setFollowersListOpen}
+          title="دنبال‌کننده‌ها"
+        >
           <FollowersList onClose={() => setFollowersListOpen(false)} />
         </DialogAndModalWizard>
-      }
+      )}
     </>
   )
 }

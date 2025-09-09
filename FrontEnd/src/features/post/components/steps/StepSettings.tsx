@@ -2,7 +2,7 @@ import { Textarea } from '@/features/common/components/ui/textarea'
 
 interface IProps {
   mention: string
-  setMention: (users: string) => void
+  setMention: (_users: string) => void
 }
 
 export const StepSettings = ({ mention, setMention }: IProps) => {

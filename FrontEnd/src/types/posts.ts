@@ -39,7 +39,7 @@ export interface IPostsRes {
 }
 
 export interface IGetPostRes {
-  success: boolean,
+  success: boolean
   data: {
     user: {
       username: string
@@ -48,12 +48,12 @@ export interface IGetPostRes {
     post: {
       caption: string
       images: Array<IUploadedImage>
+      createdAt: string
     }
-    createdAt: string
-  },
-  mentionedUsernames: string,
-  likeCount: string,
-  liked: boolean,
-  saveCount: string,
-  saved: boolean
+    mentionedUsernames: Array<string>
+    likeCount: string
+    liked: boolean
+    saveCount: string
+    saved: boolean
+  }
 }

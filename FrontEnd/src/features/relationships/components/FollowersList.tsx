@@ -13,7 +13,7 @@ export const FollowersList = ({ onClose }: IProps) => {
   const followersList = followersRes?.data
 
   return (
-    <div className='h-full w-full flex justify-center mt-4'>
+    <div className="h-full w-full flex justify-center mt-4">
       <div className="w-[350px] flex flex-col gap-8">
         <ScrollArea className="h-[400px]">
           {followersList?.length ? (
@@ -29,7 +29,9 @@ export const FollowersList = ({ onClose }: IProps) => {
             </p>
           )}
         </ScrollArea>
-        <Button className="w-fit self-end" onClick={() => onClose()}>بستن</Button>
+        <Button className="w-fit self-end" onClick={() => onClose()}>
+          بستن
+        </Button>
       </div>
     </div>
   )
