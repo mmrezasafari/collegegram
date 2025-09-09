@@ -2,14 +2,30 @@ import { Router } from "express";
 import { PostService } from "../modules/post/post.service";
 import zod from "zod";
 import { handleExpress } from "../../utility/handle-express";
+import { upload } from "../middleware/upload-image.middleware";
+import { PostDto } from "../modules/post/dto/post.dto";
+import { errorResponse } from "../../utility/response";
 
 
 export const postRouter = (postService: PostService) => {
   const app = Router();
 
-  app.get("/:username/posts", (req, res) => {
+  app.get("/users/:username/posts", (req, res) => {
     const username = zod.string().parse(req.params.username);
     handleExpress(res, () => postService.getPosts(username));
   })
+
+  app.patch("/posts/:id", upload.array('images', 10), (req, res) => {
+    const postId = zod.uuid().parse(req.params.id);
+    const dto = PostDto.parse(req.body);
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => postService.editPost(postId, user.userId, req.files as Express.Multer.File[], dto));
+
+  })
+  
   return app;
 }

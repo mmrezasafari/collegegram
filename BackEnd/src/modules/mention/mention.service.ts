@@ -26,5 +26,9 @@ export class MentionService {
         return this.mentionRepo.getUsernames(postId);
     }
 
+    async removePostMentions(postId: string) {
+        await this.mentionRepo.deleteMentionsByPostId(postId);
+    }
+
 
 }
