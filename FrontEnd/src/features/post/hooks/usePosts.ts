@@ -1,7 +1,12 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
-import type { IGetPostRes, IPostsRes, IUploadedPostsRes, IUploadPosts } from '@/types/posts'
+import type {
+  IGetPostRes,
+  IPostsRes,
+  IUploadedPostsRes,
+  IUploadPosts,
+} from '@/types/posts'
 import {
   keepPreviousData,
   useMutation,
@@ -87,6 +92,6 @@ export function useGetPost(postId: string) {
       if (!postId) throw new Error('Username is not available yet!')
       return getPost(postId)
     },
-    enabled: !!postId
+    enabled: !!postId,
   })
 }

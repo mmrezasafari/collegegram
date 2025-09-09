@@ -18,13 +18,19 @@ import type { ReactNode } from 'react'
 
 interface Iprops {
   open: boolean
-  setOpen: (state: boolean) => void
+  setOpen: (_state: boolean) => void
   title?: string
   className?: string
   children: ReactNode
 }
 
-export const DialogAndModalWizard = ({ open, setOpen, title, className, children }: Iprops) => {
+export const DialogAndModalWizard = ({
+  open,
+  setOpen,
+  title,
+  className,
+  children,
+}: Iprops) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   if (isDesktop) {
