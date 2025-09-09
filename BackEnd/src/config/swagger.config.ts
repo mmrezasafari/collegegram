@@ -8,7 +8,7 @@ import { HttpError } from "../../utility/http-error";
 
 export function setupSwagger(app: Express) {
   try {
-    const files = globSync("./src/docs/**/*.yaml");
+    const files = globSync("./{src,dist/src}/docs/**/*.yaml");
 
     const swaggerSpec = {
       openapi: "3.0.0",

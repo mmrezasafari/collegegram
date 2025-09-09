@@ -1,5 +1,7 @@
 import DotenvFlow from "dotenv-flow";
-DotenvFlow.config()
+if (process.env.NODE_ENV !== 'production') {
+  DotenvFlow.config()
+}
 import { DataSource } from "typeorm";
 
 export const AppDataSource = new DataSource({
