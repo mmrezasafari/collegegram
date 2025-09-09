@@ -1,8 +1,8 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { PostEntity } from "../post/post.entity";
+import { Column,CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("tags")
 export class TagEntity {
+
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
@@ -14,5 +14,4 @@ export class TagEntity {
 
   @UpdateDateColumn()
   updatedAt!: Date;
-
 }

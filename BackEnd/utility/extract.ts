@@ -13,5 +13,5 @@ export function extract(
   const matches = text.match(regex);
   if (!matches) return [];
 
-  return matches.map(m => m.slice(1)); 
+  return [...new Set(matches.map(m => m.slice(1)))];
 }

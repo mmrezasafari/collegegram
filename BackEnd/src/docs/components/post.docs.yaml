@@ -58,5 +58,10 @@ components:
               items:
                 type: string
               example: ["Mobinakh", "roozaa"]
+            savedhashtags:
+              type: array
+              items:
+                type: string
+              example: ["test", "tag"]
 
       
