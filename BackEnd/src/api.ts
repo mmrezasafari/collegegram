@@ -61,16 +61,17 @@ export const makeApp = (dataSource: DataSource) => {
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
-  const followService = new FollowService(followRepo, userService);
   const mentionService = new MentionService(mentionRepo, userService);
   const hashtagService = new HashtagService(hashtagRepo, userService);
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService);
   const saveService = new SaveService(saveRepo, postService);
-  const feedService = new FeedService(userService, postService, mentionService, likeService,saveService)
+  const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
+  const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
+
 
   setupSwagger(app);
-  
+
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService, followService, postService));
 

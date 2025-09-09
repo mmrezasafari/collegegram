@@ -26,12 +26,12 @@ export class PostService {
         const usernames = extract(mention, "mention");
         const hashtags = extract(caption, "hashtag");
         const post = await this.postRepo.createPost(userId, imagePaths, caption);
-        if (!post){
+        if (!post) {
             throw new HttpError(404, "پست  ایجاد نشد")
         }
         const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
         const savedhashtags = await this.hashtagSarvice.savePostHashtags(hashtags, post.id)
-        return {post, mentionedUsernames, savedhashtags};
+        return { post, mentionedUsernames, savedhashtags };
     }
     async getPostById(postId: string): Promise<Post> {
         const post = await this.postRepo.getById(postId)
@@ -44,7 +44,7 @@ export class PostService {
         return await this.postRepo.countPost(userId);
     }
 
-    async editPost(postId: string, userId:string , files: Express.Multer.File[], dto: PostDto){
+    async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto) {
         const imagePaths: string[] = files.map(file => file.path);
         const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption)
         if (!updatedPost) {
@@ -55,7 +55,9 @@ export class PostService {
             await this.mentionService.removePostMentions(postId);
             await this.mentionService.savePostMention(usernames, postId);
         }
-        return {updatedPost ,usernames}
-
+        return { updatedPost, usernames }
+    }
+    async getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string) {
+        return await this.postRepo.getFollowingPosts(usersId, offset, limit, sort);
     }
 }

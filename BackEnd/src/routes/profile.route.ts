@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Router } from "express";
 import { UserService } from "../modules/user/user.service";
 import { handleExpress } from "../../utility/handle-express";
 import { errorResponse } from "../../utility/response";
@@ -56,7 +56,7 @@ export const profileRouter = (userService: UserService, postService: PostService
     handleExpress(res, () => userService.saveProfileImage(req.file!, user.userId))
   });
 
-  app.post("/posts", upload.array('images', 10), (req, res) => {
+  app.post("/posts", upload.array('images', 10), (req: Request, res) => {
     const user = req.user
     if (!user) {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
@@ -69,6 +69,17 @@ export const profileRouter = (userService: UserService, postService: PostService
     const caption = req.body.caption;
     const mention = req.body.mention;
     handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId, mention));
+  });
+  app.get("/home-page", (req, res) => {
+    const offset = zod.number().parse(Number(req.query.offset));
+    const limit = zod.int().parse(Number(req.query.limit));
+    const sort = zod.enum(["ASC", "DESC"]).parse(req.query.sort);
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => followService.getHomePage(user.userId, offset, limit, sort));
   });
   return app;
 }
