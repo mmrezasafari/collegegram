@@ -1,0 +1,23 @@
+components:
+  schemas:
+    MentionPage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        caption:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string

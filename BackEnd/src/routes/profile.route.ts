@@ -7,9 +7,10 @@ import { updateUserDto } from "../modules/user/dto/update-user.dto";
 import { upload } from "../middleware/upload-image.middleware";
 import { PostService } from "../modules/post/post.service";
 import { FollowService } from "../modules/follow/follow.service";
+import { MentionService } from "../modules/mention/mention.service";
 
 
-export const profileRouter = (userService: UserService, postService: PostService, followService: FollowService) => {
+export const profileRouter = (userService: UserService, postService: PostService, followService: FollowService, mentionService: MentionService) => {
   const app = Router();
 
   app.get("/me", (req, res) => {
@@ -81,5 +82,18 @@ export const profileRouter = (userService: UserService, postService: PostService
     }
     handleExpress(res, () => followService.getHomePage(user.userId, offset, limit, sort));
   });
+
+  app.get("/mention-page", (req, res) => {
+    const offset = zod.number().parse(Number(req.query.offset));
+    const limit = zod.int().parse(Number(req.query.limit));
+    const sort = zod.enum(["ASC", "DESC"]).parse(req.query.sort);
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => mentionService.getMentionPage(user.userId, offset, limit, sort));
+  });
+
   return app;
 }
