@@ -62,6 +62,7 @@ export function useGetPosts() {
 
 export function useUploadPost() {
   const queryClient = useQueryClient()
+  const userName = useGetUserName()
 
   return useMutation({
     mutationKey: ['uploadedPost'],
@@ -69,6 +70,7 @@ export function useUploadPost() {
     onSuccess: () => {
       // change with profile get posts
       queryClient.invalidateQueries({ queryKey: ['me'] })
+      queryClient.invalidateQueries({ queryKey: ['posts', userName] })
       notify.success('پست با موفقیت بارگذاری شد', {
         position: 'top-right',
         duration: 10000,

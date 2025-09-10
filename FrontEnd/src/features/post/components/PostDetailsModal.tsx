@@ -16,10 +16,17 @@ import { Bookmark, Heart, MessageCircle, Pencil, UserRound } from 'lucide-react'
 import { Button } from '@/features/common/components/ui/button'
 import { Badge } from '@/features/common/components/ui/badge'
 import { useGetPost } from '../hooks/usePosts'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/fa'
+import { parseCaption } from '@/utils/textDecoration'
 
 interface IProp {
   postId: string
 }
+
+dayjs.extend(relativeTime)
+dayjs.locale('fa')
 
 export const PostDetailsModal = ({ postId }: IProp) => {
   const { data } = useGetPost(postId)
@@ -40,7 +47,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
   }, [api])
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 h-full">
+    <div className="flex flex-col md:flex-row md:gap-8 h-full">
       <div className="flex-[40%] flex flex-col h-full w-full gap-4">
         <div className="flex justify-between px-4">
           {/* avatar in mobile */}
@@ -51,7 +58,8 @@ export const PostDetailsModal = ({ postId }: IProp) => {
                 <UserRound color="#A5A5A5" strokeWidth={1.5} />
               </AvatarFallback>
             </Avatar>
-            <p>{post?.user.username}</p>
+            {/* fullName in mobile */}
+            <p className="font-bold text-secondary">{post?.user.username}</p>
           </div>
           {/* eidt btn in mobile */}
           <Button className="md:hidden min-w-min" variant="link">
@@ -88,7 +96,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
           </div>
           {/* post actions(like, bookmark, comment) in mobile */}
           <div className="md:hidden w-full flex justify-start gap-4 px-4">
-            <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12">
+            <div className="flex flex-col gap-2  justify-center items-center text-primary cursor-pointer w-6 h-12">
               <MessageCircle color="#ea5a69" />
               <span>۱۵</span>
             </div>
@@ -103,7 +111,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
           </div>
         </Carousel>
       </div>
-      <div className="flex md:flex-[60%] flex-col h-full w-full gap-4 max-md:px-2">
+      <div className="flex md:flex-[60%] flex-col h-full w-full gap-4 max-md:px-4">
         <div className="max-md:hidden flex justify-between items-center">
           {/* Avatar in desktop */}
           <div className="flex items-center gap-4">
@@ -113,7 +121,8 @@ export const PostDetailsModal = ({ postId }: IProp) => {
                 <UserRound color="#A5A5A5" strokeWidth={1.5} />
               </AvatarFallback>
             </Avatar>
-            <p>{post?.user.username}</p>
+            {/* fullName in desktop */}
+            <p className="font-bold text-secondary">{post?.user.username}</p>
           </div>
           {/* Eidt btn in desktop ratio */}
           <Button>
@@ -121,12 +130,24 @@ export const PostDetailsModal = ({ postId }: IProp) => {
             <span>ویرایش پست</span>
           </Button>
         </div>
-        <div className="text-xs text-gray">
-          <span>{post?.post?.createdAt}</span>
+        {/* createdAt */}
+        <div className="text-xs text-gray-500">
+          <span>{dayjs(post?.post.createdAt).fromNow()}</span>
         </div>
-        <div className="h-[130px] md:h-[190px] overflow-y-auto px-2">
-          <p className="text-justify text-sm">{post?.post.caption}</p>
+        {/* caption of post */}
+        <div className="h-[100px] md:h-[190px] overflow-y-auto md:px-2">
+          {post?.post.caption ? (
+            <div
+              className="text-justify text-sm"
+              dangerouslySetInnerHTML={{
+                __html: parseCaption(post?.post.caption),
+              }}
+            ></div>
+          ) : (
+            <p>کپشن ندارد</p>
+          )}
         </div>
+        {/* mentions */}
         <div className="flex gap-2">
           {post?.mentionedUsernames?.length
             ? post.mentionedUsernames.map((user, i) => (
