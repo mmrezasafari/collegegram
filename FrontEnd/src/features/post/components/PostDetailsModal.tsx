@@ -20,6 +20,8 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/fa'
 import { parseCaption } from '@/utils/textDecoration'
+import { useToggleSavePost } from '@/features/bookmark/hooks/useBookmark'
+import { useToggleLike } from '@/features/like/hooks/useLike'
 
 interface IProp {
   postId: string
@@ -34,6 +36,24 @@ export const PostDetailsModal = ({ postId }: IProp) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(post?.post.images.length)
+  const { mutate: toggleSavePostMutata } = useToggleSavePost(postId)
+  const { mutate: toggleLikeMutate } = useToggleLike(postId)
+
+  const onBookmarkAction = () => {
+    if (!post?.saved) {
+      toggleSavePostMutata('save')
+    } else {
+      toggleSavePostMutata('unsave')
+    }
+  }
+
+  const onLikeAction = () => {
+    if (!post?.liked) {
+      toggleLikeMutate('like')
+    } else {
+      toggleLikeMutate('unlike')
+    }
+  }
 
   useEffect(() => {
     if (!api) {
@@ -95,17 +115,26 @@ export const PostDetailsModal = ({ postId }: IProp) => {
             تصویر {current} از {count}
           </div>
           {/* post actions(like, bookmark, comment) in mobile */}
-          <div className="md:hidden w-full flex justify-start gap-4 px-4">
+          <div className="md:hidden w-full flex justify-end flex-row-reverse gap-4 px-4">
             <div className="flex flex-col gap-2  justify-center items-center text-primary cursor-pointer w-6 h-12">
               <MessageCircle color="#ea5a69" />
               <span>۱۵</span>
             </div>
-            <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12">
-              <Heart color="#ea5a69" />
+            <div
+              className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12"
+              onClick={onLikeAction}
+            >
+              <Heart color="#ea5a69" fill={post?.liked ? '#ea5a69' : 'white'} />
               <span>{post?.likeCount}</span>
             </div>
-            <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12">
-              <Bookmark color="#ea5a69" />
+            <div
+              className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12"
+              onClick={onBookmarkAction}
+            >
+              <Bookmark
+                color="#ea5a69"
+                fill={post?.saved ? '#ea5a69' : 'white'}
+              />
               <span>{post?.saveCount}</span>
             </div>
           </div>
@@ -138,7 +167,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
         <div className="h-[100px] md:h-[190px] overflow-y-auto md:px-2">
           {post?.post.caption ? (
             <div
-              className="text-justify text-sm"
+              className="text-justify text-sm/6"
               dangerouslySetInnerHTML={{
                 __html: parseCaption(post?.post.caption),
               }}
@@ -164,12 +193,21 @@ export const PostDetailsModal = ({ postId }: IProp) => {
             <MessageCircle color="#ea5a69" />
             <span>۱۵</span>
           </div>
-          <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer">
-            <Heart color="#ea5a69" />
+          <div
+            className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer"
+            onClick={onLikeAction}
+          >
+            <Heart color="#ea5a69" fill={post?.liked ? '#ea5a69' : 'white'} />
             <span>{post?.likeCount}</span>
           </div>
-          <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer">
-            <Bookmark color="#ea5a69" />
+          <div
+            className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer"
+            onClick={onBookmarkAction}
+          >
+            <Bookmark
+              color="#ea5a69"
+              fill={post?.saved ? '#ea5a69' : 'white'}
+            />
             <span>{post?.saveCount}</span>
           </div>
         </div>
