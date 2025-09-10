@@ -28,10 +28,6 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
   const goPrev = () => setStep((s) => (s > 0 ? ((s - 1) as StepKey) : s))
 
-  {
-    fileImages.length ? console.log('afsd') : console.log('123')
-  }
-
   const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
     uploadMutate(
@@ -163,11 +159,11 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
               )}
               {step === 2 && (
                 <>
-                  <Button type="submit" disabled={step !== 2}>
-                    بارگذاری
-                  </Button>
                   <Button type="button" variant="secondary" onClick={goPrev}>
                     مرحله قبل
+                  </Button>
+                  <Button type="submit" disabled={step !== 2}>
+                    بارگذاری
                   </Button>
                 </>
               )}
