@@ -136,24 +136,27 @@ export const PostDetailsModal = ({ postId }: IProp) => {
         </div>
         {/* caption of post */}
         <div className="h-[100px] md:h-[190px] overflow-y-auto md:px-2">
-          {post?.post.caption ?
+          {post?.post.caption ? (
             <div
               className="text-justify text-sm"
-              dangerouslySetInnerHTML={{ __html: parseCaption(post?.post.caption) }}
+              dangerouslySetInnerHTML={{
+                __html: parseCaption(post?.post.caption),
+              }}
             ></div>
-            : <p>کپشن ندارد</p>
-          }
+          ) : (
+            <p>کپشن ندارد</p>
+          )}
         </div>
         {/* mentions */}
         <div className="flex gap-2">
           {post?.mentionedUsernames?.length
             ? post.mentionedUsernames.map((user, i) => (
-              <div key={i} className="text-light">
-                <Badge className="text-sm" variant="secondary">
-                  {user}
-                </Badge>
-              </div>
-            ))
+                <div key={i} className="text-light">
+                  <Badge className="text-sm" variant="secondary">
+                    {user}
+                  </Badge>
+                </div>
+              ))
             : null}
         </div>
         <div className="max-md:hidden flex justify-end gap-4">
