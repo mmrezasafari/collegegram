@@ -30,5 +30,9 @@ export class MentionService {
         await this.mentionRepo.deleteMentionsByPostId(postId);
     }
 
+    async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
+        return this.mentionRepo.getMentionPage(userId, offset, limit, sort);
+    }
+
 
 }

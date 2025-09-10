@@ -1,12 +1,15 @@
 import { DataSource, DeleteResult, Repository } from "typeorm";
 import { MentionEntity } from "./mention.entity";
 import { Mention } from "./models/mention";
+import { Post } from "../post/model/post";
+import { MentionedPost } from "./models/mentionedPost";
 
 
 export interface IMentionRepository {
     saveMention(userId: string, postId: string):Promise<Mention | null>;
     getUsernames(postId: string): Promise<string[]>;
-    deleteMentionsByPostId(postId: string): Promise<DeleteResult>
+    deleteMentionsByPostId(postId: string): Promise<DeleteResult>;
+    getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<MentionedPost[] | null>
 }
 
 export class MentionRepository implements IMentionRepository {
@@ -35,6 +38,28 @@ export class MentionRepository implements IMentionRepository {
 
   async deleteMentionsByPostId(postId: string) {
     return await this.mentionRepository.delete({ postId });
+  }
+
+  async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
+    const [mentions, total] = await this.mentionRepository.createQueryBuilder("mention")
+      .leftJoinAndSelect("mention.post", "post")
+      .leftJoinAndSelect("post.images", "images")
+      .where("mention.userId = :userId", { userId })
+      .orderBy("post.createdAt", sort)
+      .skip(offset)
+      .take(limit)
+      .getManyAndCount();
+
+    const posts = mentions.map((m) => ({
+      id: m.post.id,
+      caption: m.post.caption,
+      images: m.post.images.map((img) => ({
+        id: img.id,
+        url: img.url,
+      })),
+    }));
+
+    return posts;
   }
 
 }
