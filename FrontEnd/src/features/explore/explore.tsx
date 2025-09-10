@@ -1,65 +1,7 @@
 import { useEffect, useState } from 'react'
 import SuccessBanner from './components/SuccessBanner'
 import FriendCard from './components/FriendCard'
-
-// Dummy followers data
-const dummyFollowers = [
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-  // Add more dummy followers as needed
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-  {
-    name: 'متین دهقان',
-    followers: '۱۷۰ هزار',
-    avatarUrl: '/avatars/matin.jpg',
-    pinPicture: '/pins/lavender.jpg',
-    likeCount: 138,
-    commentCount: 138,
-    bookmarkCount: 15,
-  },
-]
+import { useExplore } from './hooks/useExplore'
 
 const ExploreEmpty = () => (
   <div className="flex flex-col items-center w-full max-w-2xl mx-auto mt-8">
@@ -82,13 +24,11 @@ const ExploreEmpty = () => (
 
 const Explore = () => {
   const [showBanner, setShowBanner] = useState(true)
-  const [followers, setFollowers] = useState<typeof dummyFollowers>([])
+  const { followers, loading } = useExplore()
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowBanner(false)
-      // Simulate having followers after banner disappears
-      setFollowers(dummyFollowers)
     }, 2000)
     return () => clearTimeout(timer)
   }, [])
@@ -98,6 +38,8 @@ const Explore = () => {
       <main className="flex-1 flex flex-col items-center justify-center">
         {showBanner ? (
           <SuccessBanner />
+        ) : loading ? (
+          <div>در حال بارگذاری...</div>
         ) : followers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
             {followers.map((follower, idx) => (
