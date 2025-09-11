@@ -75,7 +75,7 @@ export const makeApp = (dataSource: DataSource) => {
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService, followService, postService));
 
-  app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService));
+  app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService, saveService));
 
   app.use("/users", authMiddleware, followRouter(followService))
 
