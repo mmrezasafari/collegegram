@@ -4,7 +4,7 @@ import { ProfileLayout } from '@/layouts/ProfileLayout'
 import { ProfilePage } from '@/features/profile/pages/ProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
-import Explore from '@/features/explore/explore'
+import Explore from '@/features/explore/pages/explore'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
