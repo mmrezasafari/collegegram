@@ -4,6 +4,7 @@ import { ProfileLayout } from '@/layouts/ProfileLayout'
 import { ProfilePage } from '@/features/profile/pages/ProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
+import Explore from '@/features/explore/explore'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -31,6 +32,11 @@ export const router = createBrowserRouter([
           { index: true, element: <ProfilePage /> },
           { path: ':username', element: <UserProfilePage /> },
         ],
+      },
+      {
+        path: '/explore',
+        element: <ProfileLayout />,
+        children: [{ index: true, element: <Explore /> }],
       },
     ],
   },
