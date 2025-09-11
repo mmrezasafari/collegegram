@@ -1,51 +1,65 @@
+import { useToggleSavePost } from '@/features/bookmark/hooks/useBookmark'
+import { useToggleLike } from '@/features/like/hooks/useLike'
 import { Bookmark, Heart, MessageCircle } from 'lucide-react'
-import { useState } from 'react'
 
-interface Props {
-  likeCount: number
-  commentCount: number
-  bookmarkCount: number
+interface IProps {
+  postId: string
+  isLiked: boolean
+  isSaved: boolean
+  likesCount: number
+  bookmarksCount: number
 }
 
-const ActionBar = ({ likeCount, commentCount, bookmarkCount }: Props) => {
-  const [likes, setLikes] = useState(likeCount)
-  const [comments, setComments] = useState(commentCount)
-  const [bookmarks, setBookmarks] = useState(bookmarkCount)
+const ActionBar = ({ postId, isLiked, isSaved, likesCount, bookmarksCount }: IProps) => {
+  const { mutate: toggleSaveAction } = useToggleSavePost(postId)
+  const { mutate: toogleLikeAction } = useToggleLike(postId)
+
+  const onToggleSave = () => {
+    if (isSaved) {
+      toggleSaveAction('unsave')
+    } else {
+      toggleSaveAction('save')
+    }
+  }
+
+  const onToggleLike = () => {
+    if (isLiked) {
+      toogleLikeAction('unlike')
+    } else {
+      toogleLikeAction('like')
+    }
+  }
+
 
   return (
-    <div className="flex justify-center items-center gap-10 mt-4">
-      {/* Bookmark */}
-      <button
-        className="flex flex-col items-center group"
-        onClick={() => setBookmarks(bookmarks + 1)}
-        aria-label="Bookmark"
-      >
-        <Bookmark size={30} color="#222" className="group-active:scale-90" />
-        <span className="mt-1 text-lg font-bold text-[#222]">{bookmarks}</span>
-      </button>
-      {/* Heart */}
-      <button
-        className="flex flex-col items-center group"
-        onClick={() => setLikes(likes + 1)}
-        aria-label="Like"
-      >
-        <Heart size={30} color="#222" className="group-active:scale-90" />
-        <span className="mt-1 text-lg font-bold text-[#222]">{likes}</span>
-      </button>
+    <div className="flex w-full items-center gap-4 py-4">
       {/* Comment */}
-      <button
-        className="flex flex-col items-center group"
-        onClick={() => setComments(comments + 1)}
-        aria-label="Comment"
+      <div
+        className="flex gap-2 justify-center items-center text-primary cursor-pointer"
       >
         <MessageCircle
-          size={30}
           color="#222"
           className="group-active:scale-90"
         />
-        <span className="mt-1 text-lg font-bold text-[#222]">{comments}</span>
-      </button>
-    </div>
+        <span className="text-[#222]">7</span>
+      </div>
+      {/* Heart */}
+      <div
+        className="flex gap-2 justify-center items-center text-primary cursor-pointer"
+        onClick={onToggleLike}
+      >
+        <Heart color="#222" className="group-active:scale-90" fill={isLiked ? '#ea5a69' : 'white'} />
+        <span className="text-[#222]">{likesCount}</span>
+      </div>
+      {/* Bookmark */}
+      <div
+        className="flex gap-2 justify-center items-center text-primary cursor-pointer"
+        onClick={onToggleSave}
+      >
+        <Bookmark color="#222" className="group-active:scale-90" fill={isSaved ? '#ea5a69' : 'white'} />
+        <span className="text-[#222]">{bookmarksCount}</span>
+      </div>
+    </div >
   )
 }
 
