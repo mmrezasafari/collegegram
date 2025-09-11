@@ -1,41 +1,37 @@
 import FriendBar from './FriendBar'
 import ActionBar from './ActionBar'
+import type { IExplore } from '@/types/explore'
 
 interface FriendCardProps {
-  name: string
-  followers: string
-  avatarUrl: string
-  likeCount: number
-  commentCount: number
-  bookmarkCount: number
-  pinPicture: string
+  friendData: IExplore
 }
 
-const FriendCard = ({
-  name,
-  followers,
-  avatarUrl,
-  likeCount,
-  commentCount,
-  bookmarkCount,
-  pinPicture,
-}: FriendCardProps) => (
-  <div className="w-full max-w-md bg-white rounded-[32px] overflow-hidden shadow flex flex-col">
-    <img
-      src={pinPicture}
-      alt="pin"
-      className="w-full h-80 object-cover"
-      style={{ borderTopLeftRadius: '32px', borderTopRightRadius: '32px' }}
-    />
-    <div className="px-6 pb-6 pt-4 flex flex-col gap-2">
-      <ActionBar
-        likeCount={likeCount}
-        commentCount={commentCount}
-        bookmarkCount={bookmarkCount}
+const FriendCard = ({ friendData }: FriendCardProps) => {
+
+  return (
+    <div className="w-[320px] h-[440px] bg-white rounded-3xl shadow flex flex-col">
+      <img
+        src={friendData.imagePath}
+        alt="pin"
+        className="w-full h-[305px] object-cover rounded-tr-3xl rounded-tl-3xl"
       />
-      <FriendBar name={name} followers={followers} avatarUrl={avatarUrl} />
+      <div className="px-6 flex flex-col gap-2">
+        <ActionBar
+          postId={friendData.post.id}
+          isLiked={friendData.liked}
+          isSaved={friendData.saved}
+          likesCount={friendData.likeCount}
+          bookmarksCount={friendData.savedCount}
+        />
+        <FriendBar
+          firstName={friendData.firstName}
+          lastName={friendData.lastName}
+          followCount={friendData.followerCount}
+          avatarUrl={friendData.imagePath}
+        />
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default FriendCard

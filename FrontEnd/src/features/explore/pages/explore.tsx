@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import SuccessBanner from './components/SuccessBanner'
-import FriendCard from './components/FriendCard'
-import { useExplore } from './hooks/useExplore'
+import SuccessBanner from '../components/SuccessBanner'
+import FriendCard from '../components/FriendCard'
+import { useExplore } from '../hooks/useExplore'
 
 const ExploreEmpty = () => (
   <div className="flex flex-col items-center w-full max-w-2xl mx-auto mt-8">
@@ -24,7 +24,8 @@ const ExploreEmpty = () => (
 
 const Explore = () => {
   const [showBanner, setShowBanner] = useState(true)
-  const { followers, loading } = useExplore()
+  const { data, isLoading } = useExplore(10, 50, 'ASC')
+  const exploreData = data?.data
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,18 +35,19 @@ const Explore = () => {
   }, [])
 
   return (
-    <div className="flex min-h-screen bg-white">
-      <main className="flex-1 flex flex-col items-center justify-center">
+    <div className="flex flex-col gap-6">
+      <h2 className="font-bold text-2xl">اکسپلور</h2>
+      <main className="w-full h-full flex flex-wrap items-center justify-stretch gap-4">
         {showBanner ? (
           <SuccessBanner />
-        ) : loading ? (
+        ) : isLoading ? (
           <div>در حال بارگذاری...</div>
-        ) : followers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
-            {followers.map((follower, idx) => (
-              <FriendCard key={idx} {...follower} />
+        ) : exploreData && exploreData.length > 0 ? (
+          <>
+            {exploreData.map((follower, idx) => (
+              <FriendCard key={idx} friendData={follower} />
             ))}
-          </div>
+          </>
         ) : (
           <ExploreEmpty />
         )}
