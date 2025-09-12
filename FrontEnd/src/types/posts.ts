@@ -30,7 +30,7 @@ export interface IUploadedPostsRes {
           createAt: string
           updatedAt: string
         }
-        images: IUploadedImage[],
+        images: IUploadedImage[]
         createdAt: string
         updatedAt: string
       }
@@ -74,20 +74,20 @@ export interface IGetPostRes {
 }
 
 export interface IUpdatedPostRes {
-  success: boolean,
+  success: boolean
   data: [
     {
-      success: boolean,
+      success: boolean
       data: {
         updatedPost: {
-          id: string,
-          caption: string,
+          id: string
+          caption: string
           images: Array<IUploadedImage>
-          createdAt: string,
+          createdAt: string
           updatedAt: string
-        },
+        }
         usernames: Array<string>
       }
-    }
+    },
   ]
 }

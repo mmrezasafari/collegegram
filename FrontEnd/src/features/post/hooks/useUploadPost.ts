@@ -1,16 +1,15 @@
-import { notify } from "@/features/common/components/ui/sonner"
-import { useGetUserName } from "@/features/common/hooks/users/useGetUserName"
-import api from "@/lib/axios"
-import type { IErrorRes } from "@/types/error"
-import type { IUploadedPostsRes, IUploadPosts } from "@/types/posts"
-import type { IRegisteredUser } from "@/types/user"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { AxiosError } from "axios"
+import { notify } from '@/features/common/components/ui/sonner'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
+import api from '@/lib/axios'
+import type { IErrorRes } from '@/types/error'
+import type { IUploadedPostsRes, IUploadPosts } from '@/types/posts'
+import type { IRegisteredUser } from '@/types/user'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 
 interface MutationContext {
   previousMeDetails?: IRegisteredUser
 }
-
 
 export async function uploadPosts(
   value: IUploadPosts,
@@ -34,23 +33,30 @@ export function useUploadPost() {
   const queryClient = useQueryClient()
   const userName = useGetUserName()
 
-  return useMutation<IUploadedPostsRes, AxiosError<IErrorRes>, IUploadPosts, MutationContext>({
+  return useMutation<
+    IUploadedPostsRes,
+    AxiosError<IErrorRes>,
+    IUploadPosts,
+    MutationContext
+  >({
     mutationKey: ['posts', userName, 'upload'],
     mutationFn: (data) => uploadPosts(data),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['me'] })
-      const previousMeDetails = queryClient.getQueryData<IRegisteredUser>(['me'])
+      const previousMeDetails = queryClient.getQueryData<IRegisteredUser>([
+        'me',
+      ])
 
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              postCount: old.data.postCount + 1
+              ...old,
+              data: {
+                ...old.data,
+                postCount: old.data.postCount + 1,
+              },
             }
-          }
-          : old
+          : old,
       )
 
       return { previousMeDetails }

@@ -1,15 +1,7 @@
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
-import type {
-  IGetPostRes,
-  IPostsRes,
-} from '@/types/posts'
-import {
-  keepPreviousData,
-  useQuery,
-} from '@tanstack/react-query'
-
-
+import type { IGetPostRes, IPostsRes } from '@/types/posts'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 export async function getPosts(userName: string): Promise<IPostsRes> {
   const res = await api.get<IPostsRes>(`/users/${userName}/posts`)
@@ -35,7 +27,6 @@ export function useGetPosts() {
     placeholderData: keepPreviousData,
   })
 }
-
 
 export function useGetPost(postId: string) {
   return useQuery<IGetPostRes, Error>({

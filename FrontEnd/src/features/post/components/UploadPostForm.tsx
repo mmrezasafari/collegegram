@@ -12,34 +12,60 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
 import { CircleCheck, CircleDot } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useUploadPost } from '../hooks/usePosts'
+import { useUploadPost } from '../hooks/useUploadPost.ts'
+import type { IGetPostRes } from '@/types/posts'
+import { useUpdatePost } from '../hooks/useUpdatePost.ts'
 
 type StepKey = 0 | 1 | 2
+interface IUploadPostForm {
+  initialData?: IGetPostRes
+  mode?: 'create' | 'edit'
+  postId?: string
+  onSuccess: () => void
+}
 
-export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
+export const UploadPostForm = ({
+  mode = 'create',
+  initialData,
+  onSuccess,
+  postId,
+}: IUploadPostForm) => {
   const { mutate: uploadMutate } = useUploadPost()
+  const { mutate: updateMutate } = useUpdatePost(postId!)
   const [step, setStep] = useState<StepKey>(0)
-  const [fileImages, setFileImages] = useState<File[]>([])
-  const [previewImages, setPreviewImages] = useState<string[]>([])
-  const [caption, setCaption] = useState('')
-  const [mention, setMention] = useState('')
+  const [images, setImages] = useState<(string | File)[]>(
+    initialData?.data.post.images.map((img) => img.url) || [],
+  )
+  const [caption, setCaption] = useState(initialData?.data.post.caption || '')
+  const [mention, setMention] = useState(
+    initialData?.data.mentionedUsernames
+      .map((userName) => `@${userName}`)
+      ?.join('') ?? '',
+  )
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
   const goPrev = () => setStep((s) => (s > 0 ? ((s - 1) as StepKey) : s))
 
-  const onUploadPost: ComponentProps<'form'>['onSubmit'] = (e) => {
+  const onSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
-    uploadMutate(
-      { caption: caption, images: fileImages, mention: mention },
-      { onSuccess: () => onSuccess?.() },
-    )
+    if (mode === 'create') {
+      uploadMutate(
+        { caption: caption, images: images as File[], mention: mention },
+        { onSuccess: () => onSuccess?.() },
+      )
+    } else {
+      updateMutate(
+        { caption, mention: mention, images: images as File[] },
+        { onSuccess: () => onSuccess?.() },
+      )
+    }
   }
 
   return (
     <form
       className="min-h-[450px] flex flex-col justify-between items-center px-8 md:px-20"
-      onSubmit={onUploadPost}
+      onSubmit={onSubmit}
     >
       {/* Stepper */}
       <div className="flex">
@@ -109,11 +135,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
             <p className="text-base text-center">
               عکس‌های مورد نظرت رو آپلود کن:
             </p>
-            <StepImages
-              setFileImages={setFileImages}
-              previewImages={previewImages}
-              setPreviewImages={setPreviewImages}
-            />
+            <StepImages images={images} setImages={setImages} />
           </div>
         )}
         {step === 1 && (
@@ -141,7 +163,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                   <Button
                     type="button"
                     onClick={goNext}
-                    disabled={fileImages.length === 0}
+                    disabled={images.length === 0}
                   >
                     بعدی
                   </Button>
@@ -149,11 +171,11 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
               )}
               {step === 1 && (
                 <>
-                  <Button type="button" onClick={goNext} disabled={step !== 1}>
-                    بعدی
-                  </Button>
                   <Button type="button" variant="secondary" onClick={goPrev}>
                     مرحله قبل
+                  </Button>
+                  <Button type="button" onClick={goNext} disabled={step !== 1}>
+                    بعدی
                   </Button>
                 </>
               )}
@@ -181,7 +203,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 <Button
                   type="button"
                   onClick={goNext}
-                  disabled={fileImages.length === 0}
+                  disabled={images.length === 0}
                 >
                   بعدی
                 </Button>
@@ -203,7 +225,7 @@ export const UploadPostForm = ({ onSuccess }: { onSuccess: () => void }) => {
                   مرحله قبل
                 </Button>
                 <Button type="submit" disabled={step !== 2}>
-                  بارگذاری
+                  {mode === 'create' ? 'بارگذاری' : 'ویرایش'}
                 </Button>
               </>
             )}
