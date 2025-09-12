@@ -27,5 +27,6 @@ export const postRouter = (postService: PostService) => {
 
   })
   
+  app.patch("/")
   return app;
 }

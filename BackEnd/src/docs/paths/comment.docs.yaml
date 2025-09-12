@@ -1,0 +1,81 @@
+paths:
+  /posts/{id}/comment:
+    post:
+      summary: comment the post
+      tags:
+        - comment
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "This is a comment"
+                parentId:
+                  type: string
+                  nullable: true
+                  example: null
+      responses: 
+        "200": 
+          description: Like success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "کامنت شما با موفقیت ثبت شد"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کامنت یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
