@@ -12,17 +12,32 @@ export interface IUploadedImage {
 }
 
 export interface IUploadedPostsRes {
-  success: string
+  success: boolean
   data: {
-    caption: string
-    user: {
-      id: string
+    success: boolean
+    data: {
+      post: {
+        id: string
+        caption: string
+        user: {
+          id: string
+          username: string
+          firstName: string
+          lastName: string
+          email: string
+          bio: string
+          imagePath: string
+          createAt: string
+          updatedAt: string
+        }
+        images: IUploadedImage[],
+        createdAt: string
+        updatedAt: string
+      }
+      mentionedUsernames: Array<string>
+      savedhashtags: Array<string>
     }
-    images: IUploadedImage[]
   }
-  id: string
-  createdAt: string
-  updatedAt: string
 }
 
 export interface IPosts {
@@ -56,4 +71,23 @@ export interface IGetPostRes {
     saveCount: string
     saved: boolean
   }
+}
+
+export interface IUpdatedPostRes {
+  success: boolean,
+  data: [
+    {
+      success: boolean,
+      data: {
+        updatedPost: {
+          id: string,
+          caption: string,
+          images: Array<IUploadedImage>
+          createdAt: string,
+          updatedAt: string
+        },
+        usernames: Array<string>
+      }
+    }
+  ]
 }
