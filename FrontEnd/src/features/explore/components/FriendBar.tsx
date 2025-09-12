@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
-import { UserRound } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { UserRound } from 'lucide-react'
 
 interface FriendBarProps {
   firstName: string
@@ -14,7 +14,6 @@ const FriendBar = ({
   followCount,
   avatarUrl,
 }: FriendBarProps) => {
-
   return (
     <div className="flex items-center w-full pb-4 gap-4">
       <Avatar className="flex justify-center items-center w-[48px] h-[48px] rounded-full">
@@ -33,12 +32,8 @@ const FriendBar = ({
           <span>{lastName}</span>
         </p>
         <p className="flex text-[#222] text-gray font-normal text-xs gap-1">
-          <span>
-            {followCount}
-          </span>
-          <span>
-            دنبال‌کننده
-          </span>
+          <span>{followCount}</span>
+          <span>دنبال‌کننده</span>
         </p>
       </div>
     </div>

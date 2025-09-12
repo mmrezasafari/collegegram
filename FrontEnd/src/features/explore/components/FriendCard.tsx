@@ -7,7 +7,6 @@ interface FriendCardProps {
 }
 
 const FriendCard = ({ friendData }: FriendCardProps) => {
-
   return (
     <div className="w-[320px] h-[440px] bg-white rounded-3xl shadow flex flex-col">
       <img

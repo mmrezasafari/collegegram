@@ -7,13 +7,11 @@ import {
 import { Camera, Plus, X } from 'lucide-react'
 
 export const StepImages = ({
-  setFileImages,
-  previewImages,
-  setPreviewImages,
+  images,
+  setImages,
 }: {
-  setFileImages: Dispatch<SetStateAction<File[]>>
-  previewImages: string[]
-  setPreviewImages: Dispatch<SetStateAction<string[]>>
+  images: (string | File)[]
+  setImages: Dispatch<SetStateAction<(string | File)[]>>
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -21,27 +19,21 @@ export const StepImages = ({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    setFileImages(files)
     if (files.length === 0) return
-    const urls = files.map((f) => URL.createObjectURL(f))
-    setPreviewImages((prev) => [...prev, ...urls])
+
+    setImages((prev) => [...prev, ...files])
   }
 
   const removeAt = (idx: number) => {
-    if (inputRef.current) inputRef.current!.value = ''
-    setPreviewImages((prev) => {
+    setImages((prev) => {
       const next = [...prev]
-      const [removed] = next.splice(idx, 1)
-      if (removed) URL.revokeObjectURL(removed)
-      return next
-    })
-    setFileImages((prev) => {
-      const next = [...prev]
-      const [_removed] = next.splice(idx, 1)
-
+      next.splice(idx, 1)
       return next
     })
   }
+
+  const getPreview = (img: string | File) =>
+    typeof img === 'string' ? img : URL.createObjectURL(img)
 
   return (
     <div className="w-full max-w-[360px] md:max-w-[420px] flex flex-col items-center gap-4">
@@ -57,13 +49,13 @@ export const StepImages = ({
             <Plus className="w-4 h-4 text-orange-500 absolute -right-2 -top-2" />
           </div>
         </button>
-        {previewImages.map((src, idx) => (
+        {images.map((img, idx) => (
           <div
-            key={src}
+            key={idx}
             className="relative w-20 md:w-24 aspect-square overflow-hidden"
           >
             <img
-              src={src}
+              src={getPreview(img)}
               className="w-full h-full object-cover rounded-3xl hover:object-contain transition-all"
             />
             <button
