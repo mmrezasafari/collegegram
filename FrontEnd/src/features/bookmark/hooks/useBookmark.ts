@@ -27,14 +27,24 @@ export const toggleSavePost = async (
 export function useToggleSavePost(postId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<ISuccessRes, AxiosError<IErrorRes>, TMutationVars, IMutationContext>({
+  return useMutation<
+    ISuccessRes,
+    AxiosError<IErrorRes>,
+    TMutationVars,
+    IMutationContext
+  >({
     mutationKey: ['post', postId, 'bookmark'],
     mutationFn: (action) => toggleSavePost(postId, action),
 
     onMutate: async (context) => {
       await queryClient.cancelQueries({ queryKey: ['post', postId] })
-      const previousPostDetails = queryClient.getQueryData<IGetPostRes>(['post', postId])
-      const previousExploreData = queryClient.getQueryData<IExploreGetRes>(['explore'])
+      const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
+        'post',
+        postId,
+      ])
+      const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
+        'explore',
+      ])
 
       if (previousPostDetails) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) => {
@@ -60,12 +70,12 @@ export function useToggleSavePost(postId: string) {
             data: old?.data.map((data) =>
               postId === data.post.id
                 ? {
-                  ...data,
-                  isSaved: context === 'save',
-                  savedCount: data.likeCount + (context === 'save' ? 1 : -1)
-                }
-                : data
-            )
+                    ...data,
+                    isSaved: context === 'save',
+                    savedCount: data.likeCount + (context === 'save' ? 1 : -1),
+                  }
+                : data,
+            ),
           }
         })
       }
@@ -79,6 +89,6 @@ export function useToggleSavePost(postId: string) {
       if (context?.previousExploreData) {
         queryClient.setQueryData(['explore'], context.previousExploreData)
       }
-    }
+    },
   })
 }

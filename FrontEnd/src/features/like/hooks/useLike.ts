@@ -27,14 +27,24 @@ export async function toggleLikePost(
 export function useToggleLike(postId: string) {
   const queryClient = useQueryClient()
 
-  return useMutation<ISuccessRes, AxiosError<IErrorRes>, TMutationVars, IMutationContext>({
+  return useMutation<
+    ISuccessRes,
+    AxiosError<IErrorRes>,
+    TMutationVars,
+    IMutationContext
+  >({
     mutationKey: ['post', postId, 'like'],
     mutationFn: (action) => toggleLikePost(postId, action),
     onMutate: async (action) => {
       await queryClient.cancelQueries({ queryKey: ['post', postId] })
       await queryClient.cancelQueries({ queryKey: ['explore'] })
-      const previousPostDetails = queryClient.getQueryData<IGetPostRes>(['post', postId])
-      const previousExploreData = queryClient.getQueryData<IExploreGetRes>(['explore'])
+      const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
+        'post',
+        postId,
+      ])
+      const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
+        'explore',
+      ])
 
       if (previousPostDetails) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) => {
@@ -45,7 +55,7 @@ export function useToggleLike(postId: string) {
               ...old.data,
               liked: action === 'like' ? true : false,
               likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
-            }
+            },
           }
         })
       }
@@ -58,12 +68,12 @@ export function useToggleLike(postId: string) {
             data: old?.data.map((data) =>
               postId === data.post.id
                 ? {
-                  ...data,
-                  isLiked: action === 'like',
-                  likeCount: data.likeCount + (action === 'like' ? 1 : -1)
-                }
-                : data
-            )
+                    ...data,
+                    isLiked: action === 'like',
+                    likeCount: data.likeCount + (action === 'like' ? 1 : -1),
+                  }
+                : data,
+            ),
           }
         })
       }
@@ -78,6 +88,6 @@ export function useToggleLike(postId: string) {
         console.log(context?.previousExploreData)
         queryClient.setQueryData(['explore'], context.previousExploreData)
       }
-    }
+    },
   })
 }
