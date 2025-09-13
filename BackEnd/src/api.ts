@@ -31,6 +31,7 @@ import { feedRouter } from "./routes/feed.route";
 import { FeedService } from "./modules/feed.service";
 import { HashtagService } from "./modules/tag/tag.service";
 import { HashtagRepository } from "./modules/tag/tag.repository";
+import path from "path";
 
 declare global {
   namespace Express {
@@ -48,6 +49,7 @@ export const makeApp = (dataSource: DataSource) => {
     origin: process.env.FRONTEND_HOST,
   }))
   app.use(express.json());
+  app.use('/BackEnd/public', express.static(path.join(__dirname, '..', 'public')))
   app.use(cookieParser());
 
   const userRepo = new UserRepository(dataSource);
