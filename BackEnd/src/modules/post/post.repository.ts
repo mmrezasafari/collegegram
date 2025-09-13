@@ -7,7 +7,7 @@ export interface IPostRepository {
   getPosts(userId: string): Promise<Post[] | null>;
   getById(postId: string): Promise<Post | null>;
   countPost(userId: string): Promise<number>;
-  updatePost(postId: string, userId: string, imageUrls?: string[], caption?: string): Promise<Post | null>
+  updatePost(postId: string, userId: string, imageUrls?: string[], caption?: string, urls?:string[]): Promise<Post | null>
   getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string): Promise<Post[] | null>
 }
 
@@ -57,18 +57,27 @@ export class PostRepository implements IPostRepository {
     })
   }
 
-  async updatePost(postId: string, userId: string, imageUrls?: string[], caption?: string) {
+  async updatePost(postId: string, userId: string, imageUrls?: string[], caption?: string, urls?: string[]) {
     const existingPost: Post | null = await this.postRepository.findOne({
       where: { id: postId, user: { id: userId } },
       relations: ["images"]
     });
     if (!existingPost) return null;
 
+    if (urls !== undefined) {
+      const existingImages = await this.postImagesRepository.find({
+        where: { post: { id: postId } }
+      });
+      const imagesToDelete = existingImages.filter(img => !urls.includes(img.url));
+      for (const img of imagesToDelete) {
+        await this.postImagesRepository.delete(img.id);
+      }
+    }
     if (imageUrls && imageUrls.length > 0) {
-      await this.postImagesRepository.delete({ post: { id: postId } });
-      existingPost.images = imageUrls.map((url) =>
-        this.postImagesRepository.create({ url })
-      );
+      for (const url of imageUrls) {
+        const newImage = this.postImagesRepository.create({ url, post: existingPost });
+        await this.postImagesRepository.save(newImage);
+      }
     }
 
     if (caption !== undefined) {

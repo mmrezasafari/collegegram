@@ -137,7 +137,32 @@ paths:
           name: id
           required: true
           schema:
-            type: string     
+            type: string   
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [images]
+            schema:
+              type: object
+              properties:
+                caption: 
+                  type: string
+                mention:
+                  type: string
+                imageUrls:
+                  type: array
+                  items:
+                    type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              example:
+                caption: "This is a caption"
+                mention: "@Mobinakh @roozaa"
+                imageUrls: ["example.jpg", "example2.png"]
+                images: ["example.jpg", "example2.png"]  
       responses: 
         200: 
           description: get successful posts

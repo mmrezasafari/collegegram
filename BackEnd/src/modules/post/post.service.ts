@@ -46,7 +46,7 @@ export class PostService {
 
     async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto) {
         const imagePaths: string[] = files.map(file => file.path);
-        const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption)
+        const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption, dto.urls)
         if (!updatedPost) {
             throw new HttpError(404, "پست یافت نشد یا ویرایش انجام نشد");
         }
