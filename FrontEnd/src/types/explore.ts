@@ -17,8 +17,8 @@ export interface IExplore {
   likeCount: number
   savedCount: number
   commentCount: number
-  liked: boolean
-  saved: boolean
+  isLiked: boolean
+  isSaved: boolean
 }
 
 export interface IExploreGetRes {

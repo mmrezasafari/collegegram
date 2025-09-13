@@ -24,7 +24,7 @@ const ExploreEmpty = () => (
 
 const Explore = () => {
   const [showBanner, setShowBanner] = useState(true)
-  const { data, isLoading } = useExplore(10, 50, 'ASC')
+  const { data, isLoading, } = useExplore(10, 50, 'ASC')
   const exploreData = data?.data
 
   useEffect(() => {

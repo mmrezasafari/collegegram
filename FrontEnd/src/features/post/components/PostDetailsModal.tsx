@@ -39,8 +39,8 @@ export const PostDetailsModal = ({ postId }: IProp) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [_count, setCount] = useState(post?.post.images.length)
-  const { mutate: toggleSavePostMutata } = useToggleSavePost(postId)
-  const { mutate: toggleLikeMutate } = useToggleLike(postId)
+  const { mutate: toggleSavePostMutata, isPending: savePending } = useToggleSavePost(postId)
+  const { mutate: toggleLikeMutate, isPending: likePending } = useToggleLike(postId)
   const [editPostModalOpen, setEditPostModalOpen] = useState(false)
 
   const onBookmarkAction = () => {
@@ -132,26 +132,28 @@ export const PostDetailsModal = ({ postId }: IProp) => {
                 <MessageCircle color="#ea5a69" />
                 <span>۱۵</span>
               </div>
-              <div
+              <button
                 className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12"
                 onClick={onLikeAction}
+                disabled={likePending}
               >
                 <Heart
                   color="#ea5a69"
-                  fill={post?.liked ? '#ea5a69' : 'white'}
+                  fill={post?.liked ? '#ea5a69' : 'transparent'}
                 />
                 <span>{post?.likeCount}</span>
-              </div>
-              <div
+              </button>
+              <button
                 className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-6 h-12"
                 onClick={onBookmarkAction}
+                disabled={savePending}
               >
                 <Bookmark
                   color="#ea5a69"
-                  fill={post?.saved ? '#ea5a69' : 'white'}
+                  fill={post?.saved ? '#ea5a69' : 'transparent'}
                 />
                 <span>{post?.saveCount}</span>
-              </div>
+              </button>
             </div>
           </Carousel>
         </div>
@@ -195,41 +197,43 @@ export const PostDetailsModal = ({ postId }: IProp) => {
           <div className="flex gap-2">
             {post?.mentionedUsernames?.length
               ? post.mentionedUsernames.map((user, i) => (
-                  <div key={i} className="text-light">
-                    <Link to={`/profile/${user}`}>
-                      <Badge
-                        className="text-sm hover:scale-103 transition-all"
-                        variant="secondary"
-                      >
-                        {user}
-                      </Badge>
-                    </Link>
-                  </div>
-                ))
+                <div key={i} className="text-light">
+                  <Link to={`/profile/${user}`}>
+                    <Badge
+                      className="text-sm hover:scale-103 transition-all"
+                      variant="secondary"
+                    >
+                      {user}
+                    </Badge>
+                  </Link>
+                </div>
+              ))
               : null}
           </div>
           <div className="max-md:hidden flex justify-end gap-4">
-            <div className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer">
+            <button className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer" disabled={true}>
               <MessageCircle color="#ea5a69" />
               <span>۱۵</span>
-            </div>
-            <div
+            </button>
+            <button
               className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer"
               onClick={onLikeAction}
+              disabled={likePending}
             >
-              <Heart color="#ea5a69" fill={post?.liked ? '#ea5a69' : 'white'} />
+              <Heart color="#ea5a69" fill={post?.liked ? '#ea5a69' : 'transparent'} />
               <span>{post?.likeCount}</span>
-            </div>
-            <div
+            </button>
+            <button
               className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer"
               onClick={onBookmarkAction}
+              disabled={savePending}
             >
               <Bookmark
                 color="#ea5a69"
-                fill={post?.saved ? '#ea5a69' : 'white'}
+                fill={post?.saved ? '#ea5a69' : 'transparent'}
               />
               <span>{post?.saveCount}</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
