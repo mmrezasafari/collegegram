@@ -45,24 +45,24 @@ export function useUpdatePost(postId: string) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  post: {
-                    ...old.data.post,
-                    caption: newData.caption,
-                    images: newData.images.map(
-                      (img) =>
-                        img instanceof File
-                          ? { url: URL.createObjectURL(img) }
-                          : { url: img }, // backend url
-                    ) as IGetPostRes['data']['post']['images'],
-                  },
-                  mentionedUsernames: newData.mention
-                    .split('@')
-                    .filter((item) => item.length !== 0),
+              ...old,
+              data: {
+                ...old.data,
+                post: {
+                  ...old.data.post,
+                  caption: newData.caption,
+                  images: newData.images.map(
+                    (img) =>
+                      img instanceof File
+                        ? { url: URL.createObjectURL(img) }
+                        : { url: img }, // backend url
+                  ) as IGetPostRes['data']['post']['images'],
                 },
-              }
+                mentionedUsernames: newData.mention
+                  .split('@')
+                  .filter((item) => item.length !== 0),
+              },
+            }
             : old,
         )
 
@@ -75,7 +75,6 @@ export function useUpdatePost(postId: string) {
         })
       },
       onSuccess: () => {
-        // queryClient.invalidateQueries({ queryKey: ['post', postId] })
         notify.success('پست با موفقیت ویرایش شد', {
           position: 'top-right',
           duration: 10000,

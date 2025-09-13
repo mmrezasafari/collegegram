@@ -17,8 +17,8 @@ const FriendCard = ({ friendData }: FriendCardProps) => {
       <div className="px-6 flex flex-col gap-2">
         <ActionBar
           postId={friendData.post.id}
-          isLiked={friendData.liked}
-          isSaved={friendData.saved}
+          isLiked={friendData.isLiked}
+          isSaved={friendData.isSaved}
           likesCount={friendData.likeCount}
           bookmarksCount={friendData.savedCount}
         />
