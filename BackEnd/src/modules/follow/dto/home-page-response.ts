@@ -7,7 +7,9 @@ export type HomePageResponseDto = {
   imagePath?: string,
   followerCount: number,
   savedCount: number,
+  isSaved: boolean,
   commentCount: number,
   likeCount: number,
+  isLiked: boolean,
   post: Post, // ← آرایه از Post
 }
