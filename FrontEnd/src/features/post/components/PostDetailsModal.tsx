@@ -25,6 +25,7 @@ import { useToggleLike } from '@/features/like/hooks/useLike'
 import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
 import { UploadPostForm } from './UploadPostForm'
 import { Link } from 'react-router-dom'
+import { baseUrl } from '@/utils/baseUrl'
 
 interface IProp {
   postId: string
@@ -39,8 +40,10 @@ export const PostDetailsModal = ({ postId }: IProp) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [_count, setCount] = useState(post?.post.images.length)
-  const { mutate: toggleSavePostMutata, isPending: savePending } = useToggleSavePost(postId)
-  const { mutate: toggleLikeMutate, isPending: likePending } = useToggleLike(postId)
+  const { mutate: toggleSavePostMutata, isPending: savePending } =
+    useToggleSavePost(postId)
+  const { mutate: toggleLikeMutate, isPending: likePending } =
+    useToggleLike(postId)
   const [editPostModalOpen, setEditPostModalOpen] = useState(false)
 
   const onBookmarkAction = () => {
@@ -108,7 +111,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
                 >
                   <img
                     className="h-[375px] md:rounded-3xl md:w-[500px] md:h-[550px] object-contain"
-                    src={image.url}
+                    src={baseUrl(image.url)}
                   />
                 </CarouselItem>
               ))}
@@ -197,21 +200,24 @@ export const PostDetailsModal = ({ postId }: IProp) => {
           <div className="flex gap-2">
             {post?.mentionedUsernames?.length
               ? post.mentionedUsernames.map((user, i) => (
-                <div key={i} className="text-light">
-                  <Link to={`/profile/${user}`}>
-                    <Badge
-                      className="text-sm hover:scale-103 transition-all"
-                      variant="secondary"
-                    >
-                      {user}
-                    </Badge>
-                  </Link>
-                </div>
-              ))
+                  <div key={i} className="text-light">
+                    <Link to={`/profile/${user}`}>
+                      <Badge
+                        className="text-sm hover:scale-103 transition-all"
+                        variant="secondary"
+                      >
+                        {user}
+                      </Badge>
+                    </Link>
+                  </div>
+                ))
               : null}
           </div>
           <div className="max-md:hidden flex justify-end gap-4">
-            <button className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer" disabled={true}>
+            <button
+              className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer"
+              disabled={true}
+            >
               <MessageCircle color="#ea5a69" />
               <span>۱۵</span>
             </button>
@@ -220,7 +226,10 @@ export const PostDetailsModal = ({ postId }: IProp) => {
               onClick={onLikeAction}
               disabled={likePending}
             >
-              <Heart color="#ea5a69" fill={post?.liked ? '#ea5a69' : 'transparent'} />
+              <Heart
+                color="#ea5a69"
+                fill={post?.liked ? '#ea5a69' : 'transparent'}
+              />
               <span>{post?.likeCount}</span>
             </button>
             <button

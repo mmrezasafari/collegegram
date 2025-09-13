@@ -5,6 +5,7 @@ import { Button } from '@/features/common/components/ui/button'
 import { Plus } from 'lucide-react'
 import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
 import { UploadPostForm } from './UploadPostForm'
+import { baseUrl } from '@/utils/baseUrl'
 
 export const PostArea = () => {
   const { data } = useGetPosts()
@@ -27,7 +28,7 @@ export const PostArea = () => {
               }}
             >
               <img
-                src={`http://localhost:3000/BackEnd/${data.images[0].url}`}
+                src={baseUrl(data.images[0].url)}
                 alt="Image 1"
                 className="w-full h-64 object-cover"
               />

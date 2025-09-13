@@ -17,8 +17,10 @@ const ActionBar = ({
   likesCount,
   bookmarksCount,
 }: IProps) => {
-  const { mutate: toggleSaveAction, isPending: savePending } = useToggleSavePost(postId)
-  const { mutate: toogleLikeAction, isPending: likePending } = useToggleLike(postId)
+  const { mutate: toggleSaveAction, isPending: savePending } =
+    useToggleSavePost(postId)
+  const { mutate: toogleLikeAction, isPending: likePending } =
+    useToggleLike(postId)
 
   const onToggleSave = () => {
     if (isSaved) {
@@ -39,12 +41,16 @@ const ActionBar = ({
   return (
     <div className="flex w-full items-center gap-4 py-4">
       {/* Comment */}
-      <button className="flex p-0 gap-2 justify-center items-center text-primary cursor-pointer" disabled={true}>
+      <button
+        className="flex p-0 gap-2 justify-center items-center text-primary cursor-pointer"
+        disabled={true}
+      >
         <MessageCircle color="#222" className="group-active:scale-90" />
         <span className="text-[#222]">7</span>
       </button>
       {/* Heart */}
-      <button className="flex gap-2 justify-center items-center text-primary cursor-pointer"
+      <button
+        className="flex gap-2 justify-center items-center text-primary cursor-pointer"
         onClick={onToggleLike}
         disabled={likePending}
       >
