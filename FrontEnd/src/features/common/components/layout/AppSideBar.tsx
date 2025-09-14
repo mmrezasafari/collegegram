@@ -25,12 +25,12 @@ const links = [
 export function AppSidebar() {
   const { data: me } = useMe()
   const user = me?.data
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, isMobile } = useSidebar()
   const navigate = useNavigate()
 
   const onNavigate = (url: string) => {
     navigate(url)
-    toggleSidebar()
+    if (isMobile) toggleSidebar()
   }
 
   return (
