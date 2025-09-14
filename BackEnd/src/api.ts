@@ -32,6 +32,8 @@ import { FeedService } from "./modules/feed.service";
 import { HashtagService } from "./modules/tag/tag.service";
 import { HashtagRepository } from "./modules/tag/tag.repository";
 import path from "path";
+import { SearchService } from "./modules/search/search.service";
+import { searchRouter } from "./routes/search.route";
 
 declare global {
   namespace Express {
@@ -70,6 +72,7 @@ export const makeApp = (dataSource: DataSource) => {
   const saveService = new SaveService(saveRepo, postService);
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
+  const searchService = new SearchService(userService, postService);
 
 
   setupSwagger(app);
@@ -87,7 +90,9 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
-  app.use("/posts", authMiddleware, feedRouter(feedService))
+  app.use("/posts", authMiddleware, feedRouter(feedService));
+
+  app.use("/search", authMiddleware, searchRouter(searchService));
 
 
 

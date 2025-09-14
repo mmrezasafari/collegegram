@@ -28,7 +28,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PostImage"
-        followCount:
+        followerCount:
           type: number
           example: 20
         likeCount:
