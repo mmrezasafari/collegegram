@@ -7,8 +7,11 @@ import {
 import { RegisterForm } from '@/features/auth/components/RegisterForm'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 import { Separator } from '@/features/common/components/ui/separator'
+import { useState } from 'react'
 
 export const AuthPage = () => {
+  const [defaultTab, setDefaultTab] = useState('login')
+
   return (
     <div className="w-full h-full md:w-[500px] md:h-auto md:max-h-[700px] flex flex-col justify-center items-center bg-backgroundLight md:rounded-3xl py-16 max-md:px-6 md:shadow-formShadow gap-8">
       <img
@@ -17,7 +20,8 @@ export const AuthPage = () => {
         height="61"
       />
       <Tabs
-        defaultValue="login"
+        value={defaultTab}
+        onValueChange={setDefaultTab}
         className="h-[510px] d-flex items-center bg-muted rounded-lg gap-12"
       >
         <TabsList className="d-flex justify-baseline w-full">
@@ -36,7 +40,7 @@ export const AuthPage = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="register">
-          <RegisterForm />
+          <RegisterForm onSuccess={() => setDefaultTab('login')} />
         </TabsContent>
         <TabsContent value="login">
           <LoginForm />

@@ -3,6 +3,8 @@ export interface IFollower {
   username: string
   imageUrl: string
   followerCount: number
+  firstName: string
+  lastName: string
 }
 
 export interface IFollowing {
@@ -10,6 +12,8 @@ export interface IFollowing {
   username: string
   imageUrl: string
   followerCount: number
+  firstName: string
+  lastName: string
 }
 
 export interface IFollowersListRes {
