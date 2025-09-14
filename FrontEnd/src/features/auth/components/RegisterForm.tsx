@@ -15,12 +15,16 @@ import {
   userNameSchema,
   validateWithYup,
 } from '@/utils/validation'
-import { type ComponentProps } from 'react'
+import { useEffect, type ComponentProps } from 'react'
 import { useRegister } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
 
-export const RegisterForm = () => {
-  const { mutate: registerMutate, isPending } = useRegister()
+interface IProps {
+  onSuccess?: () => void
+}
+
+export const RegisterForm = ({ onSuccess }: IProps) => {
+  const { mutate: registerMutate, isPending, isSuccess } = useRegister()
   const userName = useInput('userName', '', (val) =>
     validateWithYup(userNameSchema, val),
   )
@@ -35,6 +39,10 @@ export const RegisterForm = () => {
       context: { password: password.value },
     }),
   )
+
+  useEffect(() => {
+    if (isSuccess) onSuccess?.()
+  }, [isSuccess])
 
   const onFormSubmit: ComponentProps<'form'>['onSubmit'] = (e) => {
     e.preventDefault()
