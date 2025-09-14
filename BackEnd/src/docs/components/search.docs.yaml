@@ -1,0 +1,39 @@
+components:
+  schemas:
+    UserSummary:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "daleya"
+        firstName:
+          type: string
+          example: "test"
+        lastName:
+          type: string
+          example: "testy"
+        imagePath:
+          type: string
+          example: "example.jpg"
+
+    UserDetail:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "daleya"
+        firstName:
+          type: string
+          example: "test"
+        lastName:
+          type: string
+          example: "testy"
+        imagePath:
+          type: string
+          example: "example.jpg"
+        isFollowing:
+          type: boolean
+          example: true
+        followerCount:
+          type: integer
+          example: 20
