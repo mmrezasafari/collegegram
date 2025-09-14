@@ -72,7 +72,7 @@ export function useToggleSavePost(postId: string) {
                 ? {
                     ...data,
                     isSaved: context === 'save',
-                    savedCount: data.likeCount + (context === 'save' ? 1 : -1),
+                    savedCount: data.savedCount + (context === 'save' ? 1 : -1),
                   }
                 : data,
             ),

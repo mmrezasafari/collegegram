@@ -26,17 +26,12 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/profile',
         element: <ProfileLayout />,
         children: [
-          { index: true, element: <ProfilePage /> },
-          { path: ':username', element: <UserProfilePage /> },
+          { index: true, path: '/explore', element: <Explore /> },
+          { path: '/profile', element: <ProfilePage /> },
+          { path: '/profile/:username', element: <UserProfilePage /> },
         ],
-      },
-      {
-        path: '/explore',
-        element: <ProfileLayout />,
-        children: [{ index: true, element: <Explore /> }],
       },
     ],
   },
