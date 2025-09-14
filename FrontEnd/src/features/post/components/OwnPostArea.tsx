@@ -7,7 +7,7 @@ import { DialogAndModalWizard } from '@/features/common/components/layout/Dialog
 import { UploadPostForm } from './UploadPostForm'
 import { baseUrl } from '@/utils/baseUrl'
 
-export const PostArea = () => {
+export const OwnPostArea = () => {
   const { data } = useGetPosts()
   const images = data?.data
   const [postModalOpen, setPostModalOpen] = useState(false)
@@ -36,7 +36,6 @@ export const PostArea = () => {
           ))}
         </div>
       ) : (
-        // TODO: seperate post areas me from user
         <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
           <div className="flex flex-col text-center gap-4">
             <div className="font-semibold text-sm md:text-base">

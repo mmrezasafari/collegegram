@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { ProfileLayout } from '@/layouts/ProfileLayout'
-import { ProfilePage } from '@/features/profile/pages/ProfilePage'
+import { OwnProfilePage } from '@/features/profile/pages/OwnProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
 import Explore from '@/features/explore/pages/explore'
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
         element: <ProfileLayout />,
         children: [
           { index: true, path: '/explore', element: <Explore /> },
-          { path: '/profile', element: <ProfilePage /> },
+          { path: '/profile', element: <OwnProfilePage /> },
           { path: '/profile/:username', element: <UserProfilePage /> },
         ],
       },
