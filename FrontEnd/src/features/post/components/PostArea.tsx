@@ -17,11 +17,11 @@ export const PostArea = () => {
   return (
     <>
       {images?.length ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 h-auto overflow-y-auto">
+        <div className="h-[500px] md:h-[550px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 overflow-y-auto">
           {images?.map((data, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl"
+              className="overflow-hidden rounded-2xl h-66"
               onClick={() => {
                 setPostModalOpen(true)
                 setPostId(data.id)
