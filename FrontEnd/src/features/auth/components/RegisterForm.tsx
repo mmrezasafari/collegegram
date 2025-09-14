@@ -56,7 +56,6 @@ export const RegisterForm = () => {
       })
     } catch (err) {
       if (err instanceof ValidationError) {
-        console.log(err)
         const errorMap: Record<string, string> = {}
         // create mapError object
         err.inner.forEach((e) => {

@@ -4,9 +4,7 @@ import { Checkbox } from '@/features/common/components/ui/checkbox'
 import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { useInput } from '@/features/common/hooks/useInput'
-import {
-  loginFormSchema,
-} from '@/utils/validation'
+import { loginFormSchema } from '@/utils/validation'
 import { useEffect, useState, type ComponentProps } from 'react'
 import { useLogin } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
@@ -29,7 +27,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (loginData?.success) {
-      navigate('/profile')
+      navigate('/explore')
     }
   }, [loginData?.success, navigate])
 
@@ -42,6 +40,8 @@ export const LoginForm = () => {
     }
 
     try {
+      userNameOrEmail.setError(undefined)
+      password.setError(undefined)
       loginFormSchema.validateSync(formValues, { abortEarly: false })
       loginMutation({
         ...formValues,
@@ -55,7 +55,8 @@ export const LoginForm = () => {
         })
 
         //set errors
-        if (errorMap.usernameOrEmail) userNameOrEmail.setError(errorMap.usernameOrEmail)
+        if (errorMap.usernameOrEmail)
+          userNameOrEmail.setError(errorMap.usernameOrEmail)
         if (errorMap.password) password.setError(errorMap.password)
       }
     }
@@ -74,11 +75,10 @@ export const LoginForm = () => {
               name={userNameOrEmail.name}
               ref={userNameOrEmail.ref}
               type="text"
-              placeholder="ایمیل"
+              placeholder="نام‌کاربری یا ایمیل"
               className="pr-9"
-              value={userNameOrEmail.value}
               onChange={userNameOrEmail.onChange}
-              onBlur={userNameOrEmail.onBlur}
+              value={userNameOrEmail.value}
               aria-invalid={userNameOrEmail.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
@@ -102,7 +102,6 @@ export const LoginForm = () => {
               className="pr-9"
               value={password.value}
               onChange={password.onChange}
-              onBlur={password.onBlur}
               aria-invalid={password.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">

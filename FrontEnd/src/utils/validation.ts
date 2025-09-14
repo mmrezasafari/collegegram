@@ -36,9 +36,7 @@ export const registerFormSchema = yup.object({
 
 export const loginFormSchema = yup.object({
   usernameOrEmail: yup.string().required('وارد کردن ایمیل اجباری است'),
-  password: passwordSchema.concat(
-    yup.string().required('وارد کردن رمزعبور اجباری است'),
-  ),
+  password: yup.string().required('وارد کردن رمزعبور اجباری است'),
 })
 
 export const profileEditInfo = yup.object({
