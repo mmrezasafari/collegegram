@@ -1,5 +1,5 @@
 import { Separator } from '@/features/common/components/ui/separator'
-import { PostArea } from '@/features/post/components/PostArea'
+import { UserPostArea } from '@/features/post/components/UserPostArea'
 import { UserProfileOverView } from '../components/UserProfileOverView'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -21,7 +21,7 @@ export function UserProfilePage() {
       />
       <UserProfileOverView />
       <Separator className="bg-geryLight" />
-      <PostArea />
+      <UserPostArea />
     </div>
   )
 }
