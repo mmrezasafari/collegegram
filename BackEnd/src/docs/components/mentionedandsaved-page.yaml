@@ -1,6 +1,6 @@
 components:
   schemas:
-    MentionPage:
+    MentionedAndSavedPage:
       type: object
       properties:
         id:

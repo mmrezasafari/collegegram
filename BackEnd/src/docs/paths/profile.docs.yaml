@@ -386,7 +386,7 @@ paths:
                 example:
                   success: false
                   message: "خطای سرور"  
-  /profile/mention-page:
+  /profile/mentioned-page:
       get: 
         summary: Get Mention page
         tags:
@@ -426,7 +426,66 @@ paths:
                     data:
                       type: array
                       items:
-                        $ref: "#/components/schemas/MentionPage"
+                        $ref: "#/components/schemas/MentionedAndSavedPage"
+          401:
+            description: unauthorized
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "احراز هویت انجام نشده است"
+          500:
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "خطای سرور"
+  /profile/saved-page:
+      get: 
+        summary: Get Saved page
+        tags:
+          - profile
+        security:
+          - accessToken: []
+          - refreshToken: []  
+        parameters:
+          - in: query
+            name: offset
+            schema: 
+              type: integer
+              description: The number of items to skip before starting to collect the result set
+          - in: query
+            name: limit
+            schema:
+              type: integer
+              description: The numbers of items to return
+          - in: query
+            name: sort
+            schema:
+              type: string
+              enum:
+                - ASC
+                - DESC
+            example: ASC
+        responses: 
+          200: 
+            description: get successful mentionpage
+            content:
+              application/json: 
+                schema:
+                  type: object
+                  properties: 
+                    success: 
+                      type: boolean
+                    data:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/MentionedAndSavedPage"
           401:
             description: unauthorized
             content:

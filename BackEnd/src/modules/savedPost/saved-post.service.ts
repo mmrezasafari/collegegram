@@ -38,4 +38,8 @@ export class SaveService {
         const existingSave = await this.saveRepo.isSaved(postId,userId)
         return !!existingSave;
     }
+
+    async getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
+        return this.saveRepo.getSavePage(userId, offset, limit, sort);
+    }
 }

@@ -2,7 +2,7 @@ import { DataSource, DeleteResult, Repository } from "typeorm";
 import { MentionEntity } from "./mention.entity";
 import { Mention } from "./models/mention";
 import { Post } from "../post/model/post";
-import { MentionedPost } from "./models/mentionedPost";
+import { MentionedPost } from "./models/mention-page";
 
 
 export interface IMentionRepository {
@@ -41,14 +41,14 @@ export class MentionRepository implements IMentionRepository {
   }
 
   async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-    const [mentions, total] = await this.mentionRepository.createQueryBuilder("mention")
+    const mentions = await this.mentionRepository.createQueryBuilder("mention")
       .leftJoinAndSelect("mention.post", "post")
       .leftJoinAndSelect("post.images", "images")
       .where("mention.userId = :userId", { userId })
       .orderBy("post.createdAt", sort)
       .skip(offset)
       .take(limit)
-      .getManyAndCount();
+      .getMany();
 
     const posts = mentions.map((m) => ({
       id: m.post.id,
