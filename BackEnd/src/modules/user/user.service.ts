@@ -44,6 +44,11 @@ export class UserService {
         await this.userRepo.saveImage(userId, imagePath);
         return file;
     }
-
+    async searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string | null) {
+        if (!search) {
+            return await this.userRepo.getUsersExplore(userId, offset, limit, sort);
+        }
+        return await this.userRepo.searchUserInExplore(userId, offset, limit, sort, search);
+    }
 
 }
