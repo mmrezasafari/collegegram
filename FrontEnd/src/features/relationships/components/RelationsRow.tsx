@@ -3,8 +3,6 @@ import { UserRound } from 'lucide-react'
 import { ProfileDropdownShortcut } from '@/features/profile/components/ProfileDropdownShortcut'
 import type { IFollower, IFollowing } from '@/types/relations'
 
-// TODO: replace userName to firstName and lastName
-
 export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
   const data = user?.user
   return (
@@ -26,7 +24,16 @@ export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-end gap-2">
-          <p className="md:text-base text-sm font-bold">{data.username}</p>
+          <p className="md:text-base text-sm font-bold">
+            {
+              data.firstName
+                ? <>
+                  <span>{data.firstName} </span>
+                  <span>{data.lastName}</span>
+                </>
+                : <span>@{data.username}</span>
+            }
+          </p>
           <div className="md:text-base text-xs font-normal text-grey felx">
             <span>دنبال کننده </span>
             <span>{data.followerCount}</span>
