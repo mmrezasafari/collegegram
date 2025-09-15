@@ -20,7 +20,7 @@ export async function updatePost(
   formData.append('caption', data.caption)
   //seperate files from image url
   data.images.forEach((file) => {
-    if (typeof file === "string") {
+    if (typeof file === 'string') {
       formData.append('imageUrls', file)
     } else {
       formData.append('images', file)
@@ -51,24 +51,24 @@ export function useUpdatePost(postId: string) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                post: {
-                  ...old.data.post,
-                  caption: newData.caption,
-                  images: newData.images.map(
-                    (img) =>
-                      img instanceof File
-                        ? { url: URL.createObjectURL(img) }
-                        : { url: img }, // backend url
-                  ) as IGetPostRes['data']['post']['images'],
+                ...old,
+                data: {
+                  ...old.data,
+                  post: {
+                    ...old.data.post,
+                    caption: newData.caption,
+                    images: newData.images.map(
+                      (img) =>
+                        img instanceof File
+                          ? { url: URL.createObjectURL(img) }
+                          : { url: img }, // backend url
+                    ) as IGetPostRes['data']['post']['images'],
+                  },
+                  mentionedUsernames: newData.mention
+                    .split('@')
+                    .filter((item) => item.length !== 0),
                 },
-                mentionedUsernames: newData.mention
-                  .split('@')
-                  .filter((item) => item.length !== 0),
-              },
-            }
+              }
             : old,
         )
 

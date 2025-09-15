@@ -78,7 +78,9 @@ export const StepImages = ({
         onChange={handleChange}
         className="hidden"
       />
-      <span className='text-xs text-gray-400 underline'>فرمت های قابل پشتیبانی ( jpeg, jpg, png )</span>
+      <span className="text-xs text-gray-400 underline">
+        فرمت های قابل پشتیبانی ( jpeg, jpg, png )
+      </span>
     </div>
   )
 }

@@ -26,6 +26,7 @@ import { DialogAndModalWizard } from '@/features/common/components/layout/Dialog
 import { UploadPostForm } from './UploadPostForm'
 import { Link } from 'react-router-dom'
 import { baseUrl } from '@/utils/baseUrl'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 
 interface IProp {
   postId: string
@@ -38,6 +39,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
   const { data } = useGetPost(postId)
   const post = data?.data
   const [api, setApi] = useState<CarouselApi>()
+  const userName = useGetUserName()
   const [current, setCurrent] = useState(0)
   const [_count, setCount] = useState(post?.post.images.length)
   const { mutate: toggleSavePostMutata, isPending: savePending } =
@@ -90,13 +92,15 @@ export const PostDetailsModal = ({ postId }: IProp) => {
               <p className="font-bold text-secondary">{post?.user.username}</p>
             </div>
             {/* eidt btn in mobile */}
-            <Button
-              className="md:hidden min-w-min"
-              variant="link"
-              onClick={() => setEditPostModalOpen(true)}
-            >
-              <Pencil />
-            </Button>
+            {userName === post?.user.username && (
+              <Button
+                className="md:hidden min-w-min"
+                variant="link"
+                onClick={() => setEditPostModalOpen(true)}
+              >
+                <Pencil />
+              </Button>
+            )}
           </div>
           <Carousel
             setApi={setApi}
