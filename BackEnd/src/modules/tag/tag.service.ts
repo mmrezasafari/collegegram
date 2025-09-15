@@ -9,14 +9,13 @@ export class HashtagService {
         private userService: UserService
     ) { }
 
-    async savePostHashtags(hashtags:string[], postId:string){
-        const savedHashtags: string[] = [];
-        for (const hashtag of hashtags) {
-            await this.tagRepo.saveHashtag(postId, hashtag)
-            savedHashtags.push(hashtag);
-        }
-        return savedHashtags;
+    async savePostHashtags(postId: string, hashtags: string[]) {
+        return await this.tagRepo.saveHashtag(postId, hashtags)
 
+    }
+
+    async removePostHashtags(postId: string) {
+        await this.tagRepo.removePostHashtags(postId);
     }
 
 

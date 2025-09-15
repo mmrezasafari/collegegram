@@ -30,7 +30,7 @@ export class PostService {
             throw new HttpError(404, "پست  ایجاد نشد")
         }
         const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
-        const savedhashtags = await this.hashtagSarvice.savePostHashtags(hashtags, post.id)
+        const savedhashtags = await this.hashtagSarvice.savePostHashtags(post.id, hashtags)
         return { post, mentionedUsernames, savedhashtags };
     }
     async getPostById(postId: string): Promise<Post> {
@@ -56,7 +56,12 @@ export class PostService {
         if (usernames) {
             await this.mentionService.savePostMention(usernames, postId);
         }
-        return { updatedPost, usernames }
+        const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
+        await this.hashtagSarvice.removePostHashtags(postId);
+        if (hashtags){
+            await this.hashtagSarvice.savePostHashtags(postId, hashtags)
+        }
+        return { updatedPost, usernames, hashtags }
     }
     async getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string) {
         return await this.postRepo.getFollowingPosts(usersId, offset, limit, sort);
