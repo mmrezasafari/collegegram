@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
-import { useTagged } from '../hooks/useTagged'
-import { TaggedImageCard } from '../components/TaggedImageCard'
-import { TaggedEmpty } from '../components/TaggedEmpty'
+// import { useEffect, useState } from 'react'
+import { useSaves } from '../hooks/useSaves'
+import { SavesImageCard } from '../components/SavedImageCard'
+import { TaggedEmpty } from '../components/SavesEmpty'
 
-const Tagged = () => {
-  const { data, isLoading, error } = useTagged(0, 10, 'ASC')
+const Saves = () => {
+  const { data, isLoading, error } = useSaves(0, 10, 'ASC')
   console.log(data, error)
 
-  const taggedData = data?.data
+  const SavesData = data?.data
 
-  return taggedData && taggedData.length > 0 ? (
+  return SavesData && SavesData.length > 0 ? (
     <div className="flex flex-col gap-6">
       <h2 className="font-bold text-2xl"></h2>
       <main className="w-full h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
@@ -17,8 +17,8 @@ const Tagged = () => {
           <div>در حال بارگذاری...</div>
         ) : (
           <>
-            {taggedData.map((item, idx) => (
-              <TaggedImageCard
+            {SavesData.map((item, idx) => (
+              <SavesImageCard
                 key={idx}
                 src={item.images[0].url}
                 alt={item.caption || `tagged-${idx}`}
@@ -35,4 +35,4 @@ const Tagged = () => {
   )
 }
 
-export default Tagged
+export default Saves
