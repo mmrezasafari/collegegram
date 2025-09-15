@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
 import { UploadPostForm } from '@/features/post/components/UploadPostForm'
+import { FixedMenu } from '@/features/common/components/layout/FixedMenu'
 
 export const ProfileLayout = () => {
   const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
@@ -59,6 +60,7 @@ export const ProfileLayout = () => {
         <div className="col-start-1 row-start-2 col-end-2 row-end-3 md:col-start-2 md:row-start-2 md:col-end-3 md:row-end-3">
           <Outlet />
         </div>
+        <FixedMenu />
       </SidebarProvider>
       {uploadPostWizardOpen && (
         <DialogAndModalWizard

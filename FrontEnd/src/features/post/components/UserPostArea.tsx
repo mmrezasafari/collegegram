@@ -13,7 +13,7 @@ export const UserPostArea = () => {
   return (
     <>
       {images?.length ? (
-        <div className="h-[500px] md:h-[550px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 overflow-y-auto">
+        <div className="h-[460px] md:h-[550px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
           {images?.map((data, i) => (
             <div
               key={i}
