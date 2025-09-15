@@ -25,14 +25,14 @@ export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
         </Avatar>
         <div className="flex flex-col items-end gap-2">
           <p className="md:text-base text-sm font-bold">
-            {
-              data.firstName
-                ? <>
-                  <span>{data.firstName} </span>
-                  <span>{data.lastName}</span>
-                </>
-                : <span>@{data.username}</span>
-            }
+            {data.firstName ? (
+              <>
+                <span>{data.firstName} </span>
+                <span>{data.lastName}</span>
+              </>
+            ) : (
+              <span>@{data.username}</span>
+            )}
           </p>
           <div className="md:text-base text-xs font-normal text-grey felx">
             <span>دنبال کننده </span>

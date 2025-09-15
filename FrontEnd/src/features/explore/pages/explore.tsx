@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import SuccessBanner from '../components/SuccessBanner'
 import FriendCard from '../components/FriendCard'
 import { useExplore } from '../hooks/useExplore'
@@ -23,25 +22,17 @@ const ExploreEmpty = () => (
 )
 
 const Explore = () => {
-  const [showBanner, setShowBanner] = useState(true)
   const { data, isLoading } = useExplore(0, 10, 'ASC')
   const exploreData = data?.data
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowBanner(false)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
 
   return (
     <div className="flex flex-col gap-6">
       <h2 className="font-bold text-2xl">اکسپلور</h2>
-      <main className="w-full h-[750px] overflow-y-auto flex flex-wrap items-center justify-center gap-4 px-2">
-        {showBanner ? (
-          <SuccessBanner />
-        ) : isLoading ? (
-          <div>در حال بارگذاری...</div>
+      <main className="w-full h-[660px] overflow-y-auto flex flex-wrap items-center justify-center gap-4 px-2 py-2">
+        {isLoading ? (
+          <>
+            <SuccessBanner />
+          </>
         ) : exploreData && exploreData.length > 0 ? (
           <>
             {exploreData.map((follower, idx) => (
