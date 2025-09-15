@@ -10,7 +10,7 @@ export const FixedMenu = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[80%] bg-white rounded-full shadow-lg flex items-center justify-between px-12 py-3 border border-gray-400">
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[80%] bg-white rounded-full shadow-lg flex items-center justify-between px-12 py-3 border border-gray-400">
         {/* Left Icon */}
         <Link to="search">
           <Search className="w-6 h-6" />
