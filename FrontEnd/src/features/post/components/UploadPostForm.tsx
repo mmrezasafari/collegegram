@@ -131,7 +131,7 @@ export const UploadPostForm = ({
       {/* Content */}
       <div className="w-full min-h-[200px] flex items-start justify-center">
         {step === 0 && (
-          <div className="w-full flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-4 mt-2">
             <p className="text-base text-center">
               عکس‌های مورد نظرت رو آپلود کن:
             </p>

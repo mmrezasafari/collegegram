@@ -16,11 +16,17 @@ export async function updatePost(
   data: INewDataForUpdate,
 ): Promise<IUpdatedPostRes> {
   const formData = new FormData()
-
+  // caption
   formData.append('caption', data.caption)
+  //seperate files from image url
   data.images.forEach((file) => {
-    formData.append('images', file)
+    if (typeof file === "string") {
+      formData.append('imageUrls', file)
+    } else {
+      formData.append('images', file)
+    }
   })
+  // mentions
   formData.append('mention', data.mention)
 
   const res = await api.patch(`posts/${postId}`, formData, {
@@ -45,24 +51,24 @@ export function useUpdatePost(postId: string) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  post: {
-                    ...old.data.post,
-                    caption: newData.caption,
-                    images: newData.images.map(
-                      (img) =>
-                        img instanceof File
-                          ? { url: URL.createObjectURL(img) }
-                          : { url: img }, // backend url
-                    ) as IGetPostRes['data']['post']['images'],
-                  },
-                  mentionedUsernames: newData.mention
-                    .split('@')
-                    .filter((item) => item.length !== 0),
+              ...old,
+              data: {
+                ...old.data,
+                post: {
+                  ...old.data.post,
+                  caption: newData.caption,
+                  images: newData.images.map(
+                    (img) =>
+                      img instanceof File
+                        ? { url: URL.createObjectURL(img) }
+                        : { url: img }, // backend url
+                  ) as IGetPostRes['data']['post']['images'],
                 },
-              }
+                mentionedUsernames: newData.mention
+                  .split('@')
+                  .filter((item) => item.length !== 0),
+              },
+            }
             : old,
         )
 
