@@ -46,13 +46,14 @@ export class PostService {
 
     async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto) {
         const imagePaths: string[] = files.map(file => file.path);
-        const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption, dto.urls)
+        const urls = [...(dto.imageUrls ?? []), ...imagePaths].filter(url => url && url.trim() !== "");;
+        const updatedPost = await this.postRepo.updatePost(postId, userId, urls, dto.caption)
         if (!updatedPost) {
             throw new HttpError(404, "پست یافت نشد یا ویرایش انجام نشد");
         }
         const usernames = dto.mention ? extract(dto.mention, "mention") : null;
+        await this.mentionService.removePostMentions(postId);
         if (usernames) {
-            await this.mentionService.removePostMentions(postId);
             await this.mentionService.savePostMention(usernames, postId);
         }
         return { updatedPost, usernames }
