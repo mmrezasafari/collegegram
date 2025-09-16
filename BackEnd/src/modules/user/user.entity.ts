@@ -5,6 +5,7 @@ import { MentionEntity } from "../mention/mention.entity";
 import { LikeEntity } from "../like/like.entity";
 import { SavedPostEntity } from "../savedPost/saved-posts.entity";
 import { FollowEntity } from "../follow/follow.entity";
+import { CommentEntity } from "../comment/comment.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -61,4 +62,6 @@ export class UserEntity {
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers!: FollowEntity[];
 
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments!: CommentEntity[];
 }

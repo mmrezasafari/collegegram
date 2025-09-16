@@ -5,6 +5,7 @@ import { TagEntity } from "../tag/tag.entity";
 import { MentionEntity } from "../mention/mention.entity";
 import { LikeEntity } from "../like/like.entity";
 import { SavedPostEntity } from "../savedPost/saved-posts.entity";
+import { CommentEntity } from "../comment/comment.entity";
 
 @Entity("posts")
 export class PostEntity {
@@ -32,6 +33,9 @@ export class PostEntity {
 
   @OneToMany(() => SavedPostEntity, (savedPost) => savedPost.post)
   savedPosts!: SavedPostEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.post)
+  comments!: CommentEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;
