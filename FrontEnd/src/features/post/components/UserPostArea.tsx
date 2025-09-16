@@ -13,11 +13,11 @@ export const UserPostArea = () => {
   return (
     <>
       {images?.length ? (
-        <div className="h-[460px] md:h-[550px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
           {images?.map((data, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl h-66"
+              className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px]"
               onClick={() => {
                 setPostModalOpen(true)
                 setPostId(data.id)
@@ -26,7 +26,7 @@ export const UserPostArea = () => {
               <img
                 src={baseUrl(data.images[0].url)}
                 alt="Image 1"
-                className="w-full h-64 object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
           ))}

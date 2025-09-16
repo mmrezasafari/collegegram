@@ -26,9 +26,9 @@ const Explore = () => {
   const exploreData = data?.data
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl">اکسپلور</h2>
-      <main className="w-full h-[660px] overflow-y-auto flex flex-wrap items-center justify-center gap-4 px-2 py-2">
+      <main className="w-full overflow-y-auto flex flex-wrap items-center justify-center gap-4 px-2 py-2">
         {isLoading ? (
           <>
             <SuccessBanner />

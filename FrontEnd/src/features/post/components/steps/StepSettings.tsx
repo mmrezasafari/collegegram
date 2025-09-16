@@ -17,7 +17,7 @@ export const StepSettings = ({ mention, setMention }: IProps) => {
           style={{ direction: 'ltr' }}
           value={mention}
           onChange={(e) => setMention(e.target.value)}
-          placeholder="دوستات رو با فاصله از هم منشن کن"
+          placeholder="دوستات رو با @ منشن کن"
         />
       </div>
     </div>
