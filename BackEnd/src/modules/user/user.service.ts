@@ -12,7 +12,7 @@ export class UserService {
         if (!user) {
             throw new HttpError(404, "کاربر یافت نشد");
         }
-        return user;
+        return { ...user, imagePath: process.env.BACKEND_HOST || "http://localhost:3000" + user.imagePath };
     }
 
     async getUserByUsername(username: string): Promise<User> {
@@ -20,7 +20,8 @@ export class UserService {
         if (!user) {
             throw new HttpError(404, "کاربر یافت نشد");
         }
-        return user;
+        return { ...user, imagePath: process.env.BACKEND_HOST || "http://localhost:3000" + user.imagePath };
+
     }
 
     async editProfile(id: string, dto: UpdateUserDto) {
@@ -39,10 +40,15 @@ export class UserService {
 
     async saveProfileImage(file: Express.Multer.File, userId: string) {
         await this.getUser(userId);
-        const imagePath = `/uploads/${file.filename}`;
+        const imagePath = `/public/uploads/${file.filename}`;
         await this.userRepo.saveImage(userId, imagePath);
         return file;
     }
-
+    async searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string | null) {
+        if (!search) {
+            return await this.userRepo.getUsersExplore(userId, offset, limit, sort);
+        }
+        return await this.userRepo.searchUserInExplore(userId, offset, limit, sort, search);
+    }
 
 }

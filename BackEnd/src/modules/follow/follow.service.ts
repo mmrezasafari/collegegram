@@ -104,7 +104,9 @@ export class FollowService {
       }
       const followerCount = await this.countFollow(post.user.id, "followers");
       const likeCount = await this.likeService.getLikesCount(post.id);
+      const isLiked = await this.likeService.liked(post.id, userId);
       const savedCount = await this.saveService.getSaveCount(post.id);
+      const isSaved = await this.saveService.saved(post.id, userId);
       data.push({
         username: post.user.username,
         firstName: post.user.firstName,
@@ -118,7 +120,9 @@ export class FollowService {
         },
         followerCount: followerCount ?? 0,
         likeCount: likeCount ?? 0,
+        isLiked,
         savedCount: savedCount ?? 0,
+        isSaved,
         commentCount: 20
       })
     }

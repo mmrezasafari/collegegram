@@ -16,7 +16,7 @@ export const handleExpress = async<A extends object | null>(res: Response, fn: (
       res.status(200).json(successResponse<A>(data));
     }
   } catch (error) {
-
+    console.log(error)
     if (error instanceof HttpError) {
       res.status(error.status).json(errorResponse(error.message));
       return;

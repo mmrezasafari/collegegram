@@ -14,13 +14,14 @@ import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
 import { UploadPostForm } from '@/features/post/components/UploadPostForm'
+import { FixedMenu } from '@/features/common/components/layout/FixedMenu'
 
 export const ProfileLayout = () => {
   const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
 
   return (
-    <div className="bg-backgroundLight min-h-screen py-4 px-8 md:py-12 md:px-14">
-      <SidebarProvider className="relative md:min-h-[850px] min-h-[800px] grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[0.01fr_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
+    <div className="bg-backgroundLight min-h-screen py-4 px-8 md:py-6 md:px-14">
+      <SidebarProvider className="relative md:min-h-[850px] min-h-[800px] grid grid-cols-1 md:grid-cols-[0.3fr_1fr] grid-rows-[auto_1fr] md:gap-x-[72px] md:gap-y-0 gap-0 justify-center">
         <div className="hidden md:flex col-start-1 row-start-1 col-end-2 row-end-2">
           <Button
             className="w-full max-md:hidden"
@@ -56,9 +57,10 @@ export const ProfileLayout = () => {
         <div className="md:flex-auto max-md:hidden col-start-1 row-start-2 col-end-2 row-end-3">
           <AppSidebar />
         </div>
-        <div className="h-full col-start-1 row-start-2 col-end-2 row-end-3 md:col-start-2 md:row-start-2 md:col-end-3 md:row-end-3">
+        <div className="col-start-1 row-start-2 col-end-2 row-end-3 md:col-start-2 md:row-start-2 md:col-end-3 md:row-end-3">
           <Outlet />
         </div>
+        <FixedMenu />
       </SidebarProvider>
       {uploadPostWizardOpen && (
         <DialogAndModalWizard

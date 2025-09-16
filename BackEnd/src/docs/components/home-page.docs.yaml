@@ -28,15 +28,21 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PostImage"
-        followCount:
+        followerCount:
           type: number
           example: 20
         likeCount:
           type: number
           example: 20
+        isLiked: 
+          type: boolean
+          example: true
         savedCount:
           type: number
           example: 20
+        isSaved: 
+          type: boolean
+          example: true
         commentCount:
           type: number
           example: 20

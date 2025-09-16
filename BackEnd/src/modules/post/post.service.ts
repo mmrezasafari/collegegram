@@ -30,7 +30,7 @@ export class PostService {
             throw new HttpError(404, "پست  ایجاد نشد")
         }
         const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
-        const savedhashtags = await this.hashtagSarvice.savePostHashtags(hashtags, post.id)
+        const savedhashtags = await this.hashtagSarvice.savePostHashtags(post.id, hashtags)
         return { post, mentionedUsernames, savedhashtags };
     }
     async getPostById(postId: string): Promise<Post> {
@@ -46,16 +46,22 @@ export class PostService {
 
     async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto) {
         const imagePaths: string[] = files.map(file => file.path);
-        const updatedPost = await this.postRepo.updatePost(postId, userId, imagePaths, dto.caption)
+        const urls = [...(dto.imageUrls ?? []), ...imagePaths].filter(url => url && url.trim() !== "");;
+        const updatedPost = await this.postRepo.updatePost(postId, userId, urls, dto.caption)
         if (!updatedPost) {
             throw new HttpError(404, "پست یافت نشد یا ویرایش انجام نشد");
         }
         const usernames = dto.mention ? extract(dto.mention, "mention") : null;
+        await this.mentionService.removePostMentions(postId);
         if (usernames) {
-            await this.mentionService.removePostMentions(postId);
             await this.mentionService.savePostMention(usernames, postId);
         }
-        return { updatedPost, usernames }
+        const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
+        await this.hashtagSarvice.removePostHashtags(postId);
+        if (hashtags){
+            await this.hashtagSarvice.savePostHashtags(postId, hashtags)
+        }
+        return { updatedPost, usernames, hashtags }
     }
     async getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string) {
         return await this.postRepo.getFollowingPosts(usersId, offset, limit, sort);

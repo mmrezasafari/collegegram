@@ -1,9 +1,12 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { ProfileLayout } from '@/layouts/ProfileLayout'
-import { ProfilePage } from '@/features/profile/pages/ProfilePage'
+import { OwnProfilePage } from '@/features/profile/pages/OwnProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
+import Explore from '@/features/explore/pages/explore'
+import Tagged from '@/features/tagged/pages/Tagged'
+import Saves from '@/features/saved/pages/Saves'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -25,11 +28,13 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/profile',
         element: <ProfileLayout />,
         children: [
-          { index: true, element: <ProfilePage /> },
-          { path: ':username', element: <UserProfilePage /> },
+          { index: true, path: '/explore', element: <Explore /> },
+          { path: '/profile', element: <OwnProfilePage /> },
+          { path: '/profile/:username', element: <UserProfilePage /> },
+          { path: '/tagged', element: <Tagged /> },
+          { path: '/saves', element: <Saves /> },
         ],
       },
     ],

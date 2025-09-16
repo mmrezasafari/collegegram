@@ -4,12 +4,7 @@ import { Checkbox } from '@/features/common/components/ui/checkbox'
 import { Input } from '@/features/common/components/ui/input'
 import { Label } from '@/features/common/components/ui/label'
 import { useInput } from '@/features/common/hooks/useInput'
-import {
-  emailSchema,
-  loginFormSchema,
-  passwordSchema,
-  validateWithYup,
-} from '@/utils/validation'
+import { loginFormSchema } from '@/utils/validation'
 import { useEffect, useState, type ComponentProps } from 'react'
 import { useLogin } from '../hooks/useAuth'
 import { ValidationError } from 'yup'
@@ -22,12 +17,8 @@ export const LoginForm = () => {
     isPending: loginIsPending,
   } = useLogin()
   const navigate = useNavigate()
-  const email = useInput('email', '', (val) =>
-    validateWithYup(emailSchema, val),
-  )
-  const password = useInput('password', '', (val) =>
-    validateWithYup(passwordSchema, val),
-  )
+  const userNameOrEmail = useInput('userNameOrEmail', '')
+  const password = useInput('password', '')
   const [rememberMe, setRememberMe] = useState(false)
 
   const onRememberMeClick: ComponentProps<'button'>['onClick'] = () => {
@@ -36,7 +27,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (loginData?.success) {
-      navigate('/profile')
+      navigate('/explore')
     }
   }, [loginData?.success, navigate])
 
@@ -44,11 +35,13 @@ export const LoginForm = () => {
     e.preventDefault()
 
     const formValues = {
-      usernameOrEmail: email.value,
+      usernameOrEmail: userNameOrEmail.value,
       password: password.value,
     }
 
     try {
+      userNameOrEmail.setError(undefined)
+      password.setError(undefined)
       loginFormSchema.validateSync(formValues, { abortEarly: false })
       loginMutation({
         ...formValues,
@@ -62,7 +55,8 @@ export const LoginForm = () => {
         })
 
         //set errors
-        if (errorMap.usernameOrEmail) email.setError(errorMap.usernameOrEmail)
+        if (errorMap.usernameOrEmail)
+          userNameOrEmail.setError(errorMap.usernameOrEmail)
         if (errorMap.password) password.setError(errorMap.password)
       }
     }
@@ -78,24 +72,23 @@ export const LoginForm = () => {
         <div className="flex flex-col">
           <div className="relative w-full max-w-sm">
             <Input
-              name={email.name}
-              ref={email.ref}
-              type="email"
-              placeholder="ایمیل"
+              name={userNameOrEmail.name}
+              ref={userNameOrEmail.ref}
+              type="text"
+              placeholder="نام‌کاربری یا ایمیل"
               className="pr-9"
-              value={email.value}
-              onChange={email.onChange}
-              onBlur={email.onBlur}
-              aria-invalid={email.error ? true : false}
+              onChange={userNameOrEmail.onChange}
+              value={userNameOrEmail.value}
+              aria-invalid={userNameOrEmail.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
               <EmailIcon />
             </div>
           </div>
-          {email.error && (
+          {userNameOrEmail.error && (
             <div className="flex text-textError text-xs gap-2 mt-2 px-2 text-justify">
               <ErrorIcon />
-              {email.error}
+              {userNameOrEmail.error}
             </div>
           )}
         </div>
@@ -109,7 +102,6 @@ export const LoginForm = () => {
               className="pr-9"
               value={password.value}
               onChange={password.onChange}
-              onBlur={password.onBlur}
               aria-invalid={password.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">

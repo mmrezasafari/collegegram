@@ -1,0 +1,44 @@
+import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { PostDetailsModal } from '@/features/post/components/PostDetailsModal'
+import type { ITagged } from '@/types/tagged'
+import { baseUrl } from '@/utils/baseUrl'
+import { useState } from 'react'
+
+interface IProps {
+  taggedPosts: ITagged
+}
+
+export const TaggedImageCard = ({ taggedPosts }: IProps) => {
+  const [postModalOpen, setPostModalOpen] = useState(false)
+  const [postId, setPostId] = useState('')
+
+  return (
+    <>
+      {taggedPosts.images.map((taggedPost) => (
+        <div
+          key={taggedPost.id}
+          className="overflow-hidden rounded-2xl w-[150px] md:w-full h-[150px] md:h-64"
+          onClick={() => {
+            setPostModalOpen(true)
+            setPostId(taggedPosts.id)
+          }}
+        >
+          <img
+            src={baseUrl(taggedPost.url)}
+            alt="Tagged Image"
+            className="object-cover"
+          />
+        </div>
+      ))}
+      {postModalOpen && (
+        <DialogAndModalWizard
+          open={postModalOpen}
+          setOpen={setPostModalOpen}
+          className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
+        >
+          <PostDetailsModal postId={postId} />
+        </DialogAndModalWizard>
+      )}
+    </>
+  )
+}

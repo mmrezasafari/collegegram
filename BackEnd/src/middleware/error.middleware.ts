@@ -4,6 +4,7 @@ import { errorResponse } from "../../utility/response";
 import { MulterError } from "multer";
 
 export const errorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
+  console.log(error)
   if (error instanceof ZodError) {
     if (error.issues[0].message === "Invalid UUID") {
       res.status(400).json(errorResponse("شناسه معتبر نیست"));
@@ -29,8 +30,8 @@ export const errorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
     return;
   }
 
-  if (error instanceof MulterError){
-     switch (error.code) {
+  if (error instanceof MulterError) {
+    switch (error.code) {
       case "LIMIT_FILE_SIZE":
         return res.status(400).json(errorResponse("حجم فایل بیش از حد مجاز است"));
 

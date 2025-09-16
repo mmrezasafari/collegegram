@@ -1,7 +1,8 @@
-import { DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { User } from "./model/user";
 import { Login } from "../auth/model/login";
+import { SearchUserByDetails } from "../search/models/searchUsers";
 
 export interface CreateUser {
   username: string,
@@ -25,6 +26,9 @@ export interface IUserRepository {
   create(userDto: CreateUser): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
   saveImage(id: string, imagePath: string): Promise<void>;
+  searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string): Promise<SearchUserByDetails[] | null>
+  getUsersExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SearchUserByDetails[] | null>
+
 }
 export class UserRepository implements IUserRepository {
   userRepository: Repository<UserEntity>;
@@ -85,4 +89,73 @@ export class UserRepository implements IUserRepository {
 
   }
 
+  async searchUserInExplore(
+    userId: string,
+    offset: number,
+    limit: number,
+    sort: "ASC" | "DESC",
+    search: string
+  ): Promise<SearchUserByDetails[] | null> {
+    return await this.userRepository.createQueryBuilder("user")
+      .select("user.username", "username")
+      .addSelect("user.firstName", "firstName")
+      .addSelect("user.lastName", "lastName")
+      .addSelect("user.imagePath", "imagePath")
+      .where(new Brackets(qb => {
+        qb.where('user.username ILike :search', { search: `%${search}%` })
+          .orWhere('user.firstName ILike :search', { search: `%${search}%` })
+          .orWhere('user.lastName ILike :search', { search: `%${search}%` })
+      }))
+      .andWhere("user.id != :userId", { userId })
+      .addSelect((qb) => {
+        return qb.subQuery()
+          .select('COUNT(*)')
+          .from('follows', 'follow')
+          .where('follow.followingId = user.id')
+      }, 'followersCount')
+      .addSelect((qb) => {
+        return qb.subQuery()
+          .select("CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END")
+          .from("follows", "f")
+          .where("f.followerId = :userId")
+          .andWhere("f.followingId = user.id");
+      }, "isFollowing")
+      .orderBy('"followersCount"', sort)
+      .addOrderBy("user.createdAt", sort)
+      .skip(offset)
+      .take(limit)
+      .getRawMany()
+  }
+  async getUsersExplore(
+    userId: string,
+    offset: number,
+    limit: number,
+    sort: "ASC" | "DESC"
+  ): Promise<SearchUserByDetails[] | null> {
+    return await this.userRepository.createQueryBuilder("user")
+      .select("user.username", "username")
+      .addSelect("user.firstName", "firstName")
+      .addSelect("user.lastName", "lastName")
+      .addSelect("user.imagePath", "imagePath")
+      .andWhere("user.id != :userId", { userId })
+      .addSelect((qb) => {
+        return qb.subQuery()
+          .select('COUNT(*)')
+          .from('follows', 'follow')
+          .where('follow.followingId = user.id')
+      }, 'followersCount')
+      .addSelect((qb) => {
+        return qb.subQuery()
+          .select("CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END")
+          .from("follows", "f")
+          .where("f.followerId = :userId")
+          .andWhere("f.followingId = user.id");
+      }, "isFollowing")
+      .setParameter("userId", userId)
+      .orderBy('"followersCount"', sort)
+      .addOrderBy("user.createdAt", sort)
+      .skip(offset)
+      .take(limit)
+      .getRawMany()
+  }
 }

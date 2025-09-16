@@ -31,6 +31,9 @@ import { feedRouter } from "./routes/feed.route";
 import { FeedService } from "./modules/feed.service";
 import { HashtagService } from "./modules/tag/tag.service";
 import { HashtagRepository } from "./modules/tag/tag.repository";
+import path from "path";
+import { SearchService } from "./modules/search/search.service";
+import { searchRouter } from "./routes/search.route";
 import { commentRouter } from "./routes/comment.route";
 import { CommentRepository } from "./modules/comment/comment.repository";
 import { CommentService } from "./modules/comment/comment.service";
@@ -51,6 +54,7 @@ export const makeApp = (dataSource: DataSource) => {
     origin: process.env.FRONTEND_HOST,
   }))
   app.use(express.json());
+  app.use('/BackEnd/public', express.static(path.join(__dirname, '..', 'public')))
   app.use(cookieParser());
 
   const userRepo = new UserRepository(dataSource);
@@ -72,15 +76,15 @@ export const makeApp = (dataSource: DataSource) => {
   const saveService = new SaveService(saveRepo, postService);
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
+  const searchService = new SearchService(userService, postService);
   const commentService = new CommentService(commentRepo, postService, userService)
-
 
   setupSwagger(app);
 
   app.use(authRouter(authService));
   app.use("/users", authMiddleware, userRouter(userService, followService, postService));
 
-  app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService));
+  app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService, saveService));
 
   app.use("/users", authMiddleware, followRouter(followService))
 
@@ -91,8 +95,12 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
   app.use("/posts", authMiddleware, feedRouter(feedService));
+  
+  app.use("/search", authMiddleware, searchRouter(searchService));
 
   app.use("/posts", authMiddleware, commentRouter(commentService));
+
+
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
