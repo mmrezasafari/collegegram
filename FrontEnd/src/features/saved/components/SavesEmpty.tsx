@@ -1,5 +1,5 @@
 export const TaggedEmpty = () => (
-  <div className="flex flex-col items-center">
+  <div className="h-full flex flex-col items-center justify-center">
     <h1 className="font-bold text-xl md:text-3xl mb-6 text-[#200] text-center">
       هنوز پستی ذخیره نکردی
     </h1>

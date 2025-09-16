@@ -1,12 +1,12 @@
 import api from '@/lib/axios'
-import type { ITagGetRes } from '@/types/tagged'
+import type { ISavedGetRes } from '@/types/seved'
 import { useQuery } from '@tanstack/react-query'
 
 export async function fetchSavesDate(
   offset: number,
   limit: number,
   order: string,
-): Promise<ITagGetRes> {
+): Promise<ISavedGetRes> {
   const res = await api.get(
     `/profile/saved-page?offset=${offset}&limit=${limit}&sort=${order}`,
   )
@@ -15,7 +15,7 @@ export async function fetchSavesDate(
 }
 
 export function useSaves(offset: number, limit: number, order: string) {
-  return useQuery<ITagGetRes, Error>({
+  return useQuery<ISavedGetRes, Error>({
     queryKey: ['saves'],
     queryFn: () => fetchSavesDate(offset, limit, order),
   })
