@@ -72,7 +72,7 @@ export function AppSidebar() {
     <Sidebar
       side="right"
       collapsible="icon"
-      className="w-full h-full bg-light md:sticky rounded-3xl border border-geryLight py-4"
+      className=" bg-light w-full h-[calc(100vh-200px)] md:h-[calc(100vh-100px)] md:sticky rounded-3xl border border-geryLight py-4"
     >
       <SidebarContent className="h-full max-md:bg-geryVeryLight">
         <SidebarHeader className="text-right px-8 py-4 md:pt-0 md:pb-4 md:px-8 border-b border-geryLight">

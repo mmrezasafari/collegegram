@@ -5,8 +5,8 @@ import { OwnProfilePage } from '@/features/profile/pages/OwnProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
 import Explore from '@/features/explore/pages/explore'
-import Tagged from '@/features/tagged/pages/Tagged'
-import Saves from '@/features/saved/pages/Saves'
+import { Tagged } from '@/features/tagged/pages/Tagged'
+import { Saves } from '@/features/saved/pages/Saves'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
