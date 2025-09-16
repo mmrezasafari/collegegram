@@ -9,7 +9,6 @@ export const commentRouter = (commentService: CommentService) => {
   const app = Router();
 
   app.post("/:id/comment",(req, res) =>{
-      console.log("hi")
       const postId = zod.uuid().parse(req.params.id);
       const user = req.user
       if (!user) {
@@ -18,7 +17,6 @@ export const commentRouter = (commentService: CommentService) => {
           }
       const { content, parentId } = req.body;
       if(parentId == null){
-        console.log("commentid null")
         handleExpress(res, () => commentService.comment(postId,user.userId, content));
       }
       else{
@@ -26,6 +24,27 @@ export const commentRouter = (commentService: CommentService) => {
       }
     })
 
+  app.get("/:id/comment",(req, res)=>{
+      const postId = zod.uuid().parse(req.params.id);
+      const commentId = req.query.commentId;
+      const user = req.user
+      if (!user) {
+            res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+            return;
+        }
+      if(commentId == null){
+        handleExpress(res, () => commentService.getComments(postId));
+      }
+      if(commentId){
+        if(typeof commentId === "string"){
+        handleExpress(res, () => commentService.getReplies(commentId));
+        }
+        else{
+          res.status(400).json(errorResponse("آیدی کامنت باید استرینگ باشد"))
+          return;
+        }
+      }
+  })
 
   return app;
 }

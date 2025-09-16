@@ -7,7 +7,8 @@ export interface ICommentRepository {
   comment(postId:string, userId:string, content:string):Promise<Comment>;
   getById(commentId:string):Promise<Comment | null>;
   replyComment(postId:string, userId:string, content:string, parentId:string):Promise<Comment>;
-//   getComments(postId: string):Promise<Comment[] | null>;
+  getComments(postId: string):Promise<Comment[] | null>;
+  getReplies(commentId:string):Promise<Comment[] | null>;
 }
 
 export class CommentRepository implements ICommentRepository {
@@ -37,8 +38,28 @@ export class CommentRepository implements ICommentRepository {
     });
   }
   
-//   getComments(postId: string){
+  async getComments(postId: string){
+    return await this.commentRepository.find({
+    where:[
+        {postId: postId, parentId:undefined},
+        {postId: postId, parent:{parentId:undefined}}
+    ],
+    order: {
+    createdAt: "ASC" 
+  }
+    });
+  }
 
-//   }
-  
+  async getReplies(commentId:string){
+    const replies = await this.commentRepository.find({
+    where:[
+        {parentId:commentId}
+    ],
+    order: {
+    createdAt: "ASC" 
+  }
+    });
+  return replies.length > 0 ? replies : null;
+  }
+
 }

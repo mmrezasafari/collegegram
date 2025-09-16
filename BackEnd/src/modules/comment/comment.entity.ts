@@ -19,9 +19,6 @@ export class CommentEntity {
   @Column()
   parentId?: string;
 
-//   @Column()
-//   repliesComment?: CommentEntity[];
-
   @ManyToOne(() => PostEntity, (post) => post.comments, {  onDelete: "CASCADE", onUpdate: "CASCADE" })
   post!: PostEntity;
   

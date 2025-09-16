@@ -72,7 +72,7 @@ export const makeApp = (dataSource: DataSource) => {
   const saveService = new SaveService(saveRepo, postService);
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
-  const commentService = new CommentService(commentRepo, postService)
+  const commentService = new CommentService(commentRepo, postService, userService)
 
 
   setupSwagger(app);
@@ -90,10 +90,9 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
-  app.use("/posts", authMiddleware, feedRouter(feedService))
+  app.use("/posts", authMiddleware, feedRouter(feedService));
 
-  app.use("/posts", authMiddleware, commentRouter(commentService))
-
+  app.use("/posts", authMiddleware, commentRouter(commentService));
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
