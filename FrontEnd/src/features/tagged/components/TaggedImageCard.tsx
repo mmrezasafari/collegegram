@@ -17,7 +17,7 @@ export const TaggedImageCard = ({ taggedPosts }: IProps) => {
       {taggedPosts.images.map((taggedPost) => (
         <div
           key={taggedPost.id}
-          className="overflow-hidden rounded-2xl w-[150px] md:w-full h-[150px] md:h-64"
+          className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px]"
           onClick={() => {
             setPostModalOpen(true)
             setPostId(taggedPosts.id)
@@ -26,7 +26,7 @@ export const TaggedImageCard = ({ taggedPosts }: IProps) => {
           <img
             src={baseUrl(taggedPost.url)}
             alt="Tagged Image"
-            className="object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
       ))}
