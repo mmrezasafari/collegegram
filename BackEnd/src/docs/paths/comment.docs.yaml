@@ -1,0 +1,209 @@
+paths:
+  /posts/{id}/comment:
+    post:
+      summary: comment the post
+      tags:
+        - comment
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "This is a comment"
+                parentId:
+                  type: string
+                  nullable: true
+                  example: null
+      responses: 
+        "200": 
+          description: Like success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "کامنت شما با موفقیت ثبت شد"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کامنت یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+
+    get:
+      summary: get the comments of the post
+      tags:
+        - comment
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: string
+        - in: query
+          name: commentId
+          required: false
+          schema:
+            type: string
+      responses: 
+        "200": 
+          description: get comment successfully
+          content: 
+            application/json:
+              examples:
+                withoutCommentId:
+                  summary: Example when `commentId` is not provided
+                  value:
+                    success: true
+                    data:
+                      - commentId: "9a226755-a82d-403d-9141-5c7a63e0b9b2"
+                        userName: "daleya"
+                        firstName: null
+                        lastName: null
+                        profile: null
+                        content: "This is a first comment"
+                        date: "2025-09-16T11:43:09.185Z"
+                        replies: []
+                      - commentId: "e183646d-5e46-413e-a8d6-4f2acea8a8b5"
+                        userName: "daleya"
+                        firstName: null
+                        lastName: null
+                        profile: null
+                        content: "This is a second comment"
+                        date: "2025-09-16T11:43:45.376Z"
+                        replies:
+                          - commentId: "dbb329cf-8edb-49fa-b538-266a7543d1a0"
+                            userName: "daleya"
+                            firstName: null
+                            lastName: null
+                            profile: null
+                            content: "This is a first reply"
+                            date: "2025-09-16T11:44:04.787Z"
+                            hasReply: false
+                          - commentId: "d6b4bf46-2616-42a9-a9af-1fecd57cbb97"
+                            userName: "daleya"
+                            firstName: null
+                            lastName: null
+                            profile: null
+                            content: "This is a second reply"
+                            date: "2025-09-16T11:44:16.812Z"
+                            hasReply: true
+
+                withCommentId:
+                  summary: Example when `commentId` is provided
+                  value:
+                    success: true
+                    data:
+                      - commentId: "7887a865-5b25-46ac-b95c-7904081678aa"
+                        userName: "daleya"
+                        firstName: null
+                        lastName: null
+                        profile: null
+                        content: "This is a first reply of reply"
+                        date: "2025-09-16T11:44:43.827Z"
+                        hasReply: false
+                      - commentId: "72b49d74-81cb-471d-bad7-5a00b430e81a"
+                        userName: "daleya"
+                        firstName: null
+                        lastName: null
+                        profile: null
+                        content: "This is a second reply of reply"
+                        date: "2025-09-16T11:45:01.021Z"
+                        hasReply: false
+                      - commentId: "78e763b6-3fcc-4682-8dda-40748f481dd3"
+                        userName: "daleya"
+                        firstName: null
+                        lastName: null
+                        profile: null
+                        content: "This is a third reply of reply"
+                        date: "2025-09-16T11:47:13.489Z"
+                        hasReply: false
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Not found
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              examples:
+                postNotFound:
+                  summary: Post not found
+                  value:
+                    success: false
+                    message: "پست یافت نشد."
+                commentNotFound:
+                  summary: Comment not found
+                  value:
+                    success: false
+                    message: "کامنت یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"

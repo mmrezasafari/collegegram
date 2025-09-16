@@ -34,6 +34,9 @@ import { HashtagRepository } from "./modules/tag/tag.repository";
 import path from "path";
 import { SearchService } from "./modules/search/search.service";
 import { searchRouter } from "./routes/search.route";
+import { commentRouter } from "./routes/comment.route";
+import { CommentRepository } from "./modules/comment/comment.repository";
+import { CommentService } from "./modules/comment/comment.service";
 
 declare global {
   namespace Express {
@@ -62,6 +65,7 @@ export const makeApp = (dataSource: DataSource) => {
   const saveRepo = new SaveRepository(dataSource)
   const mentionRepo = new MentionRepository(dataSource)
   const hashtagRepo = new HashtagRepository(dataSource);
+  const commentRepo = new CommentRepository(dataSource)
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
@@ -73,7 +77,7 @@ export const makeApp = (dataSource: DataSource) => {
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
   const searchService = new SearchService(userService, postService);
-
+  const commentService = new CommentService(commentRepo, postService, userService)
 
   setupSwagger(app);
 
@@ -91,9 +95,10 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
   app.use("/posts", authMiddleware, feedRouter(feedService));
-
+  
   app.use("/search", authMiddleware, searchRouter(searchService));
 
+  app.use("/posts", authMiddleware, commentRouter(commentService));
 
 
 
