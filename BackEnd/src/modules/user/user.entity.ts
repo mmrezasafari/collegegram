@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SessionEntity } from "../auth/session.entity";
 import { PostEntity } from "../post/post.entity";
 import { MentionEntity } from "../mention/mention.entity";
@@ -6,6 +6,8 @@ import { LikeEntity } from "../like/like.entity";
 import { SavedPostEntity } from "../savedPost/saved-posts.entity";
 import { FollowEntity } from "../follow/follow.entity";
 import { CommentEntity } from "../comment/comment.entity";
+import { minioClient } from "../../config/minio.config";
+import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 
 @Entity("users")
 export class UserEntity {
@@ -32,6 +34,9 @@ export class UserEntity {
 
   @Column({ nullable: true })
   imagePath?: string;
+
+  @Column({ nullable: true, type: "enum", enum: ImageMimeType })
+  mimeType?: ImageMimeType;
 
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions!: SessionEntity[]
@@ -64,4 +69,19 @@ export class UserEntity {
 
   @OneToMany(() => CommentEntity, (comment) => comment.user)
   comments!: CommentEntity[];
+  @AfterLoad()
+  async getUrlFromMinio() {
+    if (this.imagePath) {
+      this.imagePath = await minioClient.presignedGetObject(
+        "profile-image",
+        this.imagePath,
+        3600,
+        {
+          "response-content-disposition": "inline",
+          "response-content-type": this.mimeType ?? "image/jpeg"
+        }
+      );
+    }
+  }
+
 }

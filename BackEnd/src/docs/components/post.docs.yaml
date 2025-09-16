@@ -9,6 +9,9 @@ components:
         url:
           type: string
           example: "public/uploads/images-1757097988650.jpg"
+        mimeType:
+          type: string 
+          example: "image/jpeg"
         createdAt:
           type: string
           format: date-time
