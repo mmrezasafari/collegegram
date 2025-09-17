@@ -112,7 +112,7 @@ export class CommentService {
     async getReplies(commentId: string){
         const replies = await this.commentRepo.getReplies(commentId);
         const repliesOutputs : ReplyCommentOutput[] = [];
-        if(replies && replies.length>1){
+        if(replies){
             for(var reply of replies){
                 let replyOutput = await this.convertToReplyCommentOutput(reply);
                 if(replyOutput){
