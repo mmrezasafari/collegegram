@@ -4,7 +4,7 @@ import { FollowersList } from '@/features/relationships/components/FollowersList
 import { FollowingsList } from '@/features/relationships/components/FollowingList'
 import { Separator } from '@/features/common/components/ui/separator'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import { EditProfileForm } from './EditProfileForm'
@@ -103,30 +103,30 @@ export const OwnProfileOverView = () => {
         </Button>
       </div>
       {followingsListOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={followingsListOpen}
           setOpen={setFollowingsListOpen}
           title="دنبال شونده‌‌ها"
         >
           <FollowingsList onClose={() => setFollowingsListOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
       {followersListOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={followersListOpen}
           setOpen={setFollowersListOpen}
           title="دنبال‌کننده‌ها"
         >
           <FollowersList onClose={() => setFollowersListOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
       {editProfileOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={editProfileOpen}
           setOpen={setEditProfileOpen}
         >
           <EditProfileForm onSuccess={() => setEditProfileOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useGetPosts } from '../hooks/usePosts'
 import { PostDetailsModal } from './PostDetailsModal'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { baseUrl } from '@/utils/baseUrl'
 
 export const UserPostArea = () => {
@@ -41,13 +41,13 @@ export const UserPostArea = () => {
         </div>
       )}
       {postModalOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={postModalOpen}
           setOpen={setPostModalOpen}
           className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
         >
           <PostDetailsModal postId={postId} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

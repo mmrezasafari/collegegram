@@ -2,7 +2,7 @@ import { PanelsTopLeft, Plus, Search } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { DialogAndModalWizard } from './DialogAndModalWizard'
+import { DialogAndDrawerWizard } from './DialogAndDrawerWizard'
 import { UploadPostForm } from '@/features/post/components/UploadPostForm'
 
 export const FixedMenu = () => {
@@ -32,12 +32,12 @@ export const FixedMenu = () => {
         </Link>
       </div>
       {uploadPostWizardOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={uploadPostWizardOpen}
           setOpen={setUploadPostWizardOpen}
         >
           <UploadPostForm onSuccess={() => setUploadPostWizardOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

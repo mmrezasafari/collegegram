@@ -3,7 +3,7 @@ import { useGetPosts } from '../hooks/usePosts'
 import { PostDetailsModal } from './PostDetailsModal'
 import { Button } from '@/features/common/components/ui/button'
 import { Plus } from 'lucide-react'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
 import { baseUrl } from '@/utils/baseUrl'
 
@@ -62,21 +62,21 @@ export const OwnPostArea = () => {
         </div>
       )}
       {uploadPostWizardOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={uploadPostWizardOpen}
           setOpen={setUploadPostWizardOpen}
         >
           <UploadPostForm onSuccess={() => setUploadPostWizardOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
       {postModalOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={postModalOpen}
           setOpen={setPostModalOpen}
           className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
         >
           <PostDetailsModal postId={postId} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

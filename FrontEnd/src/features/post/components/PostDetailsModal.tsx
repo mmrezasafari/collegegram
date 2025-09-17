@@ -22,7 +22,7 @@ import 'dayjs/locale/fa'
 import { parseCaption } from '@/utils/textDecoration'
 import { useToggleSavePost } from '@/features/bookmark/hooks/useBookmark'
 import { useToggleLike } from '@/features/like/hooks/useLike'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
 import { Link } from 'react-router-dom'
 import { baseUrl } from '@/utils/baseUrl'
@@ -204,17 +204,17 @@ export const PostDetailsModal = ({ postId }: IProp) => {
           <div className="flex gap-2">
             {post?.mentionedUsernames?.length
               ? post.mentionedUsernames.map((user, i) => (
-                  <div key={i} className="text-light">
-                    <Link to={`/profile/${user}`}>
-                      <Badge
-                        className="text-sm hover:scale-103 transition-all"
-                        variant="secondary"
-                      >
-                        {user}
-                      </Badge>
-                    </Link>
-                  </div>
-                ))
+                <div key={i} className="text-light">
+                  <Link to={`/profile/${user}`}>
+                    <Badge
+                      className="text-sm hover:scale-103 transition-all"
+                      variant="secondary"
+                    >
+                      {user}
+                    </Badge>
+                  </Link>
+                </div>
+              ))
               : null}
           </div>
           <div className="max-md:hidden flex justify-end gap-4">
@@ -251,7 +251,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
         </div>
       </div>
       {editPostModalOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={editPostModalOpen}
           setOpen={setEditPostModalOpen}
           className="h-fit flex flex-col"
@@ -262,7 +262,7 @@ export const PostDetailsModal = ({ postId }: IProp) => {
             mode="edit"
             onSuccess={() => setEditPostModalOpen(false)}
           />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

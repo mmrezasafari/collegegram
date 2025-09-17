@@ -14,7 +14,7 @@ import {
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelations'
 import { useState } from 'react'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 
 export const UserProfileOverView = () => {
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
@@ -164,22 +164,22 @@ export const UserProfileOverView = () => {
         />
       </div>
       {followingsListOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={followingsListOpen}
           setOpen={setFollowingsListOpen}
           title="دنبال شونده‌‌ها"
         >
           <FollowingsList onClose={() => setFollowingsListOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
       {followersListOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={followersListOpen}
           setOpen={setFollowersListOpen}
           title="دنبال‌کننده‌ها"
         >
           <FollowersList onClose={() => setFollowersListOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )
