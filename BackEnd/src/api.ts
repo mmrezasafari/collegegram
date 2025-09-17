@@ -76,8 +76,9 @@ export const makeApp = (dataSource: DataSource) => {
   const saveService = new SaveService(saveRepo, postService);
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService);
-  const searchService = new SearchService(userService, postService);
   const commentService = new CommentService(commentRepo, postService, userService)
+  const searchService = new SearchService(userService, hashtagService);
+
 
   setupSwagger(app);
 
