@@ -63,5 +63,49 @@ components:
               items:
                 type: string
               example: ["test", "tag"]
+    PostWithTags:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "10f9ac2f-b086-46e0-b112-9746901837ea"
+        caption:
+          type: string
+          example: "in #iran beautiful #iran_nature"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-15T06:20:52.468Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-09-15T06:31:37.602Z"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostImage"
+        tags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: "8f19ff7d-ac66-4637-b44c-175160325e54"
+              context:
+                type: string
+                example: "iran"
+              createdAt:
+                type: string
+                format: date-time
+                example: "2025-09-15T06:25:58.726Z"
+              updatedAt:
+                type: string
+                format: date-time
+                example: "2025-09-15T06:25:58.726Z"
+
+      
 
       

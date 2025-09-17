@@ -1,12 +1,14 @@
 import { DataSource, Repository } from "typeorm";
 import { TagEntity } from "./tag.entity";
-import { Tag } from "./model/tag";
 import { PostEntity } from "../post/post.entity";
+import { SearchTag } from "../search/models/searchTags";
 
 
 export interface IHashtagRepository {
-    saveHashtag(postId: string, hashtags: string[]):Promise<TagEntity[]  | undefined>
-    removePostHashtags(postId: string): Promise<void>
+    saveHashtag(postId: string, hashtags: string[]):Promise<TagEntity[]  | undefined>;
+    removePostHashtags(postId: string): Promise<void>;
+    searchTagInExplore(offset: number, limit: number, sort: "ASC" | "DESC", search: string): Promise<SearchTag[]>
+    getTagsExplore(offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SearchTag[]>;
 }
 
 export class HashtagRepository implements IHashtagRepository {
@@ -43,14 +45,53 @@ export class HashtagRepository implements IHashtagRepository {
 
   async removePostHashtags(postId: string) {
 
-  const post = await this.postRepository.findOne({
-    where: { id: postId },
-    relations: ["tags"],
-  });
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ["tags"],
+    });
 
-  if (post) {
-    post.tags = [];
-    await this.postRepository.save(post);
+    if (post) {
+      post.tags = [];
+      await this.postRepository.save(post);
+    }
   }
-}
+
+  async searchTagInExplore(
+    offset: number,
+    limit: number,
+    sort: "ASC" | "DESC",
+    search: string
+  ) {
+    const postsWithTag = await this.postRepository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.images", "images")
+      .leftJoinAndSelect("post.tags", "tags")
+      .where("tags.context LIKE :keyword", { keyword: `%${search}%` })
+
+      .addOrderBy("post.createdAt", sort)
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return postsWithTag;
+  }
+
+
+  async getTagsExplore(
+    offset: number,
+    limit: number,
+    sort: "ASC" | "DESC"
+  ) {
+    const posts = await this.postRepository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.images", "images")
+      .leftJoinAndSelect("post.tags", "tags")
+      .addOrderBy("post.createdAt", sort)
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return posts
+  }
+
 }

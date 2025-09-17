@@ -18,5 +18,12 @@ export class HashtagService {
         await this.tagRepo.removePostHashtags(postId);
     }
 
+    async searchTagInExplore(offset: number, limit: number, sort: "ASC" | "DESC", search: string | null) {
+        if (!search) {
+            return await this.tagRepo.getTagsExplore(offset, limit, sort);
+        }
+        return await this.tagRepo.searchTagInExplore(offset, limit, sort, search);
+    }
+
 
 }
