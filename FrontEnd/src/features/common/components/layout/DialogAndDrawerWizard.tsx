@@ -24,7 +24,7 @@ interface Iprops {
   children: ReactNode
 }
 
-export const DialogAndModalWizard = ({
+export const DialogAndDrawerWizard = ({
   open,
   setOpen,
   title,

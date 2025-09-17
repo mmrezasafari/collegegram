@@ -1,4 +1,4 @@
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { PostDetailsModal } from '@/features/post/components/PostDetailsModal'
 import type { ISaved } from '@/types/seved'
 import { baseUrl } from '@/utils/baseUrl'
@@ -31,13 +31,13 @@ export const SavesImageCard = ({ savesPosts }: IProps) => {
         </div>
       ))}
       {postModalOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={postModalOpen}
           setOpen={setPostModalOpen}
           className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
         >
           <PostDetailsModal postId={postId} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </>
   )

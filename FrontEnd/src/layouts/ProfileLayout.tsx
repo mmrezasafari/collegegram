@@ -12,7 +12,7 @@ import { Plus, UserRound } from 'lucide-react'
 import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
-import { DialogAndModalWizard } from '@/features/common/components/layout/DialogAndModalWizard'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from '@/features/post/components/UploadPostForm'
 import { FixedMenu } from '@/features/common/components/layout/FixedMenu'
 
@@ -63,12 +63,12 @@ export const ProfileLayout = () => {
         <FixedMenu />
       </SidebarProvider>
       {uploadPostWizardOpen && (
-        <DialogAndModalWizard
+        <DialogAndDrawerWizard
           open={uploadPostWizardOpen}
           setOpen={setUploadPostWizardOpen}
         >
           <UploadPostForm onSuccess={() => setUploadPostWizardOpen(false)} />
-        </DialogAndModalWizard>
+        </DialogAndDrawerWizard>
       )}
     </div>
   )
