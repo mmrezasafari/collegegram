@@ -16,13 +16,10 @@ export class FeedService {
     ) { }
 
     async getPost(postId: string, userId: string){
-        const existuser = await this.userService.getUser(userId);
-        const user = {
-            username: existuser.username,
-            imagePath: existuser.imagePath
-        };
         const existpost = await this.postService.getPostById(postId);
         const post = {
+            username: existpost.user.username,
+            profileImage: existpost.user.imagePath,
             caption: existpost.caption,
             images: existpost.images,
             createdAt: existpost.createdAt,
@@ -35,6 +32,6 @@ export class FeedService {
         const saveCount = await this.saveService.getSaveCount(postId);
         const saved = await this.saveService.saved(postId, userId);
 
-        return{user, post, mentionedUsernames,likeCount, liked, saveCount, saved}
+        return{ post, mentionedUsernames,likeCount, liked, saveCount, saved}
     }
 }

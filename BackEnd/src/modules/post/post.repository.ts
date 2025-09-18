@@ -5,7 +5,7 @@ import { PostImagesEntity } from "./post-images.entity";
 export interface IPostRepository {
   createPost(id: string, imagesUrls: string[], caption: string): Promise<Post | null>;
   getPosts(userId: string): Promise<Post[] | null>;
-  getById(postId: string): Promise<Post | null>;
+  getById(postId: string): Promise<PostEntity | null>;
   countPost(userId: string): Promise<number>;
   updatePost(postId: string, userId: string, imageUrls?: string[], caption?: string): Promise<Post | null>
   getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string): Promise<Post[] | null>
@@ -44,7 +44,10 @@ export class PostRepository implements IPostRepository {
   }
 
   async getById(postId: string) {
-    return await this.postRepository.findOneBy({ id: postId });
+    return await this.postRepository.findOne({
+    where: { id: postId },
+    relations: ["user"],
+  });
   }
 
   async countPost(userId: string): Promise<number> {

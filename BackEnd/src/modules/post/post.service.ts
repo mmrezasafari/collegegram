@@ -33,7 +33,7 @@ export class PostService {
         const savedhashtags = await this.hashtagSarvice.savePostHashtags(post.id, hashtags)
         return { post, mentionedUsernames, savedhashtags };
     }
-    async getPostById(postId: string): Promise<Post> {
+    async getPostById(postId: string) {
         const post = await this.postRepo.getById(postId)
         if (!post) {
             throw new HttpError(404, "پست یافت نشد");
