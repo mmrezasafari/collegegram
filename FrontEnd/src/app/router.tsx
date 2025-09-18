@@ -7,6 +7,7 @@ import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
 import Explore from '@/features/explore/pages/explore'
 import { Tagged } from '@/features/tagged/pages/Tagged'
 import { Saves } from '@/features/saved/pages/Saves'
+import SearchPage from '@/features/search/pages/search'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
           { path: '/profile/:username', element: <UserProfilePage /> },
           { path: '/tagged', element: <Tagged /> },
           { path: '/saves', element: <Saves /> },
+          { path: '/search', element: <SearchPage /> },
         ],
       },
     ],
