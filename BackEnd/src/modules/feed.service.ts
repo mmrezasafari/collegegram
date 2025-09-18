@@ -20,6 +20,8 @@ export class FeedService {
         const post = {
             username: existpost.user.username,
             profileImage: existpost.user.imagePath,
+            firstName: existpost.user.firstName,
+            lastName: existpost.user.lastName,
             caption: existpost.caption,
             images: existpost.images,
             createdAt: existpost.createdAt,
