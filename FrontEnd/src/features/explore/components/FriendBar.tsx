@@ -16,7 +16,7 @@ const FriendBar = ({
 }: FriendBarProps) => {
   return (
     <div className="flex items-center w-full pb-4 gap-4">
-      <Avatar className="flex justify-center items-center w-[48px] h-[48px] rounded-full">
+      <Avatar className="flex justify-center items-center w-[35px] h-[35px] rounded-full">
         <AvatarImage
           src={avatarUrl}
           className="w-full h-full object-cover object-center scale-160 rounded-full"
@@ -26,9 +26,9 @@ const FriendBar = ({
           <UserRound color="#A5A5A5" strokeWidth={1.5} />
         </AvatarFallback>
       </Avatar>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <p className="font-bold text-[#222]">
-          <span>{firstName}</span>
+          <span>{firstName} </span>
           <span>{lastName}</span>
         </p>
         <p className="flex text-[#222] text-gray font-normal text-xs gap-1">

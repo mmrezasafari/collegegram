@@ -36,6 +36,9 @@ export const UploadPostForm = ({
   const [images, setImages] = useState<(string | File)[]>(
     initialData?.data.post.images.map((img) => img.url) || [],
   )
+  const [imagesName, setImagesNames] = useState<string[]>(
+    initialData?.data.post.images.map((img) => img.fileName) || [],
+  )
   const [caption, setCaption] = useState(initialData?.data.post.caption || '')
   const [mention, setMention] = useState(
     initialData?.data.mentionedUsernames
@@ -51,12 +54,21 @@ export const UploadPostForm = ({
     e.preventDefault()
     if (mode === 'create') {
       uploadMutate(
-        { caption: caption, images: images as File[], mention: mention },
+        {
+          caption: caption,
+          images: images as File[],
+          mention: mention,
+        },
         { onSuccess: () => onSuccess?.() },
       )
     } else {
       updateMutate(
-        { caption, mention: mention, images: images as File[] },
+        {
+          caption,
+          mention: mention,
+          images: images as File[],
+          fileName: imagesName,
+        },
         { onSuccess: () => onSuccess?.() },
       )
     }
@@ -64,8 +76,8 @@ export const UploadPostForm = ({
 
   return (
     <form
-      className="min-h-[450px] flex flex-col justify-between items-center px-8 md:px-20"
       onSubmit={onSubmit}
+      className="min-h-[450px] flex flex-col justify-between items-center px-8 md:px-20"
     >
       {/* Stepper */}
       <div className="flex">

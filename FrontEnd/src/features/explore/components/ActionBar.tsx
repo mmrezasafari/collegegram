@@ -1,6 +1,7 @@
 import { useToggleSavePost } from '@/features/bookmark/hooks/useBookmark'
 import { useToggleLike } from '@/features/like/hooks/useLike'
 import { Bookmark, Heart, MessageCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface IProps {
   postId: string
@@ -41,13 +42,13 @@ const ActionBar = ({
   return (
     <div className="flex w-full items-center gap-4 py-4">
       {/* Comment */}
-      <button
+      <Link
+        to={`/post/${postId}`}
         className="flex p-0 gap-2 justify-center items-center text-primary cursor-pointer"
-        disabled={true}
       >
         <MessageCircle color="#222" className="group-active:scale-90" />
         <span className="text-[#222]">7</span>
-      </button>
+      </Link>
       {/* Heart */}
       <button
         className="flex gap-2 justify-center items-center text-primary cursor-pointer"

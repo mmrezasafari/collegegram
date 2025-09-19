@@ -38,7 +38,11 @@ export const UserProfileOverView = () => {
         <div className="flex flex-col md:flex-col w-full md:gap-8 gap-4">
           <div className="flex w-full items-center md:gap-8 gap-4">
             <Avatar className="md:w-[147px] md:h-[147px] w-[65px] h-[65px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
-              <AvatarImage className="w-full h-full" alt="avatar" />
+              <AvatarImage
+                src={user?.imagePath}
+                className="w-full h-full object-cover rounded-full"
+                alt="avatar"
+              />
               <AvatarFallback className="w-[45px] md:w-[100px] h-auto">
                 <UserRound
                   className="w-full h-full object-cover"

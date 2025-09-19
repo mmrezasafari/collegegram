@@ -13,7 +13,7 @@ export const Tagged = () => {
         {isLoading ? (
           <div>در حال بارگذاری...</div>
         ) : taggedData && taggedData?.length ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 h-full p-2 overflow-y-auto">
             {taggedData?.map((data, idx) => (
               <TaggedImageCard key={idx} taggedPosts={data} />
             ))}

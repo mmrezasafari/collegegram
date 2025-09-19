@@ -6,6 +6,8 @@ export const Saves = () => {
   const { data, isLoading } = useSaves(0, 10, 'ASC')
   const savesData = data?.data
 
+  console.log(savesData)
+
   return (
     <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl mt-2">ذخیره‌ها</h2>
@@ -13,7 +15,7 @@ export const Saves = () => {
         {isLoading ? (
           <div>در حال بارگذاری...</div>
         ) : savesData && savesData.length ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto h-full">
             {savesData.map((item, idx) => (
               <SavesImageCard key={idx} savesPosts={item} />
             ))}

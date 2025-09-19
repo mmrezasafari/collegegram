@@ -4,18 +4,34 @@ import {
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
 import { UserRound } from 'lucide-react'
-import { ProfileDropdownShortcut } from '@/features/profile/components/ProfileDropdownShortcut'
+import { ProfileDropdownShortcut } from '@/features/relationships/components/ProfileDropdownShortcut'
 import type { IFollower, IFollowing } from '@/types/relations'
 
 export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
   const data = user?.user
   return (
-    <div className="flex flex-row-reverse w-full justify-between items-center">
+    <div className="flex  w-full justify-between items-center">
       <div className="flex flex-row-reverse items-center gap-4">
+        <div className="flex flex-col gap-2">
+          <p className="md:text-base text-sm font-bold">
+            {data.firstName ? (
+              <>
+                <span>{data.firstName} </span>
+                <span>{data.lastName}</span>
+              </>
+            ) : (
+              <span>{data.username}@</span>
+            )}
+          </p>
+          <div className="md:text-base text-xs font-normal text-grey felx">
+            <span>{data.followerCount} </span>
+            <span>دنبال کننده </span>
+          </div>
+        </div>
         <Avatar className="w-[56px] h-[56px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
           <AvatarImage
             src={data.imageUrl}
-            className="w-full h-full"
+            className="w-full h-full object-cover"
             alt="avatar"
           />
           <AvatarFallback className="w-[45px] h-auto">
@@ -27,22 +43,6 @@ export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
             />
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-end gap-2">
-          <p className="md:text-base text-sm font-bold">
-            {data.firstName ? (
-              <>
-                <span>{data.firstName} </span>
-                <span>{data.lastName}</span>
-              </>
-            ) : (
-              <span>@{data.username}</span>
-            )}
-          </p>
-          <div className="md:text-base text-xs font-normal text-grey felx">
-            <span>دنبال کننده </span>
-            <span>{data.followerCount}</span>
-          </div>
-        </div>
       </div>
       <ProfileDropdownShortcut user={data} />
     </div>

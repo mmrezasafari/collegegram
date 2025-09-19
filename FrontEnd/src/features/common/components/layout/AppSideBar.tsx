@@ -78,13 +78,19 @@ export function AppSidebar() {
         <SidebarHeader className="text-right px-8 py-4 md:pt-0 md:pb-4 md:px-8 border-b border-geryLight">
           <div className="flex items-center justify-end rtl:justify-start">
             <div className="group-data-[collapsible=icon]:hidden flex justify-between items-center gap-3 w-full">
-              <Avatar className="w-[48px] h-[48px]">
+              <Avatar className="w-[48px] h-auto">
                 <AvatarImage
-                  className="w-full h-full object-cover object-center scale-160"
+                  src={user?.imagePath}
+                  className="w-full h-full object-contain scale-160"
                   alt="avatar"
                 />
                 <AvatarFallback className="bg-geryVeryLight">
-                  <UserRound color="#A5A5A5" strokeWidth={1.5} />
+                  <UserRound
+                    className="w-full h-full object-cover"
+                    color="#A5A5A5A5"
+                    fill="#A5A5A5A5"
+                    strokeWidth={0}
+                  />
                 </AvatarFallback>
               </Avatar>
               <span className="text-base font-normal">{user?.username}</span>
