@@ -37,6 +37,7 @@ export const router = createBrowserRouter([
           { path: '/profile/:username', element: <UserProfilePage /> },
           { path: '/tagged', element: <Tagged /> },
           { path: '/saves', element: <Saves /> },
+          { path: '/search', element: <SearchPage /> },
         ],
       },
       {
