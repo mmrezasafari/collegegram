@@ -28,6 +28,8 @@ components:
                         type: string
                       url:
                         type: string
+                      fileName:
+                        type: string
                       createdAt:
                         type: string
                         format: date-time

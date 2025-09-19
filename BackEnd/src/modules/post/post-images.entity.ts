@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PostEntity } from "./post.entity";
+import { minioClient } from "../../config/minio.config";
+import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 
 @Entity("post_images")
 export class PostImagesEntity {
@@ -9,6 +11,9 @@ export class PostImagesEntity {
   @Column()
   url!: string;
 
+  @Column({ type: "enum", enum: ImageMimeType, default: ImageMimeType.jpeg })
+  mimeType!: ImageMimeType;
+
   @ManyToOne(() => PostEntity, (post) => post.images, { onDelete: "CASCADE", onUpdate: "CASCADE" })
   post!: PostEntity;
 
@@ -17,4 +22,19 @@ export class PostImagesEntity {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @AfterLoad()
+  async getUrlFromMinio() {
+    if (this.url) {
+      this.url = await minioClient.presignedGetObject(
+        "posts",
+        this.url,
+        3600,
+        {
+          "response-content-disposition": "inline",
+          "response-content-type": this.mimeType
+        }
+      );
+    }
+  }
 }
