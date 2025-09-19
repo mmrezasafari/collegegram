@@ -1,5 +1,5 @@
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
-import { PostDetailsModal } from '@/features/post/components/PostDetailsModal'
+import { PostDetails } from '@/features/post/components/PostDetails'
 import type { ISaved } from '@/types/seved'
 import { baseUrl } from '@/utils/baseUrl'
 import { useState } from 'react'
@@ -36,7 +36,7 @@ export const SavesImageCard = ({ savesPosts }: IProps) => {
           setOpen={setPostModalOpen}
           className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
         >
-          <PostDetailsModal postId={postId} />
+          <PostDetails postId={postId} />
         </DialogAndDrawerWizard>
       )}
     </>

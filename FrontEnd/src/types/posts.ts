@@ -56,14 +56,14 @@ export interface IPostsRes {
 export interface IGetPostRes {
   success: boolean
   data: {
-    user: {
-      username: string
-      imagePath: string
-    }
     post: {
       caption: string
       images: Array<IUploadedImage>
+      profileImage: string
+      username: string
       createdAt: string
+      firstName: string
+      lastName: string
     }
     mentionedUsernames: Array<string>
     likeCount: string

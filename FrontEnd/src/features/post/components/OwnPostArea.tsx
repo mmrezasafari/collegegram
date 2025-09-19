@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useGetPosts } from '../hooks/usePosts'
-import { PostDetailsModal } from './PostDetailsModal'
+import { PostDetails } from './PostDetails'
 import { Button } from '@/features/common/components/ui/button'
 import { Plus } from 'lucide-react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
@@ -75,7 +75,7 @@ export const OwnPostArea = () => {
           setOpen={setPostModalOpen}
           className="h-[95%] md:max-w-full md:w-[1250px] md:h-[730px] flex flex-col md:px-12"
         >
-          <PostDetailsModal postId={postId} />
+          <PostDetails postId={postId} />
         </DialogAndDrawerWizard>
       )}
     </>
