@@ -7,6 +7,8 @@ import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
 import Explore from '@/features/explore/pages/explore'
 import { Tagged } from '@/features/tagged/pages/Tagged'
 import { Saves } from '@/features/saved/pages/Saves'
+import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
+import { PostLayout } from '@/layouts/PostLayout'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -36,6 +38,10 @@ export const router = createBrowserRouter([
           { path: '/tagged', element: <Tagged /> },
           { path: '/saves', element: <Saves /> },
         ],
+      },
+      {
+        element: <PostLayout />,
+        children: [{ path: '/post/:postId', element: <PostDetailsPage /> }],
       },
     ],
   },
