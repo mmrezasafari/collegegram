@@ -64,7 +64,7 @@ export class PostRepository implements IPostRepository {
   }
 
   async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string) {
-    const existingPost = await this.getById(postId);
+    const existingPost: Post | null = await this.getById(postId);
     if (!existingPost) return null;
     const postImage: PostImage[] = [];
     if (imageUrls && imageUrls.length > 0) {
