@@ -3,6 +3,7 @@ import { UserEntity } from "./user.entity";
 import { User } from "./model/user";
 import { Login } from "../auth/model/login";
 import { SearchUserByDetails } from "../search/models/searchUsers";
+import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 
 export interface CreateUser {
   username: string,
@@ -25,7 +26,7 @@ export interface IUserRepository {
   getForLogin(usernameOrEmail: string): Promise<Login | null>;
   create(userDto: CreateUser): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
-  saveImage(id: string, imagePath: string): Promise<void>;
+  saveImage(id: string, imagePath: string, mimeType: ImageMimeType): Promise<void>;
   searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string): Promise<SearchUserByDetails[] | null>
   getUsersExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SearchUserByDetails[] | null>
 
@@ -84,8 +85,8 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async saveImage(id: string, imagePath: string): Promise<void> {
-    await this.userRepository.update(id, { imagePath });
+  async saveImage(id: string, imagePath: string, mimeType: ImageMimeType): Promise<void> {
+    await this.userRepository.update(id, { imagePath, mimeType });
 
   }
 

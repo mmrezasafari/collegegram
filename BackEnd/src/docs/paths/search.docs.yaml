@@ -83,4 +83,90 @@ paths:
                   $ref: "#/components/schemas/Error"
               example:
                 success: false
-                message: "خطای سرور"        
+                message: "خطای سرور"
+  /search/tags:
+    get:
+      summary: Search tags
+      tags: 
+        - search
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - in: query
+          name: offset
+          schema: 
+            type: integer
+            description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            description: The numbers of items to return
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+          example: ASC   
+        - in: query
+          name: search
+          schema: 
+            type: string
+            description: search between s by this phrase
+        - in: query
+          name: isSummary
+          schema:
+            type: boolean
+            description: Get response with details or no
+          example: false
+      responses:
+        200:
+          description: get successful tags
+          content:
+            application/json:
+              schema:
+
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    oneOf:
+                      - type: array
+                        items:
+                          $ref: "#/components/schemas/PostWithTags"
+                      - type: array
+                        items:
+                          type: string
+                          example: "iran"
+
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "مقادیر ورودی اشتباه است"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"            

@@ -3,22 +3,20 @@ components:
     GetPost:
       type: object
       properties:
-        success:
-          type: boolean
         data:
           type: object
           properties:
-            user:
-              type: object
-              properties:
-                username:
-                  type: string
-                imagePath:
-                  type: string
-                  nullable: true
             post:
               type: object
               properties:
+                username: 
+                  type: string
+                profileImage:
+                  type: string
+                firstName: 
+                  type: string
+                lastName: 
+                  type: string
                 caption:
                   type: string
                 images:
@@ -29,6 +27,8 @@ components:
                       id:
                         type: string
                       url:
+                        type: string
+                      fileName:
                         type: string
                       createdAt:
                         type: string

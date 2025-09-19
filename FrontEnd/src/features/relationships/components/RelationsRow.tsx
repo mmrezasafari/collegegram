@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/features/common/components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/features/common/components/ui/avatar'
 import { UserRound } from 'lucide-react'
 import { ProfileDropdownShortcut } from '@/features/profile/components/ProfileDropdownShortcut'
 import type { IFollower, IFollowing } from '@/types/relations'

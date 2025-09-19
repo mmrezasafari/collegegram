@@ -1,7 +1,7 @@
 export const highlightHastags = (text: string) => {
   return text.replace(
     /#[\u0600-\u06FF\w]+/g, // match # + Persian or English word chars
-    (match) => `<span class="font-black">${match}</span>`,
+    (match) => `<span class="font-black break-all">${match}</span>`,
   )
 }
 

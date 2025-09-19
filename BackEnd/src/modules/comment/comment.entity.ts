@@ -16,7 +16,7 @@ export class CommentEntity {
   @Column({ type: "text" })
   content!: string;
 
-  @Column()
+  @Column({ nullable: true })
   parentId?: string;
 
   @ManyToOne(() => PostEntity, (post) => post.comments, {  onDelete: "CASCADE", onUpdate: "CASCADE" })

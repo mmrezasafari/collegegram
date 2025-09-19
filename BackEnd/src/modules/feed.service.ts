@@ -4,6 +4,8 @@ import { PostService } from "./post/post.service";
 import { UserService } from "./user/user.service";
 import { MentionService } from "./mention/mention.service";
 import { SaveService } from "./savedPost/saved-post.service";
+import { Post } from "./post/model/post";
+import { HttpError } from "../../utility/http-error";
 
 
 export class FeedService {
@@ -15,17 +17,37 @@ export class FeedService {
         private saveService: SaveService
     ) { }
 
-    async getPost(postId: string, userId: string){
-        const existuser = await this.userService.getUser(userId);
+    async getPost(postId: string, userId: string) {
+        const existUser = await this.userService.getUser(userId);
         const user = {
-            username: existuser.username,
-            imagePath: existuser.imagePath
+            username: existUser.username,
+            imagePath: existUser.imagePath
         };
-        const existpost = await this.postService.getPostById(postId);
+        const existPost: Post = await this.postService.getPostById(postId);
+        if (!existPost) {
+            throw new HttpError(404, "پست یافت نشد");
+        }
+        existPost.images = existPost.images.map(image => {
+            const lastSlashIndex = image.url.lastIndexOf("/");
+            const questionMarkIndex = image.url.indexOf("?", lastSlashIndex);
+            let fileName: string;
+            if (questionMarkIndex === -1) {
+                // اگر ? نبود، کل رشته بعد از / میگیریم
+                fileName = image.url.slice(lastSlashIndex + 1);
+            } else {
+                // اگر ? بود، فقط تا قبلش
+                fileName = image.url.slice(lastSlashIndex + 1, questionMarkIndex);
+            }
+            return { ...image, fileName };
+        });
         const post = {
-            caption: existpost.caption,
-            images: existpost.images,
-            createdAt: existpost.createdAt,
+            username: existPost.user?.username,
+            profileImage: existPost.user?.imagePath,
+            firstName: existPost.user?.firstName,
+            lastName: existPost.user?.lastName,
+            caption: existPost.caption,
+            images: existPost.images,
+            createdAt: existPost.createdAt,
         };
         const mentionedUsernames = await this.mentionService.getMentionedUsernames(postId);
 
@@ -35,6 +57,6 @@ export class FeedService {
         const saveCount = await this.saveService.getSaveCount(postId);
         const saved = await this.saveService.saved(postId, userId);
 
-        return{user, post, mentionedUsernames,likeCount, liked, saveCount, saved}
+        return { user, post, mentionedUsernames, likeCount, liked, saveCount, saved }
     }
 }
