@@ -5,7 +5,6 @@ import { Button } from '@/features/common/components/ui/button'
 import { Plus } from 'lucide-react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
-import { baseUrl } from '@/utils/baseUrl'
 
 export const OwnPostArea = () => {
   const { data } = useGetPosts()
@@ -14,6 +13,8 @@ export const OwnPostArea = () => {
   const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
   const [postId, setPostId] = useState('')
 
+  console.log(images)
+
   return (
     <>
       {images?.length ? (
@@ -21,16 +22,16 @@ export const OwnPostArea = () => {
           {images?.map((data, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px]"
+              className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all"
               onClick={() => {
                 setPostModalOpen(true)
                 setPostId(data.id)
               }}
             >
               <img
-                src={baseUrl(data.images[0].url)}
+                src={data.images.length ? data.images[0].url : ''}
                 alt="Image 1"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"
               />
             </div>
           ))}

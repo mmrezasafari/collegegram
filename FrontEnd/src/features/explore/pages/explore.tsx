@@ -22,13 +22,13 @@ const ExploreEmpty = () => (
 )
 
 const Explore = () => {
-  const { data, isLoading } = useExplore(0, 10, 'ASC')
+  const { data, isLoading } = useExplore(0, 20, 'ASC')
   const exploreData = data?.data
 
   return (
     <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl">اکسپلور</h2>
-      <main className="w-full overflow-y-auto flex flex-wrap items-center justify-center gap-4 px-2 py-2">
+      <main className="w-full overflow-y-auto flex flex-wrap items-center gap-4 px-2 py-2">
         {isLoading ? (
           <>
             <SuccessBanner />

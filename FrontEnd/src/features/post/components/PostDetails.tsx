@@ -32,7 +32,6 @@ import { useToggleLike } from '@/features/like/hooks/useLike'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
 import { Link, useParams } from 'react-router-dom'
-import { baseUrl } from '@/utils/baseUrl'
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import { CommentSection } from '@/features/comment/components/CommentsSection'
 import { cn } from '@/lib/utils'
@@ -100,7 +99,11 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
               {/* avatar in mobile */}
               <div className="md:hidden flex items-center gap-4 ">
                 <Avatar className="w-[48px] h-[48px]">
-                  <AvatarImage src={post?.post.profileImage} alt="user" />
+                  <AvatarImage
+                    className="object-cover"
+                    src={post?.post.profileImage}
+                    alt="user"
+                  />
                   <AvatarFallback className="bg-geryLight">
                     <UserRound color="#A5A5A5" strokeWidth={1.5} />
                   </AvatarFallback>
@@ -140,7 +143,7 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   >
                     <img
                       className="h-[375px] md:rounded-3xl w-full md:h-[550px] object-contain"
-                      src={baseUrl(image.url)}
+                      src={image.url}
                     />
                   </CarouselItem>
                 ))}
@@ -204,7 +207,11 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
               {/* Avatar in desktop */}
               <div className="flex items-center gap-4">
                 <Avatar className="w-[48px] h-[48px]">
-                  <AvatarImage src={post?.post.profileImage} alt="user" />
+                  <AvatarImage
+                    className="object-cover"
+                    src={post?.post.profileImage}
+                    alt="user"
+                  />
                   <AvatarFallback className="bg-geryLight">
                     <UserRound color="#A5A5A5" strokeWidth={1.5} />
                   </AvatarFallback>
@@ -249,17 +256,17 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
             <div className="flex gap-2 flex-wrap">
               {post?.mentionedUsernames?.length
                 ? post.mentionedUsernames.map((user, i) => (
-                    <div key={i} className="text-light">
-                      <Link to={`/profile/${user}`}>
-                        <Badge
-                          className="text-sm hover:scale-103 transition-all"
-                          variant="secondary"
-                        >
-                          {user}
-                        </Badge>
-                      </Link>
-                    </div>
-                  ))
+                  <div key={i} className="text-light">
+                    <Link to={`/profile/${user}`}>
+                      <Badge
+                        className="text-sm hover:scale-103 transition-all"
+                        variant="secondary"
+                      >
+                        {user}
+                      </Badge>
+                    </Link>
+                  </div>
+                ))
                 : ''}
             </div>
             <div className="max-md:hidden flex justify-end gap-4">

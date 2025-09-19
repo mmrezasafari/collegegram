@@ -36,12 +36,12 @@ export const StepImages = ({
     typeof img === 'string' ? img : URL.createObjectURL(img)
 
   return (
-    <div className="w-full max-w-[360px] md:max-w-[420px] flex flex-col items-center gap-4">
-      <div className="grid grid-cols-3 max-h-[250px] gap-4 overflow-y-auto overflow-x-hidden snap-y py-2">
+    <div className="w-full md:max-w-[420px] flex flex-col items-center gap-4">
+      <div className="grid grid-cols-3 max-h-[250px] items-center justify-items-center item gap-3 overflow-y-auto overflow-x-hidden snap-y p-2">
         <button
           onClick={onPick}
           type="button"
-          className="w-24 md:w-28 aspect-square rounded-full border-2 border-orange-400 bg-transparent flex items-center justify-center cursor-copy"
+          className="w-20 md:w-24 aspect-square rounded-full border-2 border-orange-400 bg-transparent flex items-center justify-center cursor-copy"
           aria-label="افزودن عکس"
         >
           <div className="relative flex items-center justify-center">

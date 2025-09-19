@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useGetPosts } from '../hooks/usePosts'
 import { PostDetails } from './PostDetails'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
-import { baseUrl } from '@/utils/baseUrl'
 
 export const UserPostArea = () => {
   const { data } = useGetPosts()
@@ -24,7 +23,7 @@ export const UserPostArea = () => {
               }}
             >
               <img
-                src={baseUrl(data.images[0].url)}
+                src={data.images.length ? data.images[0].url : ''}
                 alt="Image 1"
                 className="w-full h-full object-cover"
               />

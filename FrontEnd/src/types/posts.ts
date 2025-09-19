@@ -4,11 +4,19 @@ export interface IUploadPosts {
   mention: string
 }
 
+export interface IUpdatedPosts {
+  caption: string
+  images: File[]
+  mention: string
+}
+
 export interface IUploadedImage {
   url: string
   id: string
   createdAt: string
   updatedAt: string
+  mimType: string
+  fileName: string
 }
 
 export interface IUploadedPostsRes {

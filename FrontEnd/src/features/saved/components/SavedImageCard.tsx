@@ -1,7 +1,6 @@
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { PostDetails } from '@/features/post/components/PostDetails'
 import type { ISaved } from '@/types/seved'
-import { baseUrl } from '@/utils/baseUrl'
 import { useState } from 'react'
 
 interface IProps {
@@ -14,22 +13,20 @@ export const SavesImageCard = ({ savesPosts }: IProps) => {
 
   return (
     <>
-      {savesPosts.images.map((savedPost) => (
-        <div
-          key={savedPost.id}
-          className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px]"
-          onClick={() => {
-            setPostModalOpen(true)
-            setPostId(savesPosts.id)
-          }}
-        >
-          <img
-            src={baseUrl(savedPost.url)}
-            alt="saved Image"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ))}
+      <div
+        key={savesPosts.id}
+        className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all"
+        onClick={() => {
+          setPostModalOpen(true)
+          setPostId(savesPosts.id)
+        }}
+      >
+        <img
+          src={savesPosts.images[0].url}
+          alt="saved Image"
+          className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"
+        />
+      </div>
       {postModalOpen && (
         <DialogAndDrawerWizard
           open={postModalOpen}

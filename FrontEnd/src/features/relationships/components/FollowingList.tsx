@@ -1,5 +1,4 @@
 import { RelationsRow } from './RelationsRow'
-import { ScrollArea } from '@/features/common/components/ui/scroll-area'
 import { Separator } from '@/features/common/components/ui/separator'
 import { useGetFollowings } from '../hooks/useRelations'
 import { Button } from '@/features/common/components/ui/button'
@@ -15,7 +14,7 @@ export const FollowingsList = ({ onClose }: IProps) => {
   return (
     <div className="h-full w-full flex justify-center mt-4">
       <div className="w-[350px] flex flex-col gap-8">
-        <ScrollArea className="h-[400px]">
+        <div className="h-[400px] overflow-y-auto px-2">
           {followingList?.length ? (
             followingList?.map((friend) => (
               <div key={friend.id}>
@@ -28,7 +27,7 @@ export const FollowingsList = ({ onClose }: IProps) => {
               این کاربر فردی را دنبال نمی‌کند
             </p>
           )}
-        </ScrollArea>
+        </div>
         <Button className="w-fit self-end" onClick={() => onClose()}>
           بستن
         </Button>
