@@ -24,6 +24,9 @@ components:
         imagePath:
           type: string
           example: "example.jpg"
+        mimeType:
+          type: string 
+          example: "image/jpeg"
         createAt:
           type: string
           example: 2025-09-04T05:33:18.772Z

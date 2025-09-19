@@ -3,6 +3,8 @@ import { User } from "./model/user";
 import { hashingPassword } from "../../../utility/bcrypt-password";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { IUserRepository } from "./user.repository";
+import { minioClient } from "../../config/minio.config";
+import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 export class UserService {
     constructor(
         private userRepo: IUserRepository,
@@ -12,7 +14,7 @@ export class UserService {
         if (!user) {
             throw new HttpError(404, "کاربر یافت نشد");
         }
-        return { ...user, imagePath: process.env.BACKEND_HOST || "http://localhost:3000" + user.imagePath };
+        return user;
     }
 
     async getUserByUsername(username: string): Promise<User> {
@@ -20,7 +22,7 @@ export class UserService {
         if (!user) {
             throw new HttpError(404, "کاربر یافت نشد");
         }
-        return { ...user, imagePath: process.env.BACKEND_HOST || "http://localhost:3000" + user.imagePath };
+        return user;
 
     }
 
@@ -39,10 +41,14 @@ export class UserService {
     }
 
     async saveProfileImage(file: Express.Multer.File, userId: string) {
-        await this.getUser(userId);
-        const imagePath = `/public/uploads/${file.filename}`;
-        await this.userRepo.saveImage(userId, imagePath);
-        return file;
+        console.log(file)
+        const user = await this.getUser(userId);
+        const name = file.originalname.split(".");
+        const extension = name[name.length - 1];
+        const objectName = `${Date.now()}-${user.username}`;
+        await minioClient.putObject("profile-image", `${objectName}.${extension}`, file.buffer);
+        await this.userRepo.saveImage(userId, `${objectName}.${extension}`, file.mimetype as ImageMimeType);
+        return;
     }
     async searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string | null) {
         if (!search) {

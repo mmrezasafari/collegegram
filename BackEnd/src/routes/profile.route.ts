@@ -14,8 +14,8 @@ import { SaveService } from "../modules/savedPost/saved-post.service";
 export const profileRouter = (
   userService: UserService,
   postService: PostService,
-  followService: FollowService, 
-  mentionService: MentionService, 
+  followService: FollowService,
+  mentionService: MentionService,
   saveService: SaveService
 ) => {
   const app = Router();
@@ -28,6 +28,7 @@ export const profileRouter = (
     }
     handleExpress(res, async () => {
       const user = await userService.getUser(me.userId);
+      console.log(user)
       const followerCount = await followService.countFollow(me.userId, "followers") ?? 0;
       const followingCount = await followService.countFollow(me.userId, "followings") ?? 0;
       const postCount = await postService.countPost(me.userId);
@@ -61,7 +62,7 @@ export const profileRouter = (
       res.status(400).json({ message: "فایل ارسال نشده" });
       return;
     }
-    handleExpress(res, () => userService.saveProfileImage(req.file!, user.userId))
+    handleExpress(res, () => userService.saveProfileImage(req.file as Express.Multer.File, user.userId))
   });
 
   app.post("/posts", upload.array('images', 10), (req: Request, res) => {
