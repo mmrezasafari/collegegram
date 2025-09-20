@@ -9,6 +9,7 @@ interface IProps {
   isSaved: boolean
   likesCount: number
   bookmarksCount: number
+  commentCount: number
 }
 
 const ActionBar = ({
@@ -17,6 +18,7 @@ const ActionBar = ({
   isSaved,
   likesCount,
   bookmarksCount,
+  commentCount,
 }: IProps) => {
   const { mutate: toggleSaveAction, isPending: savePending } =
     useToggleSavePost(postId)
@@ -47,7 +49,7 @@ const ActionBar = ({
         className="flex p-0 gap-2 justify-center items-center text-primary cursor-pointer"
       >
         <MessageCircle color="#222" className="group-active:scale-90" />
-        <span className="text-[#222]">7</span>
+        <span className="text-[#222]">{commentCount}</span>
       </Link>
       {/* Heart */}
       <button
