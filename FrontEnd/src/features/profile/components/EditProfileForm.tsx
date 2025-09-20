@@ -46,6 +46,9 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [avatar, setAvatar] = useState<File | null>(null)
   const user = queryClient.getQueryData<IRegisteredUser>(['me'])?.data
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const [userAvatar, setUserAvatar] = useState<string | undefined>(
+    user?.imagePath,
+  )
   const firstName = useInput(
     'name',
     user && user.firstName ? user.firstName : '',
@@ -83,6 +86,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
     if (email.value !== user.email) diff.email = email.value
     if (bio.value !== user.bio) diff.bio = bio.value
     if (password.value) diff.password = password.value
+    if (user.imagePath !== userAvatar) diff.userAvatar = userAvatar || ''
 
     return diff
   }, [
@@ -91,6 +95,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
     email.value,
     bio.value,
     password.value,
+    userAvatar,
     user,
   ])
 
@@ -170,9 +175,9 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 previewUrl ? 'تغییر تصویر پروفایل' : 'انتخاب تصویر پروفایل'
               }
             >
-              {previewUrl ? (
+              {previewUrl || userAvatar ? (
                 <img
-                  src={previewUrl}
+                  src={previewUrl || userAvatar}
                   alt="پیش‌نمایش تصویر پروفایل"
                   className="w-full h-full object-cover hover:object-contain"
                 />
@@ -185,7 +190,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
             </button>
 
             {/* Overlay edit icon when image exists */}
-            {previewUrl && (
+            {(previewUrl || userAvatar) && (
               <div className="absolute right-1/2 translate-x-1/2 bottom-[-10px] flex gap-1">
                 <Button
                   type="button"
@@ -200,13 +205,17 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                   className="min-w-none w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center"
                   variant="secondary"
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
+                    if (userAvatar) {
+                      setUserAvatar(undefined)
+                      setAvatar(null)
+                    }
                     setPreviewUrl((prev) => {
                       fileInputRef.current!.value = ''
                       if (prev) URL.revokeObjectURL(prev)
                       return null
                     })
-                  }
+                  }}
                 >
                   <CircleX className="w-4 h-4 text-secondary" />
                 </Button>
@@ -369,7 +378,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 <Button
                   variant="default"
                   type="submit"
-                  disabled={Object.keys(changedValues).length === 0 && !avatar}
+                  disabled={Object.keys(changedValues).length === 0}
                 >
                   ثبت تغییرات
                 </Button>
@@ -382,7 +391,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 <Button
                   variant="default"
                   type="submit"
-                  disabled={Object.keys(changedValues).length === 0 && !avatar}
+                  disabled={Object.keys(changedValues).length === 0}
                 >
                   ثبت تغییرات
                 </Button>
