@@ -124,4 +124,8 @@ export class CommentService {
 
     }
 
+    async getCommentCount(postId: string) {
+        return await this.commentRepo.countComment(postId);
+    }
+
 }

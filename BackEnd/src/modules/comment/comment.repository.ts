@@ -9,6 +9,7 @@ export interface ICommentRepository {
   replyComment(postId:string, userId:string, content:string, parentId:string):Promise<Comment>;
   getComments(postId: string):Promise<Comment[] | null>;
   getReplies(commentId:string):Promise<Comment[] | null>;
+  countComment(postId: string):Promise<number | null>;
 }
 
 export class CommentRepository implements ICommentRepository {
@@ -60,6 +61,13 @@ export class CommentRepository implements ICommentRepository {
   }
     });
   return replies.length > 0 ? replies : null;
+  }
+
+  async countComment(postId: string) {
+    return await this.commentRepository.countBy({
+      postId
+    });
+
   }
 
 }

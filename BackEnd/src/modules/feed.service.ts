@@ -6,6 +6,7 @@ import { MentionService } from "./mention/mention.service";
 import { SaveService } from "./savedPost/saved-post.service";
 import { Post } from "./post/model/post";
 import { HttpError } from "../../utility/http-error";
+import { CommentService } from "./comment/comment.service";
 
 
 export class FeedService {
@@ -14,15 +15,11 @@ export class FeedService {
         private postService: PostService,
         private mentionService: MentionService,
         private likeService: LikeService,
-        private saveService: SaveService
+        private saveService: SaveService,
+        private commentService: CommentService
     ) { }
 
     async getPost(postId: string, userId: string) {
-        const existUser = await this.userService.getUser(userId);
-        const user = {
-            username: existUser.username,
-            imagePath: existUser.imagePath
-        };
         const existPost: Post = await this.postService.getPostById(postId);
         if (!existPost) {
             throw new HttpError(404, "پست یافت نشد");
@@ -57,6 +54,8 @@ export class FeedService {
         const saveCount = await this.saveService.getSaveCount(postId);
         const saved = await this.saveService.saved(postId, userId);
 
-        return { user, post, mentionedUsernames, likeCount, liked, saveCount, saved }
+        const commentCount = await this.commentService.getCommentCount(postId);
+
+        return {post, mentionedUsernames, likeCount, liked, saveCount, saved, commentCount }
     }
 }

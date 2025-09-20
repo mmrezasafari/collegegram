@@ -51,6 +51,8 @@ components:
               type: integer
             saved:
               type: boolean
+            commentCount:
+              type: integer
     UpdatedPost:
       type: object
       properties:
