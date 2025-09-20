@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SearchBar } from '../components/serchbar'
+import { SearchBar } from '../components/searchbar'
 
 const tabs = [
   { id: 'users', label: 'افراد' },
