@@ -57,7 +57,7 @@ const chunkPosts = (posts: string[]) => {
 }
 
 const SearchPage = () => {
-  const [activeTab, setActiveTab] = useState('posts')
+  const [activeTab, setActiveTab] = useState('users')
 
   return (
     <div className="bg-[#f7f7f7] min-h-screen w-full flex flex-col items-right pt-8">
