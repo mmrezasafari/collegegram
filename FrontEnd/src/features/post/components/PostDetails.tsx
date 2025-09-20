@@ -170,7 +170,7 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   to={`/post/${postId}`}
                 >
                   <MessageCircle color="#ea5a69" />
-                  <span>۱۵</span>
+                  <span>{post?.commentCount}</span>
                 </Link>
                 <button
                   className="flex flex-col gap-2 justify-center items-center text-primary cursor-pointer w-7 h-14"
