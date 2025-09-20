@@ -73,6 +73,7 @@ export interface IGetPostRes {
       firstName: string
       lastName: string
     }
+    commentCount: number
     mentionedUsernames: Array<string>
     likeCount: string
     liked: boolean

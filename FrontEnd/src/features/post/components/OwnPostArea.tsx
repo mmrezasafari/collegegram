@@ -13,8 +13,6 @@ export const OwnPostArea = () => {
   const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
   const [postId, setPostId] = useState('')
 
-  console.log(images)
-
   return (
     <>
       {images?.length ? (

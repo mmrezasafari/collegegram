@@ -9,9 +9,11 @@ import { Camera, Plus, X } from 'lucide-react'
 export const StepImages = ({
   images,
   setImages,
+  setImagesFileName,
 }: {
   images: (string | File)[]
   setImages: Dispatch<SetStateAction<(string | File)[]>>
+  setImagesFileName: Dispatch<SetStateAction<string[]>>
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -25,6 +27,11 @@ export const StepImages = ({
   }
 
   const removeAt = (idx: number) => {
+    setImagesFileName((prev) => {
+      const next = [...prev]
+      next.splice(idx, 1)
+      return next
+    })
     setImages((prev) => {
       const next = [...prev]
       next.splice(idx, 1)

@@ -21,6 +21,7 @@ const FriendCard = ({ friendData }: FriendCardProps) => {
           isSaved={friendData.isSaved}
           likesCount={friendData.likeCount}
           bookmarksCount={friendData.savedCount}
+          commentCount={friendData.commentCount}
         />
         <FriendBar
           firstName={friendData.firstName}

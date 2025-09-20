@@ -36,7 +36,7 @@ export const UploadPostForm = ({
   const [images, setImages] = useState<(string | File)[]>(
     initialData?.data.post.images.map((img) => img.url) || [],
   )
-  const [imagesName, setImagesNames] = useState<string[]>(
+  const [imagesFileName, setImagesFileName] = useState<string[]>(
     initialData?.data.post.images.map((img) => img.fileName) || [],
   )
   const [caption, setCaption] = useState(initialData?.data.post.caption || '')
@@ -67,7 +67,7 @@ export const UploadPostForm = ({
           caption,
           mention: mention,
           images: images as File[],
-          fileName: imagesName,
+          imagesName: imagesFileName,
         },
         { onSuccess: () => onSuccess?.() },
       )
@@ -147,7 +147,11 @@ export const UploadPostForm = ({
             <p className="text-base text-center">
               عکس‌های مورد نظرت رو آپلود کن:
             </p>
-            <StepImages images={images} setImages={setImages} />
+            <StepImages
+              images={images}
+              setImages={setImages}
+              setImagesFileName={setImagesFileName}
+            />
           </div>
         )}
         {step === 1 && (
