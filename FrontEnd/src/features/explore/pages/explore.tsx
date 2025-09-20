@@ -1,6 +1,7 @@
 import SuccessBanner from '../components/SuccessBanner'
 import FriendCard from '../components/FriendCard'
 import { useExplore } from '../hooks/useExplore'
+import { Link, useNavigate } from 'react-router-dom'
 
 const ExploreEmpty = () => (
   <div className="flex flex-col items-center w-full max-w-2xl mx-auto mt-8">
@@ -12,19 +13,17 @@ const ExploreEmpty = () => (
       <br />
       آماده‌ای؟
     </div>
-    <button
-      className="bg-[#F37B8C] text-white border-none rounded-full px-12 py-2 text-s font-bold cursor-pointer"
-      onClick={() => alert('جستجوی کالج‌گرامی‌ها')}
-    >
-      جستجوی کالج‌گرامی‌ها
-    </button>
+    <Link to={'/search'}>
+      <button className="bg-[#F37B8C] text-white border-none rounded-full px-12 py-2 text-s font-bold cursor-pointer">
+        جستجوی کالج‌گرامی‌ها
+      </button>
+    </Link>
   </div>
 )
 
 const Explore = () => {
   const { data, isLoading } = useExplore(0, 20, 'ASC')
   const exploreData = data?.data
-
   return (
     <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl">اکسپلور</h2>
