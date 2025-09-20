@@ -1,4 +1,5 @@
 import { notify } from '@/features/common/components/ui/sonner'
+import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type { IErrorRes } from '@/types/error'
 import type { IGetPostRes, IUpdatedPostRes } from '@/types/posts'
@@ -9,7 +10,7 @@ interface INewDataForUpdate {
   mention: string
   caption: string
   images: Array<File>
-  fileName: Array<string>
+  imagesName: Array<string>
 }
 
 export async function updatePost(
@@ -19,11 +20,14 @@ export async function updatePost(
   const formData = new FormData()
   // caption
   formData.append('caption', data.caption)
+  // set iamgesFileName
+  console.log(data.imagesName)
+  data.imagesName.forEach((name) => {
+    formData.append('imageUrls', name)
+  })
   //seperate files from image url
   data.images.forEach((file) => {
-    if (typeof file === 'string') {
-      formData.append('imageUrls', file)
-    } else {
+    if (typeof file === 'object') {
       formData.append('images', file)
     }
   })
@@ -39,6 +43,7 @@ export async function updatePost(
 
 export function useUpdatePost(postId: string) {
   const queryClient = useQueryClient()
+  const userName = useGetUserName()
 
   return useMutation<IUpdatedPostRes, AxiosError<IErrorRes>, INewDataForUpdate>(
     {
@@ -82,6 +87,7 @@ export function useUpdatePost(postId: string) {
         })
       },
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['posts', userName] })
         notify.success('پست با موفقیت ویرایش شد', {
           position: 'top-right',
           duration: 10000,
