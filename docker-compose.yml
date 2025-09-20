@@ -11,6 +11,7 @@ services:
       - ./BackEnd/public/uploads:/usr/src/app/BackEnd/public/uploads
     depends_on:
       - postgres
+      - minio
     networks:
       - app-network
 
@@ -26,13 +27,32 @@ services:
       - app-network
     env_file:
       - ./BackEnd/.env
+  
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    volumes:
+      - ./minio_data:/data
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console UI
+    env_file:
+      - ./BackEnd/.env
+    networks:
+      - app-network
 
   frontend:
     build: ./FrontEnd
     container_name: collegegram-frontend
     restart: unless-stopped
+    env_file:
+      - ./FrontEnd/.env
     networks:
       - app-network
+    
 
   nginx:
     image: nginx:alpine
