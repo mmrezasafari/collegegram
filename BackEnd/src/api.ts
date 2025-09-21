@@ -31,7 +31,6 @@ import { feedRouter } from "./routes/feed.route";
 import { FeedService } from "./modules/feed.service";
 import { HashtagService } from "./modules/tag/tag.service";
 import { HashtagRepository } from "./modules/tag/tag.repository";
-import path from "path";
 import { SearchService } from "./modules/search/search.service";
 import { searchRouter } from "./routes/search.route";
 import { commentRouter } from "./routes/comment.route";
@@ -54,7 +53,6 @@ export const makeApp = (dataSource: DataSource) => {
     origin: process.env.FRONTEND_HOST,
   }))
   app.use(express.json());
-  app.use('/BackEnd/public', express.static(path.join(__dirname, '..', 'public')))
   app.use(cookieParser());
 
   const userRepo = new UserRepository(dataSource);
@@ -96,7 +94,7 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
   app.use("/posts", authMiddleware, feedRouter(feedService));
-  
+
   app.use("/search", authMiddleware, searchRouter(searchService));
 
   app.use("/posts", authMiddleware, commentRouter(commentService));

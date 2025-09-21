@@ -41,7 +41,6 @@ export class UserService {
     }
 
     async saveProfileImage(file: Express.Multer.File, userId: string) {
-        console.log(file)
         const user = await this.getUser(userId);
         const name = file.originalname.split(".");
         const extension = name[name.length - 1];

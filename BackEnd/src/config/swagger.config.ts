@@ -17,6 +17,8 @@ export function setupSwagger(app: Express) {
         version: "1.0.0",
         description: "API documentation for collegeGram"
       },
+      servers: process.env.NODE_ENV === 'production' ? [{ url: '/api' }] :
+        [{ url: 'http://localhost:3000' }],
       paths: {},
       components: {
         securitySchemes: {
