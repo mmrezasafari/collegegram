@@ -1,37 +1,53 @@
-import api from '@/lib/axios'
-import type {
-  ISearchUserDataGetRes,
-  ISearchKeywordDataGetRes,
-  ISearchSuggestionDataGetRes,
-} from '@/types/search'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
+import axios from '@/lib/axios'
+import { baseUrl } from '@/utils/baseUrl'
+import type { ISearchTagedData, ISearchUserData } from '@/types/search'
 
-export async function fetchSearchDate(
+interface UseSearchResult {
+  userSuggestions: ISearchUserData[]
+  tagSuggestions: ISearchTagedData[]
+  loading: boolean
+}
+
+export function useSearch(
   offset: number,
   limit: number,
   order: string,
-): Promise<
-  | ISearchUserDataGetRes
-  | ISearchKeywordDataGetRes
-  | ISearchSuggestionDataGetRes
-  | undefined
-> {
-  const res = await api.get(
-    `/profile/search-page?offset=${offset}&limit=${limit}&sort=${order}`,
-  )
+  issummary: boolean,
+): UseSearchResult {
+  const [userSuggestions, setUserSuggestions] = useState<ISearchUserData[]>([])
+  const [tagSuggestions, setTagSuggestions] = useState<ISearchTagedData[]>([])
+  const [loading, setLoading] = useState(false)
 
-  return res.data
-}
+  useEffect(() => {
+    // Check for valid parameters before making API calls
+    if (offset == null || limit == null || !order) {
+      setUserSuggestions([])
+      setTagSuggestions([])
+      return
+    }
+    setLoading(true)
+    const fetchUsers = axios.get(
+      baseUrl(
+        `search/users?offset=${offset}&limit=${limit}&sort=${order}&isSummary=${issummary}&q=$`,
+      ),
+    )
+    const fetchTags = axios.get(
+      baseUrl(
+        `search/tags?offset=${offset}&limit=${limit}&sort=${order}&isSummary=true&q=$`,
+      ),
+    )
+    Promise.all([fetchUsers, fetchTags])
+      .then(([usersRes, tagsRes]) => {
+        setUserSuggestions(usersRes.data?.data ?? [])
+        setTagSuggestions(tagsRes.data?.data ?? [])
+      })
+      .catch(() => {
+        setUserSuggestions([])
+        setTagSuggestions([])
+      })
+      .finally(() => setLoading(false))
+  }, [offset, limit, order, issummary])
 
-export function useSearch(offset: number, limit: number, order: string) {
-  return useQuery<
-    | ISearchUserDataGetRes
-    | ISearchKeywordDataGetRes
-    | ISearchSuggestionDataGetRes
-    | undefined,
-    Error
-  >({
-    queryKey: ['search'],
-    queryFn: () => fetchSearchDate(offset, limit, order),
-  })
+  return { userSuggestions, tagSuggestions, loading }
 }

@@ -1,23 +1,56 @@
-export interface ISearchUserDataGetRes {
-  success: boolean
-  data: ISearchUserData[]
-}
+// export interface ISearchUserDataGetRes {
+//   success: boolean
+//   data: ISearchUserData[]
+// }
 
 export interface ISearchUserData {
-  id: string
-  name: string
-  avatar: string
-}
-
-export interface ISearchKeywordDataGetRes {
   success: boolean
-  data: ISearchKeywordData[]
+  data: {
+    username: string
+    firstName: string
+    lastName: string
+    imagePath: string
+    isSummary: boolean
+  }[]
 }
 
-export interface ISearchKeywordData {
-  id: string
-  keyword: string
+export interface ISearchTagedData {
+  success: true
+  data: [
+    {
+      id: string
+      caption: string
+      createdAt: string
+      updatedAt: string
+      images: [
+        {
+          id: string
+          url: string
+          mimeType: string
+          createdAt: string
+          updatedAt: string
+        },
+      ]
+      tags: []
+    },
+  ]
 }
+
+// export interface ISearchUserData {
+//   id: string
+//   name: string
+//   avatar: string
+// }
+
+// export interface ISearchTagedDataGetRes {
+//   success: boolean
+//   data: ISearchTagedData[]
+// }
+
+// export interface ISearchTagedData {
+//   id: string
+//   keyword: string
+// }
 
 export interface ISearchSuggestionDataGetRes {
   success: boolean
