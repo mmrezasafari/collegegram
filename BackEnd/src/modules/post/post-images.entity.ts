@@ -1,6 +1,6 @@
 import { AfterLoad, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PostEntity } from "./post.entity";
-import { minioClient } from "../../config/minio.config";
+import { minioGetClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 
 @Entity("post_images")
@@ -26,7 +26,7 @@ export class PostImagesEntity {
   @AfterLoad()
   async getUrlFromMinio() {
     if (this.url) {
-      this.url = await minioClient.presignedGetObject(
+      this.url = await minioGetClient.presignedGetObject(
         "posts",
         this.url,
         3600,

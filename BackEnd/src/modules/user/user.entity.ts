@@ -6,7 +6,7 @@ import { LikeEntity } from "../like/like.entity";
 import { SavedPostEntity } from "../savedPost/saved-posts.entity";
 import { FollowEntity } from "../follow/follow.entity";
 import { CommentEntity } from "../comment/comment.entity";
-import { minioClient } from "../../config/minio.config";
+import { minioGetClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 
 @Entity("users")
@@ -72,7 +72,7 @@ export class UserEntity {
   @AfterLoad()
   async getUrlFromMinio() {
     if (this.imagePath) {
-      this.imagePath = await minioClient.presignedGetObject(
+      this.imagePath = await minioGetClient.presignedGetObject(
         "profile-image",
         this.imagePath,
         3600,
