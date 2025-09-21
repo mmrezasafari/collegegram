@@ -1,7 +1,7 @@
 import SuccessBanner from '../components/SuccessBanner'
 import FriendCard from '../components/FriendCard'
 import { useExplore } from '../hooks/useExplore'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const ExploreEmpty = () => (
   <div className="flex flex-col items-center w-full max-w-2xl mx-auto mt-8">
