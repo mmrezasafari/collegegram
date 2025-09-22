@@ -6,5 +6,7 @@ export interface ReplyCommentOutput{
     profile?:string,
     content: string,
     date: Date,
+    isLiked: boolean,
+    likeCount: number,
     hasReply: boolean
 }

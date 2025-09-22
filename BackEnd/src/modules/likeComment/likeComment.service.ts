@@ -3,14 +3,20 @@ import { IPostRepository } from "../post/post.repository";
 import { CommentService } from "../comment/comment.service";
 import { ILikeCommentRepository } from "./likeComment.repository"
 
+export interface ILikeCommentService{
+    likeComment(commentId:string, userId:string):Promise<{ message: string }>;
+    unLikeComment(commentId:string, userId:string):Promise<{ message: string }>;
+    getLikesCountComment(commentId: string): Promise<number>;
+    isLikedComment(commentId: string, userId: string): Promise<boolean>;
+}
 
-export class LikeCommentService {
+export class LikeCommentService implements ILikeCommentService{
     constructor(
         private likeCommentRepo: ILikeCommentRepository,
         private commentService: CommentService
     ) { }
 
-    async likeComment(commentId:string, userId:string,){
+    async likeComment(commentId:string, userId:string){
         const comment = await this.commentService.getCommentById(commentId)
         const existingLike = await this.likeCommentRepo.isLiked(commentId,userId)
         if (existingLike) {
@@ -34,10 +40,10 @@ export class LikeCommentService {
     async getLikesCountComment(commentId: string){
     return await this.likeCommentRepo.countLike(commentId);
     }
-
-    // async liked(commentId:string ,userId:string){
-    //     const existingLike = await this.likeCommentRepo.isLiked(commentId,userId)
-    //     return !!existingLike;
-    // }
+    
+    async isLikedComment(commentId: string, userId: string): Promise<boolean> {
+    const existingLike = await this.likeCommentRepo.isLiked(commentId, userId);
+    return existingLike !== null;
+    }
 
 }
