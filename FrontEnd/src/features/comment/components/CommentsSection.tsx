@@ -54,6 +54,7 @@ export const CommentSection = ({ postId }: { postId: string }) => {
               <div className="w-full">
                 <CommentItem
                   comment={reply}
+                  postId={postId}
                   onReply={(id, user) => {
                     setReplyTo(id)
                     setReplyUser(user)
@@ -104,6 +105,7 @@ export const CommentSection = ({ postId }: { postId: string }) => {
           comments?.map((comment) => (
             <div key={comment.commentId} className="flex flex-col gap-4">
               <CommentItem
+                postId={postId}
                 comment={comment}
                 onReply={(id, user) => {
                   setReplyTo(id)
