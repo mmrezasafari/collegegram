@@ -7,7 +7,7 @@ export interface ILikeCommentRepository {
   isLiked(commentId:string,userId:string):Promise<LikeComment | null>;
   like(commentId:string,userId:string):Promise<LikeComment>;
   unLike(commentId: string, userId: string):Promise<null>;
-  countLike(commentId:string):Promise<number | null>;
+  countLike(commentId:string):Promise<number>;
 }
 
 export class LikeCommentRepository implements ILikeCommentRepository {

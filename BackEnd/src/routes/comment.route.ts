@@ -33,11 +33,11 @@ export const commentRouter = (commentService: CommentService) => {
             return;
         }
       if(commentId == null){
-        handleExpress(res, () => commentService.getComments(postId));
+        handleExpress(res, () => commentService.getComments(postId, user.userId));
       }
       if(commentId){
         if(typeof commentId === "string"){
-        handleExpress(res, () => commentService.getReplies(commentId));
+        handleExpress(res, () => commentService.getReplies(commentId,  user.userId));
         }
         else{
           res.status(400).json(errorResponse("آیدی کامنت باید استرینگ باشد"))

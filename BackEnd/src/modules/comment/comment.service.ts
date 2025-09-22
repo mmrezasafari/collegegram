@@ -6,13 +6,19 @@ import { CommentOutput } from "./model/comment-output";
 import { Comment } from "./model/comment";
 import { ReplyCommentOutput } from "./model/reply-comment-output";
 import { UserService } from "../user/user.service";
+import { ILikeCommentService, LikeCommentService } from "../likeComment/likeComment.service";
 
 export class CommentService {
+    private likeCommentService!: ILikeCommentService;
     constructor(
         private commentRepo: ICommentRepository,
         private postService: PostService,
-        private userService: UserService
+        private userService: UserService,
     ) { }
+
+    async setLikeComment(likeCommentService: ILikeCommentService){
+        this.likeCommentService = likeCommentService;
+    }
 
     async comment(postId:string, userId:string, content:string){
         const post = await this.postService.getPostById(postId)
@@ -34,8 +40,10 @@ export class CommentService {
         return {replyComment, message: "ریپلای شما با موفقیت ثبت شد" }
 
     }
-    async convertToCommentOutput(comment:Comment){
+    async convertToCommentOutput(comment:Comment, userId: string){
         const user = await this.userService.getUser(comment.userId)
+        const isLiked = await this.likeCommentService.isLikedComment(comment.id, userId)
+        const likeCount = await this.likeCommentService.getLikesCountComment(comment.id)
         if(user){
             const commentOutput:CommentOutput={
                 commentId: comment.id,
@@ -45,6 +53,8 @@ export class CommentService {
                 profile:user.imagePath,
                 content: comment.content,
                 date:comment.createdAt,
+                isLiked: isLiked,
+                likeCount: likeCount,
                 replies: []
             }
             return commentOutput;
@@ -52,9 +62,11 @@ export class CommentService {
         return null;
     }
 
-    async convertToReplyCommentOutput(comment:Comment){
+    async convertToReplyCommentOutput(comment:Comment, userId: string){
         const user = await this.userService.getUser(comment.userId)
         const replies = await this.commentRepo.getReplies(comment.id)
+        const isLiked = await this.likeCommentService.isLikedComment(comment.id, userId)
+        const likeCount = await this.likeCommentService.getLikesCountComment(comment.id)
         if(user){
             if(replies){
                 const replyCommentOutput:ReplyCommentOutput={
@@ -65,6 +77,8 @@ export class CommentService {
                     profile:user.imagePath,
                     content: comment.content,
                     date:comment.createdAt,
+                    isLiked: isLiked,
+                    likeCount: likeCount,
                     hasReply:true   
                 }
                 return replyCommentOutput;
@@ -77,6 +91,8 @@ export class CommentService {
                     profile:user.imagePath,
                     content: comment.content,
                     date:comment.createdAt,
+                    isLiked: isLiked,
+                    likeCount: likeCount,
                     hasReply:false   
                 }
                 return replyCommentOutput;
@@ -86,16 +102,16 @@ export class CommentService {
 
     }
 
-    async getComments(postId: string){
+    async getComments(postId: string, userId: string){
     const comments =  await this.commentRepo.getComments(postId);
     const commentOutputs : CommentOutput[] = []
     if(comments){
         for(var comment of comments){
             if(comment.parentId == null){
-                let commentOutput = await this.convertToCommentOutput(comment)
+                let commentOutput = await this.convertToCommentOutput(comment, userId)
                 for(var reply of comments){
                     if(reply.parentId == comment.id){
-                        let replyOutput = await this.convertToReplyCommentOutput(reply)
+                        let replyOutput = await this.convertToReplyCommentOutput(reply, userId)
                         if(commentOutput && replyOutput){
                             commentOutput.replies.push(replyOutput)
                         }
@@ -109,12 +125,13 @@ export class CommentService {
     }
     return commentOutputs;
     }
-    async getReplies(commentId: string){
+
+    async getReplies(commentId: string,  userId: string){
         const replies = await this.commentRepo.getReplies(commentId);
         const repliesOutputs : ReplyCommentOutput[] = [];
         if(replies){
             for(var reply of replies){
-                let replyOutput = await this.convertToReplyCommentOutput(reply);
+                let replyOutput = await this.convertToReplyCommentOutput(reply, userId);
                 if(replyOutput){
                 repliesOutputs.push(replyOutput)
                 }
