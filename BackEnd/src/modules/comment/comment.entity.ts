@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, PrimaryColumn } from "typeorm";
 import { PostEntity } from "../post/post.entity";
 import { UserEntity } from "../user/user.entity";
+import { LikeCommentEntity } from "../likeComment/likeComment.entity";
 
 @Entity("comments")
 export class CommentEntity {
@@ -24,6 +25,9 @@ export class CommentEntity {
   
   @ManyToOne(() => UserEntity, (user) => user.comments, {  onDelete: "CASCADE", onUpdate: "CASCADE"  })
   user!: UserEntity;
+
+  @OneToMany(() => LikeCommentEntity, (like) => like.comment)
+  likes!: LikeCommentEntity[];
 
   @ManyToOne(() => CommentEntity, (comments) => comments.replies, { nullable: true, onDelete: "CASCADE" })
   parent?: CommentEntity;

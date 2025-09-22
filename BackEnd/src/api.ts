@@ -36,6 +36,9 @@ import { searchRouter } from "./routes/search.route";
 import { commentRouter } from "./routes/comment.route";
 import { CommentRepository } from "./modules/comment/comment.repository";
 import { CommentService } from "./modules/comment/comment.service";
+import { LikeCommentRepository } from "./modules/likeComment/likeComment.repository";
+import { likeCommentRouter } from "./routes/likeComment.route";
+import { LikeCommentService } from "./modules/likeComment/likeComment.service";
 
 declare global {
   namespace Express {
@@ -64,6 +67,7 @@ export const makeApp = (dataSource: DataSource) => {
   const mentionRepo = new MentionRepository(dataSource)
   const hashtagRepo = new HashtagRepository(dataSource);
   const commentRepo = new CommentRepository(dataSource)
+  const likeCommentRepo = new LikeCommentRepository(dataSource);
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
@@ -76,6 +80,7 @@ export const makeApp = (dataSource: DataSource) => {
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService);
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService, commentService);
   const searchService = new SearchService(userService, hashtagService);
+  const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
 
 
   setupSwagger(app);
@@ -99,7 +104,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, commentRouter(commentService));
 
-
+  app.use("/comments", authMiddleware, likeCommentRouter(likeCommentService))
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
