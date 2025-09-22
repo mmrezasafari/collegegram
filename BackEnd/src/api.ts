@@ -74,9 +74,9 @@ export const makeApp = (dataSource: DataSource) => {
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService);
   const saveService = new SaveService(saveRepo, postService);
-  const followService = new FollowService(followRepo, postService, userService, likeService, saveService);
   const commentService = new CommentService(commentRepo, postService, userService)
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService);
+  const followService = new FollowService(followRepo, postService, userService, likeService, saveService, commentService);
   const searchService = new SearchService(userService, hashtagService);
 
 

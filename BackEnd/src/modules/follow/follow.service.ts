@@ -1,4 +1,5 @@
 import { HttpError } from "../../../utility/http-error";
+import { CommentService } from "../comment/comment.service";
 import { LikeService } from "../like/like.service";
 import { PostService } from "../post/post.service";
 import { SaveService } from "../savedPost/saved-post.service";
@@ -14,7 +15,8 @@ export class FollowService {
     private postService: PostService,
     private userService: UserService,
     private likeService: LikeService,
-    private saveService: SaveService
+    private saveService: SaveService,
+    private commentService: CommentService,
   ) { }
   async followUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
@@ -107,6 +109,7 @@ export class FollowService {
       const isLiked = await this.likeService.liked(post.id, userId);
       const savedCount = await this.saveService.getSaveCount(post.id);
       const isSaved = await this.saveService.saved(post.id, userId);
+      const commentCount = await this.commentService.getCommentCount(post.id);
       data.push({
         username: post.user.username,
         firstName: post.user.firstName,
@@ -123,7 +126,7 @@ export class FollowService {
         isLiked,
         savedCount: savedCount ?? 0,
         isSaved,
-        commentCount: 20
+        commentCount: commentCount ?? 0
       })
     }
     return data;
