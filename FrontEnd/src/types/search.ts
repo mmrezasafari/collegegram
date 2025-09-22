@@ -1,17 +1,6 @@
-// export interface ISearchUserDataGetRes {
-//   success: boolean
-//   data: ISearchUserData[]
-// }
-
-export interface ISearchUserData {
+export interface ISearchUserGetRes {
   success: boolean
-  data: {
-    username: string
-    firstName: string
-    lastName: string
-    imagePath: string
-    isSummary: boolean
-  }[]
+  data: ISearchedUsersData[]
 }
 
 export interface ISearchTagedData {
@@ -22,42 +11,32 @@ export interface ISearchTagedData {
       caption: string
       createdAt: string
       updatedAt: string
-      images: [
-        {
-          id: string
-          url: string
-          mimeType: string
-          createdAt: string
-          updatedAt: string
-        },
-      ]
+      images: Array<{
+        id: string
+        url: string
+        mimeType: string
+        createdAt: string
+        updatedAt: string
+      }>
       tags: []
     },
   ]
 }
 
-// export interface ISearchUserData {
-//   id: string
-//   name: string
-//   avatar: string
-// }
-
-// export interface ISearchTagedDataGetRes {
-//   success: boolean
-//   data: ISearchTagedData[]
-// }
-
-// export interface ISearchTagedData {
-//   id: string
-//   keyword: string
-// }
-
-export interface ISearchSuggestionDataGetRes {
+export interface ISearchTagsGetRes {
   success: boolean
-  data: ISearchSuggestionData[]
+  data: ISearchedTagsData[]
 }
 
-export interface ISearchSuggestionData {
+export interface ISearchedTagsData {
   id: string
-  suggestion: string
+  caption: string
+  images: Array<{
+    id: string
+    url: string
+  }>
 }
+//     id: string
+//     url: string
+//   }>
+// }

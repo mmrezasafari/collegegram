@@ -1,48 +1,26 @@
+// searchbar.tsx
+
 import { useState } from 'react'
-
-const userSuggestions = [
-  {
-    name: 'طبیعت محمدی',
-    avatar: '/avatar.png',
-  },
-]
-
-const keywordSuggestions = [
-  {
-    name: 'طبیعت ایران',
-    avatar: '/nature1.jpg',
-  },
-  {
-    name: 'طبیعت ایران',
-    avatar: '/nature2.jpg',
-  },
-]
-
-const searchSuggestions = [
-  'طبیعت',
-  'طبیعت ایران',
-  'طبیعت زیبا',
-  'طبیعت شمال',
-  'طبیعت جنوب',
-]
+import { useUsersSearch, useTagsSearch } from '../hooks/useSearch'
 
 export const SearchBar = () => {
   const [query, setQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const { mutate: userSuggestions } = useUsersSearch(0, 50, 'ASC', query, false)
+  const { mutate: tagSuggestions } = useTagsSearch(0, 50, 'ASC', query, false)
 
-  const filteredUsers =
-    query.trim().length > 0
-      ? userSuggestions.filter((u) => u.name.includes(query.trim()))
-      : []
-
-  const filteredKeywords =
-    query.trim().length > 0
-      ? keywordSuggestions.filter((k) => k.name.includes(query.trim()))
-      : []
+  const userSuggestionsArr = userSuggestions ?? []
+  const tagSuggestionsArr = tagSuggestions ?? []
 
   const filteredSearchSuggestions =
     query.trim().length > 0
-      ? searchSuggestions.filter((s) => s.includes(query.trim()))
+      ? [
+          'طبیعت',
+          'طبیعت ایران',
+          'طبیعت زیبا',
+          'طبیعت شمال',
+          'طبیعت جنوب',
+        ].filter((s) => s.includes(query.trim()))
       : []
 
   return (
@@ -73,12 +51,12 @@ export const SearchBar = () => {
         </svg>
       </div>
       {showSuggestions &&
-        (filteredUsers.length > 0 || filteredKeywords.length > 0) && (
+        (userSuggestionsArr.length > 0 || tagSuggestionsArr.length > 0) && (
           <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
             {/* User Suggestions */}
-            {filteredUsers.length > 0 && (
+            {userSuggestionsArr.length > 0 && (
               <div className="px-6 pt-4 pb-2 relative">
-                {filteredUsers.map((user, idx) => (
+                {userSuggestionsArr.map((user, idx) => (
                   <div
                     key={idx}
                     className="flex items-center justify-between mb-3"
@@ -100,16 +78,16 @@ export const SearchBar = () => {
                 </button>
               </div>
             )}
-            {/* Keyword Suggestions */}
-            {filteredKeywords.length > 0 && (
+            {/* Tag Suggestions */}
+            {tagSuggestionsArr.length > 0 && (
               <div className="px-6 pb-4">
-                {filteredKeywords.map((k, idx) => (
+                {tagSuggestionsArr.map((tag, idx) => (
                   <div
                     key={idx}
                     className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
-                    onMouseDown={() => setQuery(k.name)}
+                    onMouseDown={() => setQuery(tag.name)}
                   >
-                    <span className="text-right w-full">{k.name}</span>
+                    <span className="text-right w-full">{tag.name}</span>
                     <svg
                       className="w-5 h-5 text-gray-500 ml-2"
                       fill="none"
@@ -125,7 +103,7 @@ export const SearchBar = () => {
               </div>
             )}
             {/* Divider */}
-            {filteredUsers.length > 0 && filteredKeywords.length > 0 && (
+            {userSuggestionsArr.length > 0 && tagSuggestionsArr.length > 0 && (
               <hr className="my-2" />
             )}
             {/* Search Suggestions */}
