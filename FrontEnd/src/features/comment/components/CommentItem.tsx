@@ -2,16 +2,27 @@ import type { IComment, IReplyComment } from '@/types/comment'
 import { Heart, Reply } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useToggleLikeComment } from '../hooks/useLikeComment'
 
 dayjs.extend(relativeTime)
 dayjs.locale('fa')
 
 interface IProps {
   comment: IComment | IReplyComment
-  onReply: (id: string, user: string) => void
+  postId: string
+  onReply: (_id: string, _user: string) => void
 }
 
-export const CommentItem = ({ comment, onReply }: IProps) => {
+export const CommentItem = ({ comment, onReply, postId }: IProps) => {
+  const { mutate: likeCommentMutate } = useToggleLikeComment(
+    postId,
+    comment && comment.commentId,
+  )
+
+  const onToggleLike = () => {
+    likeCommentMutate('like')
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -30,7 +41,7 @@ export const CommentItem = ({ comment, onReply }: IProps) => {
           </p>
         </div>
         <div className="flex gap-2 md:gap-4 items-end text-primary font-bold text-xs md:text-sm">
-          <Heart size={16} className="cursor-pointer" />
+          <Heart size={16} className="cursor-pointer" onClick={onToggleLike} />
           <div
             className="flex items-end gap-1 cursor-pointer"
             onClick={() =>
