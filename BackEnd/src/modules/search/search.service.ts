@@ -1,3 +1,4 @@
+import { minioGetClient } from "../../config/minio.config";
 import { PostService } from "../post/post.service";
 import { HashtagService } from "../tag/tag.service";
 import { UserService } from "../user/user.service";
@@ -20,16 +21,47 @@ export class SearchService {
     if (isSummary && resultSearch) {
       const response: SearchUserBySummary[] = [];
       for (const element of resultSearch) {
+        const imagePath = await minioGetClient.presignedGetObject(
+                "posts",
+                element.imagePath,
+                3600,
+                {
+                  "response-content-disposition": "inline",
+                  "response-content-type": element.mimeType
+                }
+        );
         response.push({
           username: element.username,
           firstName: element.firstName,
           lastName: element.lastName,
-          imagePath: element.imagePath
+          mimeType: element.mimeType,
+          imagePath
+        })
+
+      }
+      return response;
+    } else if(!resultSearch) {
+      return null;
+    }
+    else {
+      const response = []
+      for (const element of resultSearch) {
+        const imagePath = await minioGetClient.presignedGetObject(
+                "posts",
+                element.imagePath,
+                3600,
+                {
+                  "response-content-disposition": "inline",
+                  "response-content-type": element.mimeType
+                }
+        );
+        response.push({
+          ...element,
+          imagePath
+
         })
       }
       return response;
-    } else {
-      return resultSearch;
 
     }
   }
