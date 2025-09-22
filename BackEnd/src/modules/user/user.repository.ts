@@ -102,6 +102,7 @@ export class UserRepository implements IUserRepository {
       .addSelect("user.firstName", "firstName")
       .addSelect("user.lastName", "lastName")
       .addSelect("user.imagePath", "imagePath")
+      .addSelect("user.mimeType", "mimeType")
       .where(new Brackets(qb => {
         qb.where('user.username ILike :search', { search: `%${search}%` })
           .orWhere('user.firstName ILike :search', { search: `%${search}%` })
@@ -138,6 +139,7 @@ export class UserRepository implements IUserRepository {
       .addSelect("user.firstName", "firstName")
       .addSelect("user.lastName", "lastName")
       .addSelect("user.imagePath", "imagePath")
+      .addSelect("user.mimeType", "mimeType")
       .andWhere("user.id != :userId", { userId })
       .addSelect((qb) => {
         return qb.subQuery()
