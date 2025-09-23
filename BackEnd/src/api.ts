@@ -40,6 +40,8 @@ import { LikeCommentRepository } from "./modules/likeComment/likeComment.reposit
 import { likeCommentRouter } from "./routes/likeComment.route";
 import { LikeCommentService } from "./modules/likeComment/likeComment.service";
 import { CloseFriendRepository } from "./modules/closeFriend/close-friend.repository";
+import { CloseFriendService } from "./modules/closeFriend/close-friend.service";
+import { closeFriendRouter } from "./routes/closeFriend.route";
 
 declare global {
   namespace Express {
@@ -83,6 +85,8 @@ export const makeApp = (dataSource: DataSource) => {
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService, commentService);
   const searchService = new SearchService(userService, hashtagService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
+  const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService)
+
   commentService.setLikeComment(likeCommentService);
 
   setupSwagger(app);
@@ -106,7 +110,9 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, commentRouter(commentService));
 
-  app.use("/comments", authMiddleware, likeCommentRouter(likeCommentService))
+  app.use("/comments", authMiddleware, likeCommentRouter(likeCommentService));
+
+  app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));
