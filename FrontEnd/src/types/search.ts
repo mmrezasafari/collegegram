@@ -25,10 +25,10 @@ export interface ISearchedUsersData {
 
 export interface ISearchTagsGetRes {
   success: boolean
-  data: ISearchedTagsData[]
+  data: ISearchTagsData[]
 }
 
-export interface ISearchedTagsData {
+export interface ISearchTagsData {
   id: string
   caption: string
   images: Array<{

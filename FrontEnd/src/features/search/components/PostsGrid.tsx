@@ -1,13 +1,13 @@
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { PostCard } from './PostCard'
 import { useTagsSearch } from '../hooks/useSearch'
-import type { ISearchTagedData } from 'src/types/search'
+import type { ISearchTagsData } from 'src/types/search'
 import { useState } from 'react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { PostDetails } from '@/features/post/components/PostDetails'
 
-const chunkPosts = (posts: ISearchTagedData[]) => {
-  const chunks: ISearchTagedData[][] = []
+const chunkPosts = (posts: ISearchTagsData[]) => {
+  const chunks: ISearchTagsData[][] = []
   let idx = 0
 
   // First row: 3 items
