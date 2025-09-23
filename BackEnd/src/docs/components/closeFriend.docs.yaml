@@ -1,0 +1,24 @@
+components:
+  schemas:
+    CloseFriends:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: "MobinaKh"
+        firstName:
+          type: string
+          example: "Mobina"
+        lastName:
+          type: string
+          example: "Kheiri"
+        imageUrl:
+          format: url
+          type: string
+          example: "example.png"
+        followersCount:
+          type: integer
+          example: 1001

@@ -132,4 +132,12 @@ export class FollowService {
     return data;
   }
 
+  async getFollows(userId: string) {
+    const followers = await this.followRepository.getFollows(userId, "followers");
+    const followings = await this.followRepository.getFollows(userId, "followings");
+    const followerUsers = followers.map(f => f.follower).filter(Boolean);
+    const followingUsers = followings.map(f => f.following).filter(Boolean);
+    return [...followerUsers, ...followingUsers]
+  }
+
 }
