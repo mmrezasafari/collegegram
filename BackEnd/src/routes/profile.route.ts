@@ -9,6 +9,7 @@ import { PostService } from "../modules/post/post.service";
 import { FollowService } from "../modules/follow/follow.service";
 import { MentionService } from "../modules/mention/mention.service";
 import { SaveService } from "../modules/savedPost/saved-post.service";
+import { createPostDto } from "../modules/post/dto/create-post.dto";
 
 
 export const profileRouter = (
@@ -74,10 +75,10 @@ export const profileRouter = (
       res.status(400).json({ message: "فایل ارسال نشده" });
       return;
     }
-    const caption = req.body.caption;
-    const mention = req.body.mention;
-    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId, mention, user.userId));
+    const dto = createPostDto.parse(req.body);
+    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], dto , user.userId));
   });
+
   app.get("/home-page", (req, res) => {
     const offset = zod.number().parse(Number(req.query.offset));
     const limit = zod.int().parse(Number(req.query.limit));

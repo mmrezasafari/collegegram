@@ -10,8 +10,8 @@ export class HashtagService {
     ) { }
 
     async savePostHashtags(postId: string, hashtags: string[]) {
-        return await this.tagRepo.saveHashtag(postId, hashtags)
-
+        const tags = await this.tagRepo.saveHashtag(postId, hashtags);
+        return tags?.map(tag => tag.context) || [];
     }
 
     async removePostHashtags(postId: string) {

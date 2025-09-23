@@ -179,14 +179,18 @@ paths:
                   type: string
                 mention:
                   type: string
+                onlyCloseFriends:
+                  type: boolean
+                  default: false
                 images:
                   type: array
                   items:
                     type: string
                     format: binary
               example:
-                caption: "This is a caption"
+                caption: "This is a #caption"
                 mention: "@Mobinakh @roozaa"
+                onlyCloseFriends: false
                 images: ["example.jpg", "example2.png"]
 
       responses: 
@@ -200,7 +204,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: "#/components/schemas/CreatePostResponse"              
+                    $ref: "#/components/schemas/PostResponse"              
         400: 
           description: Bad Request
           content: 

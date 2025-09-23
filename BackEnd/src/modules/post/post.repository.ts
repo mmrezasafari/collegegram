@@ -4,11 +4,11 @@ import { Post } from "./model/post";
 import { PostImagesEntity } from "./post-images.entity";
 import { PostImage } from "./model/post-image";
 export interface IPostRepository {
-  createPost(id: string, imagesUrls: Partial<PostImage>[], caption: string): Promise<Post | null>;
+  createPost(id: string, imagesUrls: Partial<PostImage>[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null>;
   getPosts(userId: string): Promise<Post[] | null>;
   getById(postId: string): Promise<PostEntity | null>;
   countPost(userId: string): Promise<number>;
-  updatePost(postId: string, userId: string, imageUrls?: Partial<PostImage>[], caption?: string): Promise<Post | null>
+  updatePost(postId: string, userId: string, imageUrls?: Partial<PostImage>[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null>
   getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string): Promise<Post[] | null>;
   removeImage(url: string): Promise<DeleteResult | null>;
 }
@@ -22,9 +22,10 @@ export class PostRepository implements IPostRepository {
     this.postImagesRepository = appDataSource.getRepository(PostImagesEntity);
   }
 
-  async createPost(id: string, imageUrls: PostImage[], caption: string) {
+  async createPost(id: string, imageUrls: PostImage[], caption?: string, onlyCloseFriends?: boolean) {
     const savedPost = await this.postRepository.save({
       caption,
+      onlyCloseFriends,
       user: {
         id,
       },
@@ -63,7 +64,7 @@ export class PostRepository implements IPostRepository {
     })
   }
 
-  async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string) {
+  async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string, onlyCloseFriends?: boolean) {
     const existingPost: Post | null = await this.getById(postId);
     if (!existingPost) return null;
     const postImage: PostImage[] = [];
@@ -82,6 +83,10 @@ export class PostRepository implements IPostRepository {
     if (caption !== undefined) {
       existingPost.caption = caption;
     }
+    if (onlyCloseFriends !== undefined) {
+      existingPost.onlyCloseFriends = onlyCloseFriends;
+    }
+
     return await this.postRepository.save(existingPost)
   }
 
