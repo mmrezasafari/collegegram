@@ -68,10 +68,10 @@ export function useToggleLike(postId: string) {
             data: old?.data.map((data) =>
               postId === data.post.id
                 ? {
-                  ...data,
-                  isLiked: action === 'like',
-                  likeCount: data.likeCount + (action === 'like' ? 1 : -1),
-                }
+                    ...data,
+                    isLiked: action === 'like',
+                    likeCount: data.likeCount + (action === 'like' ? 1 : -1),
+                  }
                 : data,
             ),
           }

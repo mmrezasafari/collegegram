@@ -14,7 +14,7 @@ export const TaggedImageCard = ({ taggedPosts }: IProps) => {
   return (
     <>
       <div
-        key={taggedPosts.id}
+        key={taggedPosts?.id}
         className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all"
         onClick={() => {
           setPostModalOpen(true)
@@ -22,7 +22,7 @@ export const TaggedImageCard = ({ taggedPosts }: IProps) => {
         }}
       >
         <img
-          src={taggedPosts.images[0].url}
+          src={taggedPosts?.images[0]?.url}
           alt="Tagged Image"
           className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"
         />
