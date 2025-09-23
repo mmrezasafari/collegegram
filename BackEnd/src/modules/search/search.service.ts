@@ -21,15 +21,18 @@ export class SearchService {
     if (isSummary && resultSearch) {
       const response: SearchUserBySummary[] = [];
       for (const element of resultSearch) {
-        const imagePath = await minioGetClient.presignedGetObject(
-                "posts",
-                element.imagePath,
-                3600,
-                {
-                  "response-content-disposition": "inline",
-                  "response-content-type": element.mimeType
-                }
-        );
+        let imagePath = "";
+        if (element.imagePath !== null) {
+          imagePath = await minioGetClient.presignedGetObject(
+            "posts",
+            element.imagePath,
+            3600,
+            {
+              "response-content-disposition": "inline",
+              "response-content-type": element.mimeType
+            }
+          );
+        }
         response.push({
           username: element.username,
           firstName: element.firstName,
@@ -40,20 +43,20 @@ export class SearchService {
 
       }
       return response;
-    } else if(!resultSearch) {
+    } else if (!resultSearch) {
       return null;
     }
     else {
       const response = []
       for (const element of resultSearch) {
         const imagePath = await minioGetClient.presignedGetObject(
-                "posts",
-                element.imagePath,
-                3600,
-                {
-                  "response-content-disposition": "inline",
-                  "response-content-type": element.mimeType
-                }
+          "posts",
+          element.imagePath,
+          3600,
+          {
+            "response-content-disposition": "inline",
+            "response-content-type": element.mimeType
+          }
         );
         response.push({
           ...element,
@@ -76,15 +79,15 @@ export class SearchService {
     const resultSearch = await this.tagService.searchTagInExplore(offset, limit, sort, search ?? null);
     if (isSummary && resultSearch) {
       const uniqueTags = Array.from(
-      new Set(
-        resultSearch.flatMap(post =>
-          post.tags
-            .filter(tag => tag.context.includes(search ?? ""))
-            .map(tag => tag.context)
+        new Set(
+          resultSearch.flatMap(post =>
+            post.tags
+              .filter(tag => tag.context.includes(search ?? ""))
+              .map(tag => tag.context)
+          )
         )
-      )
-    );
-    return uniqueTags;
+      );
+      return uniqueTags;
     } else {
       return resultSearch;
     }

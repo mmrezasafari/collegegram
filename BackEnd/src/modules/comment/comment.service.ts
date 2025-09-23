@@ -16,14 +16,8 @@ export class CommentService {
         private userService: UserService,
     ) { }
 
-    async setLikeComment(likeCommentService: ILikeCommentService){
+    async setLikeComment(likeCommentService: ILikeCommentService) {
         this.likeCommentService = likeCommentService;
-    }
-
-    async comment(postId:string, userId:string, content:string){
-        const post = await this.postService.getPostById(postId)
-        const comment = await this.commentRepo.comment(postId, userId, content)
-        return {comment, message: "کامنت شما با موفقیت ثبت شد" };
     }
 
     async comment(postId: string, userId: string, content: string) {
@@ -120,37 +114,37 @@ export class CommentService {
 
     }
 
-    async getComments(postId: string, userId: string){
-    const comments =  await this.commentRepo.getComments(postId);
-    const commentOutputs : CommentOutput[] = []
-    if(comments){
-        for(var comment of comments){
-            if(comment.parentId == null){
-                let commentOutput = await this.convertToCommentOutput(comment, userId)
-                for(var reply of comments){
-                    if(reply.parentId == comment.id){
-                        let replyOutput = await this.convertToReplyCommentOutput(reply, userId)
-                        if(commentOutput && replyOutput){
-                            commentOutput.replies.push(replyOutput)
+    async getComments(postId: string, userId: string) {
+        const comments = await this.commentRepo.getComments(postId);
+        const commentOutputs: CommentOutput[] = []
+        if (comments) {
+            for (var comment of comments) {
+                if (comment.parentId == null) {
+                    let commentOutput = await this.convertToCommentOutput(comment, userId)
+                    for (var reply of comments) {
+                        if (reply.parentId == comment.id) {
+                            let replyOutput = await this.convertToReplyCommentOutput(reply, userId)
+                            if (commentOutput && replyOutput) {
+                                commentOutput.replies.push(replyOutput)
+                            }
                         }
                     }
                 }
+                return commentOutputs;
             }
             return commentOutputs;
         }
         return commentOutputs;
     }
-    return commentOutputs;
-    }
 
-    async getReplies(commentId: string,  userId: string){
+    async getReplies(commentId: string, userId: string) {
         const replies = await this.commentRepo.getReplies(commentId);
-        const repliesOutputs : ReplyCommentOutput[] = [];
-        if(replies){
-            for(var reply of replies){
+        const repliesOutputs: ReplyCommentOutput[] = [];
+        if (replies) {
+            for (var reply of replies) {
                 let replyOutput = await this.convertToReplyCommentOutput(reply, userId);
-                if(replyOutput){
-                repliesOutputs.push(replyOutput)
+                if (replyOutput) {
+                    repliesOutputs.push(replyOutput)
                 }
             }
         }
