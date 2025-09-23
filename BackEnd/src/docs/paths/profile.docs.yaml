@@ -85,12 +85,15 @@ paths:
                   type: string
                 bio:
                   type: string
+                isPrivate:
+                  type: boolean
               example:
                 lastName: "mobina"
                 firstName: "kheiri"
                 email: "mobina.kheiri@gmail.com"
                 password: "Mobin@123"
                 bio: "I am a software developer with a passion for open source."
+                isPrivate: false
 
       responses:
         200:

@@ -1,10 +1,10 @@
-import {ReplyCommentOutput} from "./reply-comment-output"
-export interface CommentOutput{
+import { ReplyCommentOutput } from "./reply-comment-output"
+export interface CommentOutput {
     commentId: string,
-    userName:string,
-    firstName?:string,
+    userName: string,
+    firstName?: string,
     lastName?: string,
-    profile?:string,
+    profile?: string,
     content: string,
     date: Date,
     isLiked: boolean,
