@@ -3,7 +3,7 @@ export interface ISearchUserGetRes {
   data: ISearchedUsersData[]
 }
 
-export interface ISearchTagedData {
+export interface ISearchedUsersData {
   success: true
   data: [
     {
