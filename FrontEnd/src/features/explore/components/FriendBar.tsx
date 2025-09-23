@@ -16,14 +16,14 @@ const FriendBar = ({
 }: FriendBarProps) => {
   return (
     <div className="flex items-center w-full pb-4 gap-4">
-      <Avatar className="flex justify-center items-center w-[35px] h-[35px] rounded-full">
+      <Avatar className="flex justify-center items-center rounded-full">
         <AvatarImage
           src={avatarUrl}
-          className="w-full h-full object-cover object-center scale-160 rounded-full"
+          className="object-cover object-center scale-160 rounded-full w-[35px] h-[35px]"
           alt="avatar"
         />
-        <AvatarFallback className="flex justify-center items-center w-full h-full bg-geryLight rounded-full">
-          <UserRound color="#A5A5A5" strokeWidth={1.5} />
+        <AvatarFallback className="flex justify-center items-center w-[60px] h-[60px] bg-geryLight rounded-full ">
+          <UserRound color="#A5A5A5" strokeWidth={1.5} size={35} />
         </AvatarFallback>
       </Avatar>
       <div className="flex flex-col gap-1">

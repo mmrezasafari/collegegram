@@ -14,15 +14,15 @@ export const SavesImageCard = ({ savesPosts }: IProps) => {
   return (
     <>
       <div
-        key={savesPosts.id}
-        className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all"
+        key={savesPosts?.id}
+        className="overflow-hidden rounded-2xl w-full h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all"
         onClick={() => {
           setPostModalOpen(true)
-          setPostId(savesPosts.id)
+          setPostId(savesPosts?.id)
         }}
       >
         <img
-          src={savesPosts.images[0].url}
+          src={savesPosts?.images?.[savesPosts.images.length - 1]?.url}
           alt="saved Image"
           className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"
         />

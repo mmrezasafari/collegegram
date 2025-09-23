@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SearchBar } from '../components/SearchBar'
+import { SearchBar } from '../components/searchbar'
 import TabsBar from '../components/TabBar'
 import { UsersGrid } from '../components/UsersGrid'
 import PostsGrid from '../components/PostsGrid'
