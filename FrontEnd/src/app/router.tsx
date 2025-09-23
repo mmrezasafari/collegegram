@@ -9,7 +9,7 @@ import { Tagged } from '@/features/tagged/pages/Tagged'
 import { Saves } from '@/features/saved/pages/Saves'
 import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
 import { PostLayout } from '@/layouts/PostLayout'
-import { SearchPage } from '@/features/search/pages/search'
+import { SearchPage } from '@/features/search/pages/searchpage'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
