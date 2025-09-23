@@ -37,6 +37,9 @@ export class PostEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.post)
   comments!: CommentEntity[];
 
+  @Column({ default: false })
+  onlyCloseFriends!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
 

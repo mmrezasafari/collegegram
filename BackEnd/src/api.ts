@@ -39,6 +39,7 @@ import { CommentService } from "./modules/comment/comment.service";
 import { LikeCommentRepository } from "./modules/likeComment/likeComment.repository";
 import { likeCommentRouter } from "./routes/likeComment.route";
 import { LikeCommentService } from "./modules/likeComment/likeComment.service";
+import { CloseFriendRepository } from "./modules/closeFriend/close-friend.repository";
 
 declare global {
   namespace Express {
@@ -68,6 +69,7 @@ export const makeApp = (dataSource: DataSource) => {
   const hashtagRepo = new HashtagRepository(dataSource);
   const commentRepo = new CommentRepository(dataSource)
   const likeCommentRepo = new LikeCommentRepository(dataSource);
+  const closeFriendRepo = new CloseFriendRepository(dataSource);
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
