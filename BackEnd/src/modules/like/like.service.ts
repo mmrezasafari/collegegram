@@ -10,9 +10,9 @@ export class LikeService {
         private postService: PostService
     ) { }
 
-    async likePost(postId:string, userId:string,){
-        const post = await this.postService.getPostById(postId)
-        const existingLike = await this.likeRepo.liked(postId,userId)
+    async likePost(postId: string, userId: string,) {
+        const post = await this.postService.getPostById(postId, userId)
+        const existingLike = await this.likeRepo.liked(postId, userId)
         if (existingLike) {
             throw new HttpError(400, "شما این پست را لایک کرده اید");
         }
@@ -20,23 +20,23 @@ export class LikeService {
         return { message: "لایک کردن با موفقیت ثبت شد" };
     }
 
-    async unLikePost(postId:string, userId:string,){
-        const post = await this.postService.getPostById(postId)
-        const existingLike = await this.likeRepo.liked(postId,userId)
+    async unLikePost(postId: string, userId: string,) {
+        const post = await this.postService.getPostById(postId, userId)
+        const existingLike = await this.likeRepo.liked(postId, userId)
         if (!existingLike) {
             throw new HttpError(400, "شما این پست را لایک نکرده اید");
         }
-        await this.likeRepo.unLike(postId,userId)
+        await this.likeRepo.unLike(postId, userId)
         return { message: "لایک با موفقیت حذف شد" }
 
     }
 
-    async getLikesCount(postId: string){
-    return await this.likeRepo.countLike(postId);
+    async getLikesCount(postId: string) {
+        return await this.likeRepo.countLike(postId);
     }
 
-    async liked(postId:string ,userId:string){
-        const existingLike = await this.likeRepo.liked(postId,userId)
+    async liked(postId: string, userId: string) {
+        const existingLike = await this.likeRepo.liked(postId, userId)
         return !!existingLike;
     }
 

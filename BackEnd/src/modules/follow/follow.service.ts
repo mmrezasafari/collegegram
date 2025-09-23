@@ -9,7 +9,16 @@ import { HomePageResponseDto } from "./dto/home-page-response";
 import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
 
-export class FollowService {
+export interface IFollowService {
+  followUser(followerId: string, username: string): Promise<Follow>;
+  unfollowUser(followerId: string, username: string): Promise<null>;
+  getFollowers(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
+  getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
+  countFollow(userId: string, type: "followers" | "followings"): Promise<number>;
+  isFollowing(followerId: string, followingId: string): Promise<boolean>;
+  getHomePage(userId: string, offset: number, limit: number, sort: string): Promise<HomePageResponseDto[]>;
+}
+export class FollowService implements IFollowService {
   constructor(
     private followRepository: FollowRepository,
     private postService: PostService,
@@ -36,12 +45,10 @@ export class FollowService {
   }
   async getFollowers(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
     const user = await this.userService.getUserByUsername(username);
-    //TODO When added private page
-
-    // const follow = await this.followRepository.isFollowing(userId, user.id);
-    // if (userId != user.id && !follow) {
-    //   throw new HttpError(403, "شما این کاربر را دنبال نمی‌کنید")
-    // }
+    const canAccess = await this.userService.canAccessResource(userId, user.id);
+    if (!canAccess) {
+      throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
+    }
     const follows = await this.followRepository.getFollows(user.id, "followers");
     const response = [];
     for (const follow of follows) {
@@ -59,12 +66,10 @@ export class FollowService {
   }
   async getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]> {
     const user = await this.userService.getUserByUsername(username);
-    //TODO When added private page
-
-    // const follow = await this.followRepository.isFollowing(userId, user.id);
-    // if (userId != user.id && !follow) {
-    //   throw new HttpError(403, "شما این کاربر را دنبال نمی‌کنید")
-    // }
+    const canAccess = await this.userService.canAccessResource(userId, user.id);
+    if (!canAccess) {
+      throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
+    }
     const follows = await this.followRepository.getFollows(user.id, "followings");
 
     const response = [];

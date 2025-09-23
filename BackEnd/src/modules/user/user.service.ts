@@ -5,10 +5,15 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { IUserRepository } from "./user.repository";
 import { minioClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
+import { IFollowService } from "../follow/follow.service";
 export class UserService {
+    private followService!: IFollowService;
     constructor(
         private userRepo: IUserRepository,
     ) { }
+    async setFollowService(followService: IFollowService) {
+        this.followService = followService;
+    }
     async getUser(id: string): Promise<User> {
         const user = await this.userRepo.getById(id);
         if (!user) {
@@ -27,7 +32,6 @@ export class UserService {
     }
 
     async editProfile(id: string, dto: UpdateUserDto) {
-        const user = await this.getUser(id);
         if (dto.email) {
             const existingEmail = await this.userRepo.getByEmail(dto.email);
             if (existingEmail) {
@@ -54,6 +58,21 @@ export class UserService {
             return await this.userRepo.getUsersExplore(userId, offset, limit, sort);
         }
         return await this.userRepo.searchUserInExplore(userId, offset, limit, sort, search);
+    }
+
+    async canAccessResource(userId: string, resourceOwnerId: string): Promise<boolean> {
+        if (userId === resourceOwnerId) {
+            return true; // کاربر می‌تواند به منابع خودش دسترسی داشته باشد
+        }
+        const resourceOwner = await this.userRepo.getById(resourceOwnerId);
+        if (!resourceOwner) {
+            throw new HttpError(404, "کاربر یافت نشد");
+        }
+        if (!resourceOwner.isPrivate) {
+            return true; // اگر حساب کاربری خصوصی نیست، همه می‌توانند دسترسی داشته باشند
+        }
+        const isFollowing = await this.followService.isFollowing(userId, resourceOwnerId);
+        return isFollowing; // اگر دنبال‌کننده است، می‌تواند دسترسی داشته باشد
     }
 
 }

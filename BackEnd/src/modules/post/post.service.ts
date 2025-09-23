@@ -18,12 +18,16 @@ export class PostService {
         private hashtagService: HashtagService
     ) { }
 
-    async getPosts(username: string) {
+    async getPosts(username: string, myId: string): Promise<Post[] | null> {
         const user = await this.userService.getUserByUsername(username);
+        const canAccess = await this.userService.canAccessResource(myId, user.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
+        }
         return await this.postRepo.getPosts(user.id)
     }
 
-    async savePost(files: Express.Multer.File[], caption: string, userId: string, mention: string) {
+    async savePost(files: Express.Multer.File[], caption: string, userId: string, mention: string, myId: string) {
         const uploads: Partial<PostImage>[] = [];
         files.map((file, index) => {
             const objectName = `${Date.now()}${index}-${file.originalname}`;
@@ -42,14 +46,18 @@ export class PostService {
             throw new HttpError(404, "پست  ایجاد نشد")
         }
 
-        const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
+        const mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id, myId);
         const savedHashtags = await this.hashtagService.savePostHashtags(post.id, hashtags)
         return { post, mentionedUsernames, savedHashtags };
     }
-    async getPostById(postId: string) {
+    async getPostById(postId: string, myId: string): Promise<Post> {
         const post = await this.postRepo.getById(postId)
         if (!post) {
             throw new HttpError(404, "پست یافت نشد");
+        }
+        const canAccess = await this.userService.canAccessResource(myId, post.user!.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این پست را ندارید");
         }
         return post;
     }
@@ -57,9 +65,9 @@ export class PostService {
         return await this.postRepo.countPost(userId);
     }
 
-    async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto) {
+    async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: PostDto, myId: string) {
         const uploads: Partial<PostImage>[] = [];
-        const post = await this.getPostById(postId);
+        const post = await this.getPostById(postId, myId);
 
         if (dto.imageUrls) {
             const imagesToDelete: string[] = [];
@@ -102,12 +110,12 @@ export class PostService {
             });
         });
         await this.postRepo.updatePost(postId, userId, uploads, dto.caption);
-        const updatedPost = await this.getPostById(postId);
+        const updatedPost = await this.getPostById(postId, myId);
 
         const usernames = dto.mention ? extract(dto.mention, "mention") : null;
         await this.mentionService.removePostMentions(postId);
         if (usernames) {
-            await this.mentionService.savePostMention(usernames, postId);
+            await this.mentionService.savePostMention(usernames, postId, myId);
         }
         const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
         await this.hashtagService.removePostHashtags(postId);

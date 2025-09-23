@@ -20,9 +20,15 @@ export class FeedService {
     ) { }
 
     async getPost(postId: string, userId: string) {
-        const existPost: Post = await this.postService.getPostById(postId);
+
+        const existPost: Post = await this.postService.getPostById(postId, userId);
         if (!existPost) {
             throw new HttpError(404, "پست یافت نشد");
+        }
+
+        const canAccess = await this.userService.canAccessResource(userId, existPost.user!.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این پست را ندارید");
         }
         existPost.images = existPost.images.map(image => {
             const lastSlashIndex = image.url.lastIndexOf("/");
@@ -56,6 +62,6 @@ export class FeedService {
 
         const commentCount = await this.commentService.getCommentCount(postId);
 
-        return {post, mentionedUsernames, likeCount, liked, saveCount, saved, commentCount }
+        return { post, mentionedUsernames, likeCount, liked, saveCount, saved, commentCount }
     }
 }

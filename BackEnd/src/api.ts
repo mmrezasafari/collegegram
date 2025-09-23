@@ -85,9 +85,10 @@ export const makeApp = (dataSource: DataSource) => {
   const followService = new FollowService(followRepo, postService, userService, likeService, saveService, commentService);
   const searchService = new SearchService(userService, hashtagService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
-  const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService)
+  const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
 
   commentService.setLikeComment(likeCommentService);
+  userService.setFollowService(followService);
 
   setupSwagger(app);
 
