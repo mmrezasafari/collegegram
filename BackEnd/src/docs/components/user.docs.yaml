@@ -15,6 +15,9 @@ components:
         lastName:
           type: string
           example: "testy"
+        isPrivate:
+          type: boolean
+          example: false
         email:
           type: string
           example: "test@gmail.com"

@@ -44,6 +44,15 @@ paths:
               example:
                 success: false
                 message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این کاربر را ندارید"
         404:          
           description: User not found
           content:
@@ -107,6 +116,15 @@ paths:
               example:
                 success: false
                 message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
         404:          
           description: User not found
           content:
@@ -194,6 +212,15 @@ paths:
               example:
                 success: false
                 message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
         404:          
           description: User not found
           content:

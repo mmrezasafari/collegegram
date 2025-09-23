@@ -38,6 +38,15 @@ paths:
               example:
                 success: false
                 message: "شما این پست را لایک کرده اید"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
         "401":
           description: unauthorized
           content:
@@ -114,6 +123,15 @@ paths:
               example:
                 success: false
                 message: "احراز هویت انجام نشده است"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
         "404": 
           description: Bad Request
           content: 
