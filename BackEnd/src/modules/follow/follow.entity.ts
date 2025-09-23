@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "../user/user.entity";
+import { FollowStatusEnum } from "./follow-status.enum";
 
 @Entity("follows")
 
@@ -14,6 +15,9 @@ export class FollowEntity {
 
     @Column()
     followingId!: string;
+
+    @Column({ enum: FollowStatusEnum, type: "enum", default: FollowStatusEnum.PENDING })
+    status!: string
 
     @ManyToOne(() => UserEntity, (user) => user.followers, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     follower!: UserEntity;

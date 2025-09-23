@@ -12,7 +12,12 @@ export const postRouter = (postService: PostService) => {
 
   app.get("/users/:username/posts", (req, res) => {
     const username = zod.string().parse(req.params.username);
-    handleExpress(res, () => postService.getPosts(username));
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => postService.getPosts(username, user.userId));
   })
 
   app.patch("/posts/:id", upload.array('images', 10), (req, res) => {
@@ -23,9 +28,9 @@ export const postRouter = (postService: PostService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
-    handleExpress(res, () => postService.editPost(postId, user.userId, req.files as Express.Multer.File[], dto));
+    handleExpress(res, () => postService.editPost(postId, user.userId, req.files as Express.Multer.File[], dto, user.userId));
 
   })
-  
+
   return app;
 }

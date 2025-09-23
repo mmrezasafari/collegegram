@@ -28,7 +28,6 @@ export const profileRouter = (
     }
     handleExpress(res, async () => {
       const user = await userService.getUser(me.userId);
-      console.log(user)
       const followerCount = await followService.countFollow(me.userId, "followers") ?? 0;
       const followingCount = await followService.countFollow(me.userId, "followings") ?? 0;
       const postCount = await postService.countPost(me.userId);
@@ -77,7 +76,7 @@ export const profileRouter = (
     }
     const caption = req.body.caption;
     const mention = req.body.mention;
-    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId, mention));
+    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], caption, user.userId, mention, user.userId));
   });
   app.get("/home-page", (req, res) => {
     const offset = zod.number().parse(Number(req.query.offset));

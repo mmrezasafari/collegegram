@@ -39,6 +39,9 @@ export class UserEntity {
   @Column({ nullable: true, type: "enum", enum: ImageMimeType })
   mimeType?: ImageMimeType;
 
+  @Column({ default: false })
+  isPrivate!: boolean;
+
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions!: SessionEntity[]
 

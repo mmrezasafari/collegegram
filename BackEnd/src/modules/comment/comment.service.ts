@@ -26,33 +26,47 @@ export class CommentService {
         return {comment, message: "کامنت شما با موفقیت ثبت شد" };
     }
 
-    async getCommentById(commentId:string){
+    async comment(postId: string, userId: string, content: string) {
+        const post = await this.postService.getPostById(postId, userId)
+        const comment = await this.commentRepo.comment(postId, userId, content)
+        return { comment, message: "کامنت شما با موفقیت ثبت شد" };
+    }
+
+    async getCommentById(commentId: string, userId: string) {
         const comment = await this.commentRepo.getById(commentId)
         if (!comment) {
             throw new HttpError(404, "کامنت یافت نشد");
         }
+        const canAccess = await this.userService.canAccessResource(userId, comment.post!.user!.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این کامنت را ندارید");
+        }
         return comment;
     }
-    async replyComment(postId:string, userId:string, content:string, parentId:string){
-        const post = await this.postService.getPostById(postId)
-        const comment = await this.getCommentById(parentId)
+    async replyComment(postId: string, userId: string, content: string, parentId: string) {
+        const post = await this.postService.getPostById(postId, userId)
+        const comment = await this.getCommentById(parentId, userId)
         const replyComment = await this.commentRepo.replyComment(postId, userId, content, parentId)
-        return {replyComment, message: "ریپلای شما با موفقیت ثبت شد" }
+        return { replyComment, message: "ریپلای شما با موفقیت ثبت شد" }
 
     }
-    async convertToCommentOutput(comment:Comment, userId: string){
+    async convertToCommentOutput(comment: Comment, userId: string) {
         const user = await this.userService.getUser(comment.userId)
+        const canAccess = await this.userService.canAccessResource(userId, user.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
+        }
         const isLiked = await this.likeCommentService.isLikedComment(comment.id, userId)
         const likeCount = await this.likeCommentService.getLikesCountComment(comment.id)
-        if(user){
-            const commentOutput:CommentOutput={
+        if (user) {
+            const commentOutput: CommentOutput = {
                 commentId: comment.id,
-                userName:user.username,
-                firstName:user.firstName,
+                userName: user.username,
+                firstName: user.firstName,
                 lastName: user.lastName,
-                profile:user.imagePath,
+                profile: user.imagePath,
                 content: comment.content,
-                date:comment.createdAt,
+                date: comment.createdAt,
                 isLiked: isLiked,
                 likeCount: likeCount,
                 replies: []
@@ -62,38 +76,42 @@ export class CommentService {
         return null;
     }
 
-    async convertToReplyCommentOutput(comment:Comment, userId: string){
+    async convertToReplyCommentOutput(comment: Comment, userId: string) {
         const user = await this.userService.getUser(comment.userId)
+        const canAccess = await this.userService.canAccessResource(userId, user.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
+        }
         const replies = await this.commentRepo.getReplies(comment.id)
         const isLiked = await this.likeCommentService.isLikedComment(comment.id, userId)
         const likeCount = await this.likeCommentService.getLikesCountComment(comment.id)
-        if(user){
-            if(replies){
-                const replyCommentOutput:ReplyCommentOutput={
+        if (user) {
+            if (replies) {
+                const replyCommentOutput: ReplyCommentOutput = {
                     commentId: comment.id,
-                    userName:user.username,
-                    firstName:user.firstName,
+                    userName: user.username,
+                    firstName: user.firstName,
                     lastName: user.lastName,
-                    profile:user.imagePath,
+                    profile: user.imagePath,
                     content: comment.content,
-                    date:comment.createdAt,
+                    date: comment.createdAt,
                     isLiked: isLiked,
                     likeCount: likeCount,
-                    hasReply:true   
+                    hasReply: true
                 }
                 return replyCommentOutput;
-            }else{
-                const replyCommentOutput:ReplyCommentOutput={
+            } else {
+                const replyCommentOutput: ReplyCommentOutput = {
                     commentId: comment.id,
-                    userName:user.username,
-                    firstName:user.firstName,
+                    userName: user.username,
+                    firstName: user.firstName,
                     lastName: user.lastName,
-                    profile:user.imagePath,
+                    profile: user.imagePath,
                     content: comment.content,
-                    date:comment.createdAt,
+                    date: comment.createdAt,
                     isLiked: isLiked,
                     likeCount: likeCount,
-                    hasReply:false   
+                    hasReply: false
                 }
                 return replyCommentOutput;
             }
@@ -117,11 +135,10 @@ export class CommentService {
                         }
                     }
                 }
-                if(commentOutput){
-                    commentOutputs.push(commentOutput)
-                }
             }
+            return commentOutputs;
         }
+        return commentOutputs;
     }
     return commentOutputs;
     }

@@ -9,9 +9,9 @@ export class SaveService {
         private postService: PostService
     ) { }
 
-    async savePost(postId:string, userId:string,){
-        const post = await this.postService.getPostById(postId)
-        const existingSave = await this.saveRepo.isSaved(postId,userId)
+    async savePost(postId: string, userId: string,) {
+        const post = await this.postService.getPostById(postId, userId)
+        const existingSave = await this.saveRepo.isSaved(postId, userId)
         if (existingSave) {
             throw new HttpError(400, "شما این پست را ذخیره دارید");
         }
@@ -19,23 +19,23 @@ export class SaveService {
         return { message: "پست با موفقیت ذخیره شد" };
     }
 
-    async unSavePost(postId:string, userId:string,){
-        const post = await this.postService.getPostById(postId)
-        const existingSave = await this.saveRepo.isSaved(postId,userId)
+    async unSavePost(postId: string, userId: string,) {
+        const post = await this.postService.getPostById(postId, userId)
+        const existingSave = await this.saveRepo.isSaved(postId, userId)
         if (!existingSave) {
             throw new HttpError(400, "شما این پست را ذخیره نکرده اید");
         }
-        await this.saveRepo.unSave(postId,userId)
+        await this.saveRepo.unSave(postId, userId)
         return { message: "ذخبره پست با موفقیت حذف شد" }
 
     }
 
-    async getSaveCount(postId: string){
-    return await this.saveRepo.countSave(postId);
+    async getSaveCount(postId: string) {
+        return await this.saveRepo.countSave(postId);
     }
 
-    async saved(postId:string ,userId:string){
-        const existingSave = await this.saveRepo.isSaved(postId,userId)
+    async saved(postId: string, userId: string) {
+        const existingSave = await this.saveRepo.isSaved(postId, userId)
         return !!existingSave;
     }
 

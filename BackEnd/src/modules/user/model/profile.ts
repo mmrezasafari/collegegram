@@ -5,6 +5,7 @@ export interface UserProfile {
   followerCount: number;
   followingCount: number;
   postCount: number;
+  isPrivate: boolean;
   firstName?: string;
   lastName?: string;
   bio?: string;
