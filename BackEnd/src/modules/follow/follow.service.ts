@@ -6,6 +6,7 @@ import { SaveService } from "../savedPost/saved-post.service";
 import { UserService } from "../user/user.service";
 import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
 import { HomePageResponseDto } from "./dto/home-page-response";
+import { FollowStatusEnum } from "./follow-status.enum";
 import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
 
@@ -33,7 +34,11 @@ export class FollowService implements IFollowService {
     if (userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال می‌کردید")
     }
-    return await this.followRepository.createFollow(followerId, following.id)
+    const user = await this.userService.getUser(following.id);
+    if (user.isPrivate) {
+      return await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.PENDING);
+    }
+    return await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.ACCEPTED)
   }
   async unfollowUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
@@ -137,7 +142,6 @@ export class FollowService implements IFollowService {
     }
     return data;
   }
-
   async getFollows(userId: string) {
     const followers = await this.followRepository.getFollows(userId, "followers");
     const followings = await this.followRepository.getFollows(userId, "followings");
@@ -145,5 +149,35 @@ export class FollowService implements IFollowService {
     const followingUsers = followings.map(f => f.following).filter(Boolean);
     return [...followerUsers, ...followingUsers]
   }
+  async respondToFollowRequests(userId: string, username: string, accept: boolean) {
+    const follower = await this.userService.getUserByUsername(username);
+    if (!follower) {
+      throw new HttpError(404, "کاربر مورد نظر یافت نشد")
+    }
+    const followRequest = await this.followRepository.getFollowById(follower.id, userId);
 
+    if (!followRequest) {
+      throw new HttpError(404, "درخواست دنبال کردن یافت نشد")
+    }
+    if (followRequest.status !== FollowStatusEnum.PENDING) {
+      throw new HttpError(400, "شما این کاربر را دنبال می‌کنید")
+    }
+    if (accept) {
+      followRequest.status = FollowStatusEnum.ACCEPTED;
+      await this.followRepository.updateFollow(followRequest);
+    } else {
+      await this.followRepository.deleteFollow(follower.id, userId)
+    }
+    return null;
+  }
+  async getStatusFollowRequest(userId: string, username: string) {
+    const following = await this.userService.getUserByUsername(username);
+    const follow = await this.followRepository.getFollowById(userId, following.id);
+    if (!follow) {
+      return { status: "NONE" }
+    } else if (follow.status === FollowStatusEnum.PENDING) {
+      return { status: "PENDING" }
+    }
+    return { status: "ACCEPTED" }
+  }
 }

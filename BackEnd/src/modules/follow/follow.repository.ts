@@ -1,9 +1,10 @@
 import { DataSource, Repository } from "typeorm";
 import { FollowEntity } from "./follow.entity";
 import { Follow } from "./models/follow";
+import { FollowStatusEnum } from "./follow-status.enum";
 
 export interface IFollowRepository {
-  createFollow(followerId: string, followingId: string): Promise<Follow | null>;
+  createFollow(followerId: string, followingId: string, status: FollowStatusEnum): Promise<Follow | null>;
   deleteFollow(followerId: string, followingId: string): Promise<null>;
   getFollows(userId: string, type: "followers" | "followings"): Promise<Follow[] | null>;
   isFollowing(followerId: string, followingId: string): Promise<Follow | null>;
@@ -17,10 +18,11 @@ export class FollowRepository implements IFollowRepository {
     this.followRepository = appDataSource.getRepository(FollowEntity);
   }
 
-  async createFollow(followerId: string, followingId: string) {
+  async createFollow(followerId: string, followingId: string, status: FollowStatusEnum) {
     return await this.followRepository.save({
       followerId,
-      followingId
+      followingId,
+      status
     });
   }
 
@@ -37,6 +39,7 @@ export class FollowRepository implements IFollowRepository {
       return await this.followRepository.find({
         where: {
           followingId: userId,
+          status: FollowStatusEnum.ACCEPTED
         },
         relations: {
           follower: true,
@@ -49,6 +52,7 @@ export class FollowRepository implements IFollowRepository {
       return await this.followRepository.find({
         where: {
           followerId: userId,
+          status: FollowStatusEnum.ACCEPTED
         },
         relations: {
           following: true
@@ -60,9 +64,13 @@ export class FollowRepository implements IFollowRepository {
     }
   }
   async isFollowing(followerId: string, followingId: string): Promise<Follow | null> {
-    return await this.followRepository.findOneBy({
-      followerId,
-      followingId
+    return await this.followRepository.findOne({
+      where: {
+        followerId,
+        followingId,
+        status: FollowStatusEnum.ACCEPTED
+      }
+
 
     })
   }
@@ -70,11 +78,25 @@ export class FollowRepository implements IFollowRepository {
     if (type === "followers") {
       return await this.followRepository.countBy({
         followingId: userId,
+        status: FollowStatusEnum.ACCEPTED
       });
     } else {
       return await this.followRepository.countBy({
         followerId: userId,
+        status: FollowStatusEnum.ACCEPTED
       });
     }
+  }
+
+  async updateFollow(follow: Follow) {
+    return await this.followRepository.save(follow);
+  }
+  async getFollowById(followerId: string, followingId: string) {
+    return await this.followRepository.findOne({
+      where: {
+        followerId,
+        followingId
+      }
+    })
   }
 }
