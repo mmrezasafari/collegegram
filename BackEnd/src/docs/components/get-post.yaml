@@ -53,42 +53,4 @@ components:
               type: boolean
             commentCount:
               type: integer
-    UpdatedPost:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: "0df6222b-abab-4c95-9bcb-804796510d7e"
-        caption:
-          type: string
-          example: "ejuio"
-        images:
-          type: array
-          items:
-            $ref: "#/components/schemas/PostImage"
-        createdAt:
-          type: string
-          format: date-time
-          example: "2025-09-09T04:28:28.253Z"
-        updatedAt:
-          type: string
-          format: date-time
-          example: "2025-09-09T08:04:45.489Z"
-
-    UpdatePostResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            updatedPost:
-              $ref: "#/components/schemas/UpdatedPost"
-            usernames:
-              type: array
-              items:
-                type: string
-              example: ["Mobinakh"]          
+                 

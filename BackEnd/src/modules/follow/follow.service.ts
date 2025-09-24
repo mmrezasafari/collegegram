@@ -124,6 +124,7 @@ export class FollowService implements IFollowService {
           id: post.id,
           images: post.images,
           caption: post.caption,
+          onlyCloseFriends: post.onlyCloseFriends,
           createdAt: post.createdAt,
         },
         followerCount: followerCount ?? 0,

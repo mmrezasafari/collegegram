@@ -9,7 +9,7 @@ export class MentionService {
         private userService: UserService
     ) { }
 
-    async savePostMention(usernames: string[], postId: string, myId: string) {
+    async savePostMention(usernames: string[], postId: string) {
         const savedUsernames: string[] = [];
         for (const username of usernames) {
             const mentionedUser = await this.userService.getUserByUsername(username);

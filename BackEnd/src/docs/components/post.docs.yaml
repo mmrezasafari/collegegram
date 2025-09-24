@@ -30,6 +30,9 @@ components:
         caption:
           type: string
           example: "chi bedonam"
+        onlyCloseFriends:
+          type: boolean
+          default: false
         user:
           $ref: "#/components/schemas/User"
         images:
@@ -45,7 +48,7 @@ components:
           format: date-time
           example: "2025-09-05T18:46:28.666Z"
 
-    CreatePostResponse:
+    PostResponse:
       type: object
       properties:
         success:
@@ -61,7 +64,7 @@ components:
               items:
                 type: string
               example: ["Mobinakh", "roozaa"]
-            savedhashtags:
+            savedHashtags:
               type: array
               items:
                 type: string

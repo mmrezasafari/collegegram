@@ -167,6 +167,8 @@ paths:
                   type: string
                 mention:
                   type: string
+                onlyCloseFriends:
+                  type: boolean
                 imageUrls:
                   type: array
                   items:
@@ -177,8 +179,9 @@ paths:
                     type: string
                     format: binary
               example:
-                caption: "This is a caption"
+                caption: "This is a #caption"
                 mention: "@Mobinakh @roozaa"
+                onlyCloseFriends: false
                 imageUrls: ["example.jpg", "example2.png"]
                 images: ["example.jpg", "example2.png"]  
       responses: 
@@ -193,7 +196,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/UpdatePostResponse"
+                      $ref: "#/components/schemas/PostResponse"
         400:
           description: Bad request
           content:
