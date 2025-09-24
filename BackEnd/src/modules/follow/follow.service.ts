@@ -42,7 +42,7 @@ export class FollowService implements IFollowService {
   }
   async unfollowUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
-    const userExists = await this.followRepository.isFollowing(followerId, following.id);
+    const userExists = await this.followRepository.getFollowById(followerId, following.id);
     if (!userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال نمی‌کردید")
     }
