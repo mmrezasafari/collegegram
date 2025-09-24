@@ -272,6 +272,7 @@ paths:
         - name: username
           in: path
           required: true
+          description: The username of the user who sent the follow request(follower)
           schema: 
             type: string
       requestBody:
@@ -309,9 +310,15 @@ paths:
             application/json: 
               schema: 
                $ref: "#/components/schemas/Error"
-              example:
-                success: false
-                message: "شما درخواست دنبال کردن این کاربر را ندارید"
+              examples: 
+                UserIsFollowing:
+                  value:  
+                    success: false
+                    message: "شما این کاربر را دنبال می‌کنید"
+                NoFollowRequest:
+                  value:
+                    success: false
+                    message: " درخواست دنبال کردن یافت نشد"
         "401":
           description: unauthorized
           content:
@@ -351,6 +358,7 @@ paths:
         - name: username
           in: path
           required: true
+          description: The username of the user to receive follow request(following)
           schema: 
             type: string
       responses:
