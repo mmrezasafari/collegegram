@@ -42,8 +42,8 @@ export const UserProfileOverView = () => {
     if (ellipsisRef.current) {
       const rect = ellipsisRef.current.getBoundingClientRect()
       setDialogPosition({
-        top: rect.bottom + window.scrollY + 8, // 8px offset below icon
-        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY, // align top with icon
+        left: rect.right + window.scrollX + 8, // 8px to the right of icon
       })
     }
     setBlockDialogOpen(true)
@@ -227,12 +227,32 @@ export const UserProfileOverView = () => {
           }}
         >
           <div
-            className="bg-white rounded-[32px] shadow-lg flex items-center justify-between px-8 py-6 min-w-[303px] min-h-[104px] cursor-default border border-gray-300"
+            className="bg-white rounded-[32px] shadow-lg flex flex-col gap-8 px-8 py-8 min-w-[303px] min-h-[104px] cursor-default border border-gray-300"
             dir="rtl"
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="text-xl font-medium">بلاک کردن</span>
-            <Ban size={40} color="#222" />
+            <div
+              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
+              onClick={() => {
+                // TODO: implement add to close friends logic here
+                alert('افزودن به دوستان نزدیک')
+                // Example: addToCloseFriends(user?.id)
+              }}
+            >
+              <span className="text-xl font-medium">
+                افزودن به دوستان نزدیک
+              </span>
+              <Plus size={40} color="#222" className="p-2" />
+            </div>
+            <div
+              className="flex flex-row items-center justify-between"
+              onClick={() => {
+                alert('بلاک کردن')
+              }}
+            >
+              <span className="text-xl font-medium">بلاک کردن</span>
+              <Ban size={40} color="#222" className="p-2" />
+            </div>
           </div>
           {/* Overlay for closing */}
           <div
