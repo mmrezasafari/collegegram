@@ -42,8 +42,8 @@ export const UserProfileOverView = () => {
     if (ellipsisRef.current) {
       const rect = ellipsisRef.current.getBoundingClientRect()
       setDialogPosition({
-        top: rect.top + window.scrollY, // align top with icon
-        left: rect.right + window.scrollX + 8, // 8px to the right of icon
+        top: rect.top + ellipsisRef.current.offsetHeight, // align top with icon
+        left: rect.right + ellipsisRef.current.offsetWidth + 8, // 8px to the right of icon
       })
     }
     setBlockDialogOpen(true)
@@ -69,8 +69,8 @@ export const UserProfileOverView = () => {
                 />
               </AvatarFallback>
             </Avatar>
-            <div className="flex max-md:w-full flex-col gap-4">
-              <div className="flex items-center max-md:justify-between gap-4">
+            <div className="flex max-md:w-full flex-col gap-4 w-full">
+              <div className="flex items-center max-md:justify-between gap-4 w-full">
                 <div className="flex items-center gap-2 md:gap-4">
                   <p className="md:text-2xl font-bold text-wrap text-justify">
                     <span>{user?.firstName} </span>
@@ -103,7 +103,7 @@ export const UserProfileOverView = () => {
                 </div>
                 <div
                   ref={ellipsisRef}
-                  className="md:hidden cursor-pointer"
+                  className="md:hidden cursor-pointer align-end"
                   style={{ display: 'inline-block' }}
                 >
                   <EllipsisVertical
@@ -186,17 +186,6 @@ export const UserProfileOverView = () => {
               )}
             </div>
           </div>
-        </div>
-        <div
-          ref={ellipsisRef}
-          className="hidden md:block cursor-pointer"
-          style={{ display: 'inline-block' }}
-        >
-          <EllipsisVertical
-            color="#ea5a69"
-            size={40}
-            onClick={handleEllipsisClick}
-          />
         </div>
       </div>
       {followingsListOpen && (
