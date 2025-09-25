@@ -1,31 +1,20 @@
 export interface ISearchUserGetRes {
   success: boolean
-  data: ISearchedUsersData[]
+  data: Array<ISearchedUsersData>
 }
 
 export interface ISearchedUsersData {
-  success: true
-  data: [
-    {
-      id: string
-      caption: string
-      createdAt: string
-      updatedAt: string
-      images: Array<{
-        id: string
-        url: string
-        mimeType: string
-        createdAt: string
-        updatedAt: string
-      }>
-      tags: []
-    },
-  ]
+  username: string
+  firstName: string
+  lastName: string
+  imagePath: string
+  isFollowing: boolean
+  followerCount: number
 }
 
 export interface ISearchTagsGetRes {
   success: boolean
-  data: ISearchTagsData[]
+  data: Array<ISearchTagsData>
 }
 
 export interface ISearchTagsData {
@@ -36,7 +25,3 @@ export interface ISearchTagsData {
     url: string
   }>
 }
-//     id: string
-//     url: string
-//   }>
-// }
