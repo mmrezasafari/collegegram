@@ -42,8 +42,8 @@ export const UserProfileOverView = () => {
     if (ellipsisRef.current) {
       const rect = ellipsisRef.current.getBoundingClientRect()
       setDialogPosition({
-        top: rect.top + window.scrollY, // align top with icon
-        left: rect.right + window.scrollX + 8, // 8px to the right of icon
+        top: rect.bottom + window.scrollY + 8, // 8px offset below icon
+        left: rect.left + window.scrollX,
       })
     }
     setBlockDialogOpen(true)
