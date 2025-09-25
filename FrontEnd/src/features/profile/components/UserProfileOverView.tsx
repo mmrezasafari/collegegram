@@ -3,7 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
-import { EllipsisVertical, Plus, UserRound } from 'lucide-react'
+import { EllipsisVertical, Plus, UserRound, Ban } from 'lucide-react'
 import { FollowersList } from '@/features/relationships/components/FollowersList'
 import { FollowingsList } from '@/features/relationships/components/FollowingList'
 import { Separator } from '@/features/common/components/ui/separator'
@@ -13,12 +13,18 @@ import {
   useFollowAction,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelations'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 
 export const UserProfileOverView = () => {
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false)
+  const ellipsisRef = useRef<HTMLDivElement | null>(null)
+  const [dialogPosition, setDialogPosition] = useState<{
+    top: number
+    left: number
+  } | null>(null)
   const { data } = useGetUser()
   const user = data?.data
   const { mutate: unFollowMutation } = useUnfollowAction()
@@ -30,6 +36,17 @@ export const UserProfileOverView = () => {
 
   const handleUnFollow = () => {
     unFollowMutation()
+  }
+
+  const handleEllipsisClick = () => {
+    if (ellipsisRef.current) {
+      const rect = ellipsisRef.current.getBoundingClientRect()
+      setDialogPosition({
+        top: rect.top + window.scrollY, // align top with icon
+        left: rect.right + window.scrollX + 8, // 8px to the right of icon
+      })
+    }
+    setBlockDialogOpen(true)
   }
 
   return (
@@ -84,7 +101,16 @@ export const UserProfileOverView = () => {
                     </Button>
                   )}
                 </div>
-                <EllipsisVertical className="md:hidden" color="#ea5a69" />
+                <div
+                  ref={ellipsisRef}
+                  className="md:hidden cursor-pointer"
+                  style={{ display: 'inline-block' }}
+                >
+                  <EllipsisVertical
+                    color="#ea5a69"
+                    onClick={handleEllipsisClick}
+                  />
+                </div>
               </div>
               <div className="hidden md:flex space-x-4 items-center h-4">
                 <div
@@ -161,11 +187,17 @@ export const UserProfileOverView = () => {
             </div>
           </div>
         </div>
-        <EllipsisVertical
+        <div
+          ref={ellipsisRef}
           className="hidden md:block cursor-pointer"
-          color="#ea5a69"
-          size={40}
-        />
+          style={{ display: 'inline-block' }}
+        >
+          <EllipsisVertical
+            color="#ea5a69"
+            size={40}
+            onClick={handleEllipsisClick}
+          />
+        </div>
       </div>
       {followingsListOpen && (
         <DialogAndDrawerWizard
@@ -184,6 +216,31 @@ export const UserProfileOverView = () => {
         >
           <FollowersList onClose={() => setFollowersListOpen(false)} />
         </DialogAndDrawerWizard>
+      )}
+      {/* Block dialog */}
+      {blockDialogOpen && dialogPosition && (
+        <div
+          className="fixed z-50"
+          style={{
+            top: dialogPosition.top,
+            left: dialogPosition.left,
+          }}
+        >
+          <div
+            className="bg-white rounded-[32px] shadow-lg flex items-center justify-between px-8 py-6 min-w-[303px] min-h-[104px] cursor-default border border-gray-300"
+            dir="rtl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="text-xl font-medium">بلاک کردن</span>
+            <Ban size={40} color="#222" />
+          </div>
+          {/* Overlay for closing */}
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: -1 }}
+            onClick={() => setBlockDialogOpen(false)}
+          />
+        </div>
       )}
     </>
   )
