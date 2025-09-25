@@ -1,4 +1,5 @@
 import { minioGetClient } from "../../config/minio.config";
+import { CloseFriendService } from "../closeFriend/close-friend.service";
 import { PostService } from "../post/post.service";
 import { HashtagService } from "../tag/tag.service";
 import { UserService } from "../user/user.service";
@@ -8,6 +9,7 @@ export class SearchService {
   constructor(
     private userService: UserService,
     private tagService: HashtagService,
+    private closeFriendService: CloseFriendService,
   ) { }
   async searchUsers(
     userId: string,
@@ -70,6 +72,7 @@ export class SearchService {
   }
 
   async searchTags(
+    userId: string,
     offset: number,
     limit: number,
     sort: "ASC" | "DESC",
@@ -77,19 +80,37 @@ export class SearchService {
     isSummary: boolean
   ) {
     const resultSearch = await this.tagService.searchTagInExplore(offset, limit, sort, search ?? null);
-    if (isSummary && resultSearch) {
+    if (!resultSearch) return [];
+
+    const visiblePosts = [];
+    for (const post of resultSearch) {
+      const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
+      if (post.onlyCloseFriends && !isCloseFriend) {
+        continue;
+      }
+      visiblePosts.push({
+        id: post.id,
+        caption: post.caption,
+        onlyCloseFriends: post.onlyCloseFriends,
+        images: post.images,
+        createdAt: post.createdAt,
+        tags: post.tags,
+      });
+    }
+
+    if (isSummary) {
       const uniqueTags = Array.from(
         new Set(
-          resultSearch.flatMap(post =>
+          visiblePosts.flatMap((post) =>
             post.tags
-              .filter(tag => tag.context.includes(search ?? ""))
-              .map(tag => tag.context)
+              .filter((tag) => tag.context.includes(search ?? ""))
+              .map((tag) => tag.context)
           )
         )
       );
       return uniqueTags;
     } else {
-      return resultSearch;
+      return visiblePosts;
     }
   }
 

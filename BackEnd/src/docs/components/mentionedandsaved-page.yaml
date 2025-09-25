@@ -8,16 +8,12 @@ components:
           format: uuid
         caption:
           type: string
+        onlyCloseFriends:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
         images:
           type: array
           items:
-            $ref: "#/components/schemas/Image"
-
-    Image:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        url:
-          type: string
+            $ref: "#/components/schemas/PostImage"

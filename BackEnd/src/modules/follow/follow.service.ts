@@ -1,11 +1,6 @@
 import { HttpError } from "../../../utility/http-error";
-import { CommentService } from "../comment/comment.service";
-import { LikeService } from "../like/like.service";
-import { PostService } from "../post/post.service";
-import { SaveService } from "../savedPost/saved-post.service";
 import { UserService } from "../user/user.service";
 import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
-import { HomePageResponseDto } from "./dto/home-page-response";
 import { FollowStatusEnum } from "./follow-status.enum";
 import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
@@ -17,16 +12,11 @@ export interface IFollowService {
   getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
   countFollow(userId: string, type: "followers" | "followings"): Promise<number>;
   isFollowing(followerId: string, followingId: string): Promise<boolean>;
-  getHomePage(userId: string, offset: number, limit: number, sort: string): Promise<HomePageResponseDto[]>;
 }
 export class FollowService implements IFollowService {
   constructor(
     private followRepository: FollowRepository,
-    private postService: PostService,
     private userService: UserService,
-    private likeService: LikeService,
-    private saveService: SaveService,
-    private commentService: CommentService,
   ) { }
   async followUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
@@ -92,63 +82,21 @@ export class FollowService implements IFollowService {
     }
     return response;
   }
+  
   async countFollow(userId: string, type: "followers" | "followings") {
     return await this.followRepository.countFollow(userId, type);
   }
+
   async isFollowing(followerId: string, followingId: string): Promise<boolean> {
     const following = await this.followRepository.isFollowing(followerId, followingId);
     return following ? true : false;
   }
-  async getHomePage(userId: string, offset: number, limit: number, sort: string) {
-    const followings = await this.followRepository.getFollows(userId, "followings")
-    if (!followings) {
-      return [];
-    }
-    let followingsId = followings.map(following => following.followingId);
-    const posts = await this.postService.getFollowingPosts(followingsId, offset, limit, sort);
-    let data: HomePageResponseDto[] = [];
-    if (!posts) {
-      return [];
-    }
-    for (const post of posts) {
-      if (!post.user) {
-        throw new HttpError(500, "خطای سرور");
-      }
-      const followerCount = await this.countFollow(post.user.id, "followers");
-      const likeCount = await this.likeService.getLikesCount(post.id);
-      const isLiked = await this.likeService.liked(post.id, userId);
-      const savedCount = await this.saveService.getSaveCount(post.id);
-      const isSaved = await this.saveService.saved(post.id, userId);
-      const commentCount = await this.commentService.getCommentCount(post.id);
-      data.push({
-        username: post.user.username,
-        firstName: post.user.firstName,
-        lastName: post.user.lastName,
-        imagePath: post.user.imagePath,
-        post: {
-          id: post.id,
-          images: post.images,
-          caption: post.caption,
-          onlyCloseFriends: post.onlyCloseFriends,
-          createdAt: post.createdAt,
-        },
-        followerCount: followerCount ?? 0,
-        likeCount: likeCount ?? 0,
-        isLiked,
-        savedCount: savedCount ?? 0,
-        isSaved,
-        commentCount: commentCount ?? 0
-      })
-    }
-    return data;
+  
+  async getFollows(userId: string, type: "followers" | "followings") {
+    return await this.followRepository.getFollows(userId, type);
+  
   }
-  async getFollows(userId: string) {
-    const followers = await this.followRepository.getFollows(userId, "followers");
-    const followings = await this.followRepository.getFollows(userId, "followings");
-    const followerUsers = followers.map(f => f.follower).filter(Boolean);
-    const followingUsers = followings.map(f => f.following).filter(Boolean);
-    return [...followerUsers, ...followingUsers]
-  }
+
   async respondToFollowRequests(userId: string, username: string, accept: boolean) {
     const follower = await this.userService.getUserByUsername(username);
     if (!follower) {
@@ -170,6 +118,7 @@ export class FollowService implements IFollowService {
     }
     return null;
   }
+
   async getStatusFollowRequest(userId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
     const follow = await this.followRepository.getFollowById(userId, following.id);

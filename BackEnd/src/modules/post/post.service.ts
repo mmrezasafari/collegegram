@@ -19,13 +19,8 @@ export class PostService {
         private hashtagService: HashtagService
     ) { }
 
-    async getPosts(username: string, myId: string): Promise<Post[] | null> {
-        const user = await this.userService.getUserByUsername(username);
-        const canAccess = await this.userService.canAccessResource(myId, user.id);
-        if (!canAccess) {
-            throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید")
-        }
-        return await this.postRepo.getPosts(user.id)
+    async getPosts(userId: string) {
+        return await this.postRepo.getPosts(userId);
     }
 
     async savePost(files: Express.Multer.File[], dto: createPostDto, userId: string) {
