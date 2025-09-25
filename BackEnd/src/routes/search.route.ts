@@ -32,7 +32,7 @@ export const searchRouter = (searchService: SearchService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
-    handleExpress(res, () => searchService.searchTags(offset, limit, sort, search, isSummary))
+    handleExpress(res, () => searchService.searchTags(user.userId, offset, limit, sort, search, isSummary))
   })
   return app;
 }

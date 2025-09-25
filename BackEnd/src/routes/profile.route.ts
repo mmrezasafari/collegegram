@@ -79,18 +79,6 @@ export const profileRouter = (
     handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], dto , user.userId));
   });
 
-  app.get("/home-page", (req, res) => {
-    const offset = zod.number().parse(Number(req.query.offset));
-    const limit = zod.int().parse(Number(req.query.limit));
-    const sort = zod.enum(["ASC", "DESC"]).parse(req.query.sort);
-    const user = req.user
-    if (!user) {
-      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
-      return;
-    }
-    handleExpress(res, () => followService.getHomePage(user.userId, offset, limit, sort));
-  });
-
   app.get("/mentioned-page", (req, res) => {
     const offset = zod.number().parse(Number(req.query.offset));
     const limit = zod.int().parse(Number(req.query.limit));

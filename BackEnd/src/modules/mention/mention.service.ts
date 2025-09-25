@@ -1,3 +1,4 @@
+import { CloseFriendService } from "../closeFriend/close-friend.service";
 import { Post } from "../post/model/post";
 import { UserService } from "../user/user.service";
 import { IMentionRepository } from "./mention.repository";
@@ -6,7 +7,8 @@ import { IMentionRepository } from "./mention.repository";
 export class MentionService {
     constructor(
         private mentionRepo: IMentionRepository,
-        private userService: UserService
+        private userService: UserService,
+        private closeFriendService: CloseFriendService
     ) { }
 
     async savePostMention(usernames: string[], postId: string) {
@@ -31,8 +33,24 @@ export class MentionService {
     }
 
     async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-        return this.mentionRepo.getMentionPage(userId, offset, limit, sort);
+        const mentions = await this.mentionRepo.getMentionPage(userId, offset, limit, sort);
+        if (!mentions) return [];
+
+        const posts: Post[] = [];
+        for (const mention of mentions) {
+            const post = mention.post;
+            const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
+            if (post.onlyCloseFriends && !isCloseFriend) {
+                continue;
+            }
+            posts.push({
+                id: post.id,
+                caption: post.caption,
+                onlyCloseFriends: post.onlyCloseFriends, 
+                images: post.images,
+                createdAt: post.createdAt,
+            });
+        }
+        return posts;
     }
-
-
 }

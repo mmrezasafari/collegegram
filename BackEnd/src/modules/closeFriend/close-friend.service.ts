@@ -13,7 +13,12 @@ export class CloseFriendService {
 
     async addCloseFriend(userId: string, username: string) {
         const friendUser = await this.userService.getUserByUsername(username);
-        const followUsers = await this.followService.getFollows(userId);
+        
+        const followers = await this.followService.getFollows(userId, "followers");
+        const followings = await this.followService.getFollows(userId,  "followings");
+        const followerUsers = followers.map(f => f.follower).filter(Boolean);
+        const followingUsers = followings.map(f => f.following).filter(Boolean);
+        const followUsers = [...followerUsers, ...followingUsers];
 
         const isFollowRelation = followUsers.some(u => u.username === friendUser.username);
         if (!isFollowRelation) {
@@ -56,6 +61,10 @@ export class CloseFriendService {
             })
         }
         return response;
+    }
+
+    async isCloseFriend (myId: string, resourceOwnerId: string) {
+        return await this.closeFriendRepo.isCloseFriend(myId, resourceOwnerId)
     }
 
 }

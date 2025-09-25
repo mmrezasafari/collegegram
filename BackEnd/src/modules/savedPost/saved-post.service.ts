@@ -1,4 +1,6 @@
 import { HttpError } from "../../../utility/http-error";
+import { CloseFriendService } from "../closeFriend/close-friend.service";
+import { Post } from "../post/model/post";
 import { PostService } from "../post/post.service";
 import { ISaveRepository } from "./saved-post.repository";
 
@@ -6,7 +8,8 @@ import { ISaveRepository } from "./saved-post.repository";
 export class SaveService {
     constructor(
         private saveRepo: ISaveRepository,
-        private postService: PostService
+        private postService: PostService,
+        private closeFriendService: CloseFriendService,
     ) { }
 
     async savePost(postId: string, userId: string,) {
@@ -40,6 +43,25 @@ export class SaveService {
     }
 
     async getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-        return this.saveRepo.getSavePage(userId, offset, limit, sort);
+        const savePosts = await this.saveRepo.getSavePage(userId, offset, limit, sort);
+        if (!savePosts) return [];
+
+        const posts: Post[] = [];
+        for (const savePost of savePosts) {
+            const post = savePost.post;
+            const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
+            if (post.onlyCloseFriends && !isCloseFriend) {
+                continue;
+            }
+            posts.push({
+                id: post.id,
+                caption: post.caption,
+                onlyCloseFriends: post.onlyCloseFriends,
+                images: post.images,
+                createdAt: post.createdAt,
+            });
+        }
+        return posts;
     }
 }
+
