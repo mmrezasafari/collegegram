@@ -178,7 +178,7 @@ export function AppSidebar() {
                 className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
                 onClick={() => {
                   setDialogOpen(false)
-                  onNavigate('/closefriends')
+                  onNavigate('/more/closefriends')
                 }}
               >
                 <span className="text-s font-medium">دوستان نزدیک</span>
@@ -188,14 +188,13 @@ export function AppSidebar() {
                 className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
                 onClick={() => {
                   setDialogOpen(false)
-                  onNavigate('/blocklist')
+                  onNavigate('/more/blocklist')
                 }}
               >
                 <span className="text-s font-medium">لیست سیاه</span>
                 <Ban size={20} color="#222" />
               </div>
             </div>
-            {/* Overlay for closing */}
             <div
               className="fixed inset-0"
               style={{ zIndex: -1 }}

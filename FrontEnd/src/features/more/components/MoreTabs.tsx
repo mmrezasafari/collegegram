@@ -5,7 +5,7 @@ const tabs: { id: 'closefriends' | 'blocklist'; label: string }[] = [
 
 interface MoreTabsProps {
   activeTab: 'closefriends' | 'blocklist'
-  setActiveTab: (_: 'closefriends' | 'blocklist') => void
+  setActiveTab: (tab: 'closefriends' | 'blocklist') => void
 }
 
 export const MoreTabsBar = ({ activeTab, setActiveTab }: MoreTabsProps) => (
