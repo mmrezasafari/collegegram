@@ -176,7 +176,10 @@ export function AppSidebar() {
             >
               <div
                 className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
-                onClick={() => {}}
+                onClick={() => {
+                  setDialogOpen(false)
+                  onNavigate('/closefriends')
+                }}
               >
                 <span className="text-s font-medium">دوستان نزدیک</span>
                 <Plus size={20} />
@@ -185,7 +188,7 @@ export function AppSidebar() {
                 className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
                 onClick={() => {
                   setDialogOpen(false)
-                  onNavigate('/more')
+                  onNavigate('/blocklist')
                 }}
               >
                 <span className="text-s font-medium">لیست سیاه</span>
