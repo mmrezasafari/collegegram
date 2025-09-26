@@ -174,12 +174,21 @@ export function AppSidebar() {
               dir="rtl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
-                <span className="text-xs font-medium">دوستان نزدیک</span>
+              <div
+                className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
+                onClick={() => {}}
+              >
+                <span className="text-s font-medium">دوستان نزدیک</span>
                 <Plus size={20} />
               </div>
-              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
-                <span className="text-xs font-medium">لیست سیاه</span>
+              <div
+                className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
+                onClick={() => {
+                  setDialogOpen(false)
+                  onNavigate('/blocklist')
+                }}
+              >
+                <span className="text-s font-medium">لیست سیاه</span>
                 <Ban size={20} color="#222" />
               </div>
             </div>
