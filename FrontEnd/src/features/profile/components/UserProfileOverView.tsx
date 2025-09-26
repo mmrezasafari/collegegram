@@ -42,8 +42,8 @@ export const UserProfileOverView = () => {
     if (ellipsisRef.current) {
       const rect = ellipsisRef.current.getBoundingClientRect()
       setDialogPosition({
-        top: rect.top + window.scrollY, // align top with icon
-        left: rect.right + window.scrollX + 8, // 8px to the right of icon
+        top: rect.top + ellipsisRef.current.offsetHeight, // align top with icon
+        left: rect.right + ellipsisRef.current.offsetWidth + 8, // 8px to the right of icon
       })
     }
     setBlockDialogOpen(true)
@@ -69,8 +69,8 @@ export const UserProfileOverView = () => {
                 />
               </AvatarFallback>
             </Avatar>
-            <div className="flex max-md:w-full flex-col gap-4">
-              <div className="flex items-center max-md:justify-between gap-4">
+            <div className="flex max-md:w-full flex-col gap-4 w-full">
+              <div className="flex items-center max-md:justify-between gap-4 w-full">
                 <div className="flex items-center gap-2 md:gap-4">
                   <p className="md:text-2xl font-bold text-wrap text-justify">
                     <span>{user?.firstName} </span>
@@ -103,7 +103,7 @@ export const UserProfileOverView = () => {
                 </div>
                 <div
                   ref={ellipsisRef}
-                  className="md:hidden cursor-pointer"
+                  className="md:hidden cursor-pointer align-end"
                   style={{ display: 'inline-block' }}
                 >
                   <EllipsisVertical
@@ -187,17 +187,6 @@ export const UserProfileOverView = () => {
             </div>
           </div>
         </div>
-        <div
-          ref={ellipsisRef}
-          className="hidden md:block cursor-pointer"
-          style={{ display: 'inline-block' }}
-        >
-          <EllipsisVertical
-            color="#ea5a69"
-            size={40}
-            onClick={handleEllipsisClick}
-          />
-        </div>
       </div>
       {followingsListOpen && (
         <DialogAndDrawerWizard
@@ -239,19 +228,24 @@ export const UserProfileOverView = () => {
                 // Example: addToCloseFriends(user?.id)
               }}
             >
-              <span className="text-xl font-medium">
-                افزودن به دوستان نزدیک
-              </span>
-              <Plus size={40} color="#222" className="p-2" />
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2 ">
+                <span className="text-xs font-medium">
+                  افزودن به دوستان نزدیک
+                </span>
+              </div>
+              <Plus size={30} color="#222" className="p-2" />
             </div>
             <div
-              className="flex flex-row items-center justify-between"
+              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
+              // TODO: implement block user logic here
               onClick={() => {
                 alert('بلاک کردن')
               }}
             >
-              <span className="text-xl font-medium">بلاک کردن</span>
-              <Ban size={40} color="#222" className="p-2" />
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
+                <span className="text-xs font-medium">بلاک کردن</span>
+              </div>
+              <Ban size={30} color="#222" className="p-2" />
             </div>
           </div>
           {/* Overlay for closing */}
