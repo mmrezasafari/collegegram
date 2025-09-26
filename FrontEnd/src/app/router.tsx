@@ -41,8 +41,12 @@ export const router = createBrowserRouter([
           { path: '/saves', element: <Saves /> },
           { path: '/search', element: <SearchPage /> },
           {
-            path: '/more',
-            element: <MorePage />,
+            path: '/blocklist',
+            element: <MorePage activeTab="blocklist" />,
+          },
+          {
+            path: '/closefriends',
+            element: <MorePage activeTab="closefriends" />,
           },
         ],
       },
