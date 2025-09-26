@@ -228,19 +228,24 @@ export const UserProfileOverView = () => {
                 // Example: addToCloseFriends(user?.id)
               }}
             >
-              <span className="text-xl font-medium">
-                افزودن به دوستان نزدیک
-              </span>
-              <Plus size={40} color="#222" className="p-2" />
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2 ">
+                <span className="text-xs font-medium">
+                  افزودن به دوستان نزدیک
+                </span>
+              </div>
+              <Plus size={30} color="#222" className="p-2" />
             </div>
             <div
-              className="flex flex-row items-center justify-between"
+              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
+              // TODO: implement block user logic here
               onClick={() => {
                 alert('بلاک کردن')
               }}
             >
-              <span className="text-xl font-medium">بلاک کردن</span>
-              <Ban size={40} color="#222" className="p-2" />
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
+                <span className="text-xs font-medium">بلاک کردن</span>
+              </div>
+              <Ban size={30} color="#222" className="p-2" />
             </div>
           </div>
           {/* Overlay for closing */}

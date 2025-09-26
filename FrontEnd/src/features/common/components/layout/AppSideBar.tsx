@@ -174,11 +174,11 @@ export function AppSidebar() {
               dir="rtl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex flex-row items-center justify-between">
+              <div className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
                 <span className="text-xs font-medium">دوستان نزدیک</span>
-                <Plus width={20} height={40} />
+                <Plus size={20} />
               </div>
-              <div className="flex flex-row items-center justify-between">
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
                 <span className="text-xs font-medium">لیست سیاه</span>
                 <Ban size={20} color="#222" />
               </div>
