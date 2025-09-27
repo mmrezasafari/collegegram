@@ -1,5 +1,5 @@
-import type { ICloseFriend } from '@/types/relations'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import type { ICloseFriend } from '@/types/relations'
 import { UserRound } from 'lucide-react'
 
 export const UserRow = (user: { user: ICloseFriend }) => {
@@ -24,7 +24,7 @@ export const UserRow = (user: { user: ICloseFriend }) => {
             <span> دنبال کننده </span> */}
           </div>
         </div>
-        <Avatar className="w-[560px] h-[560px] border border-grayLight flex justify-center items-center rounded-full bg-grayVeryLight">
+        <Avatar className="w-[56px] h-[56px] border border-grayLight flex justify-center items-center rounded-full bg-grayVeryLight">
           <AvatarImage
             src={data.imageUrl}
             className="w-full h-full object-cover"
