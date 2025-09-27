@@ -37,7 +37,7 @@ export const CloseFriendsPage = () => {
   const { data: closeFriends } = useGetCloseFriends()
   return (
     <div className="min-h-screen text-white font-sans px-8 py-10">
-      <div className="flex items-center justify-end gap-4 mb-10"></div>
+      {/* <div className="flex items-center justify-end gap-4 mb-10"></div>
       <div className="flex flex-col gap-8 max-w-lg ml-auto">
         { closeFriends?.data? (
         closeFriends?.data.map((closefriend) => (
@@ -52,7 +52,7 @@ export const CloseFriendsPage = () => {
             alt="Close Friends"
             className="mb-4"
         </div> 
-      )
+      ) */}
     </div>
   )
 }
