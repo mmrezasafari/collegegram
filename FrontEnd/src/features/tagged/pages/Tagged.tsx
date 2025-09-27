@@ -18,8 +18,6 @@ export const Tagged = () => {
 
       const { scrollTop, scrollHeight, clientHeight } = container
 
-      console.log(scrollTop + clientHeight >= scrollHeight - 50)
-
       // Trigger fetch when scrolled to bottom (or within 50px)
       if (scrollTop + clientHeight >= scrollHeight - 50) {
         fetchNextPage()
