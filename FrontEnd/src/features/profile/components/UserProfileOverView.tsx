@@ -70,36 +70,38 @@ export const UserProfileOverView = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex max-md:w-full flex-col gap-4 w-full">
-              <div className="flex items-center max-md:justify-between gap-4 w-full">
-                <div className="flex items-center gap-2 md:gap-4">
-                  <p className="md:text-2xl font-bold text-wrap text-justify">
-                    <span>{user?.firstName} </span>
-                    <span>{user?.lastName}</span>
-                  </p>
-                  <p className="md:text-base text-sm font-light">
-                    <span>{user?.username}</span>
-                    <span>@</span>
-                  </p>
-                </div>
-                <div className="max-md:hidden">
-                  {user?.isFollowing ? (
-                    <Button
-                      className="flex w-[150px]"
-                      variant="outline"
-                      onClick={handleUnFollow}
-                    >
-                      <span>دنبال نکردن</span>
-                    </Button>
-                  ) : (
-                    <Button
-                      className="flex w-[150px]"
-                      variant="default"
-                      onClick={handleFollow}
-                    >
-                      <Plus />
-                      <span>دنبال کردن</span>
-                    </Button>
-                  )}
+              <div className="flex items-center max-md:justify-between gap-4 w-full justify-between">
+                <div>
+                  <div className="flex items-center gap-2 md:gap-4">
+                    <p className="md:text-2xl font-bold text-wrap text-justify">
+                      <span>{user?.firstName} </span>
+                      <span>{user?.lastName}</span>
+                    </p>
+                    <p className="md:text-base text-sm font-light">
+                      <span>{user?.username}</span>
+                      <span>@</span>
+                    </p>
+                  </div>
+                  <div className="max-md:hidden">
+                    {user?.isFollowing ? (
+                      <Button
+                        className="flex w-[150px]"
+                        variant="outline"
+                        onClick={handleUnFollow}
+                      >
+                        <span>دنبال نکردن</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        className="flex w-[150px]"
+                        variant="default"
+                        onClick={handleFollow}
+                      >
+                        <Plus />
+                        <span>دنبال کردن</span>
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <div
                   ref={ellipsisRef}
