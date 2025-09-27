@@ -2,6 +2,7 @@ import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type {
+  ICloseFriendsListRes,
   IFollowersListRes,
   IFollowingsListRes,
   IFollowRes,
@@ -23,6 +24,15 @@ export async function getFollowings(
   userName: string,
 ): Promise<IFollowingsListRes> {
   const res = await api.get<IFollowingsListRes>(`users/${userName}/followings`)
+  return res.data
+}
+
+export async function getCloseFriends(
+  userName: string,
+): Promise<ICloseFriendsListRes> {
+  const res = await api.get<ICloseFriendsListRes>(
+    `users/${userName}/close-friends`,
+  )
   return res.data
 }
 
@@ -56,6 +66,19 @@ export function useGetFollowings() {
     queryFn: async () => {
       if (!userName) throw new Error('Username is not available yet!')
       return getFollowings(userName)
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  })
+}
+
+export function useGetCloseFriends() {
+  const userName = useGetUserName()
+  return useQuery({
+    queryKey: ['closeFriendsList', userName],
+    queryFn: async () => {
+      if (!userName) throw new Error('Username is not available yet!')
+      return getCloseFriends(userName)
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
