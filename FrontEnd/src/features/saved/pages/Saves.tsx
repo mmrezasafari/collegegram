@@ -38,8 +38,8 @@ export const Saves = () => {
         ) : allPosts?.length > 0 ? (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 h-full justify-items-center items-center">
-              {allPosts.map((item, idx) => (
-                <SavesImageCard key={idx} savesPosts={item} />
+              {allPosts?.map((item) => (
+                <SavesImageCard key={item.id} savesPosts={item} />
               ))}
             </div>
           </>
