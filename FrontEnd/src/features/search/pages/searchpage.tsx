@@ -11,7 +11,6 @@ export const SearchPage = () => {
     <>
       {/* Search Bar */}
       <SearchBar />
-
       {/* TabsBar */}
       <TabsBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="mt-4">

@@ -7,6 +7,9 @@ import { SaveService } from "./savedPost/saved-post.service";
 import { Post } from "./post/model/post";
 import { HttpError } from "../../utility/http-error";
 import { CommentService } from "./comment/comment.service";
+import { CloseFriendService } from "./closeFriend/close-friend.service";
+import { FollowService } from "./follow/follow.service";
+import { HomePageResponseDto } from "./follow/dto/home-page-response";
 
 
 export class FeedService {
@@ -16,7 +19,9 @@ export class FeedService {
         private mentionService: MentionService,
         private likeService: LikeService,
         private saveService: SaveService,
-        private commentService: CommentService
+        private commentService: CommentService,
+        private closeFriendService: CloseFriendService,
+        private followService: FollowService
     ) { }
 
     async getPost(postId: string, userId: string) {
@@ -29,6 +34,10 @@ export class FeedService {
         const canAccess = await this.userService.canAccessResource(userId, existPost.user!.id);
         if (!canAccess) {
             throw new HttpError(403, "شما اجازه دسترسی به این پست را ندارید");
+        }
+        const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, existPost.user!.id);
+        if (existPost.onlyCloseFriends && !isCloseFriend) {
+            throw new HttpError(403, "شما اجازه دسترسی به پست برای دوستان نزدیک را ندارید");
         }
         existPost.images = existPost.images.map(image => {
             const lastSlashIndex = image.url.lastIndexOf("/");
@@ -49,6 +58,7 @@ export class FeedService {
             firstName: existPost.user?.firstName,
             lastName: existPost.user?.lastName,
             caption: existPost.caption,
+            onlyCloseFriend: existPost.onlyCloseFriends,
             images: existPost.images,
             createdAt: existPost.createdAt,
         };
@@ -64,4 +74,71 @@ export class FeedService {
 
         return { post, mentionedUsernames, likeCount, liked, saveCount, saved, commentCount }
     }
+
+    async getPosts(username: string, myId: string) {
+        const user = await this.userService.getUserByUsername(username);
+
+        const canAccess = await this.userService.canAccessResource(myId, user.id);
+        if (!canAccess) {
+            throw new HttpError(403, "شما اجازه دسترسی به این کاربر را ندارید");
+        }
+
+        const isCloseFriend = await this.closeFriendService.isCloseFriend(myId, user.id);
+
+        const posts = (await this.postService.getPosts(user.id)) ?? []; 
+
+        const filteredPosts = posts.filter(post =>
+            isCloseFriend ? true : !post.onlyCloseFriends
+        );
+
+        return filteredPosts;
+    }
+
+    async getHomePage(userId: string, offset: number, limit: number, sort: string) {
+        const followings = await this.followService.getFollows(userId, "followings")
+        if (!followings) {
+          return [];
+        }
+        let followingsId = followings.map(following => following.followingId);
+        const posts = await this.postService.getFollowingPosts(followingsId, offset, limit, sort);
+        let data: HomePageResponseDto[] = [];
+        if (!posts) {
+          return [];
+        }
+        for (const post of posts) {
+          if (!post.user) {
+            throw new HttpError(500, "خطای سرور");
+          }
+          const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user.id);
+          if (post.onlyCloseFriends && !isCloseFriend) {
+            continue;
+          }
+          const followerCount = await this.followService.countFollow(post.user.id, "followers");
+          const likeCount = await this.likeService.getLikesCount(post.id);
+          const isLiked = await this.likeService.liked(post.id, userId);
+          const savedCount = await this.saveService.getSaveCount(post.id);
+          const isSaved = await this.saveService.saved(post.id, userId);
+          const commentCount = await this.commentService.getCommentCount(post.id);
+          data.push({
+            username: post.user.username,
+            firstName: post.user.firstName,
+            lastName: post.user.lastName,
+            imagePath: post.user.imagePath,
+            post: {
+              id: post.id,
+              images: post.images,
+              caption: post.caption,
+              onlyCloseFriends: post.onlyCloseFriends,
+              createdAt: post.createdAt,
+            },
+            followerCount: followerCount ?? 0,
+            likeCount: likeCount ?? 0,
+            isLiked,
+            savedCount: savedCount ?? 0,
+            isSaved,
+            commentCount: commentCount ?? 0
+          })
+        }
+        return data;
+      }
 }

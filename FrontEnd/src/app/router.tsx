@@ -10,6 +10,8 @@ import { Saves } from '@/features/saved/pages/Saves'
 import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
 import { PostLayout } from '@/layouts/PostLayout'
 import { SearchPage } from '@/features/search/pages/searchpage'
+import { MorePage } from '@/features/more/pages/morepage'
+import { Error404 } from '@/features/common/pages/Error404'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -39,11 +41,23 @@ export const router = createBrowserRouter([
           { path: '/tagged', element: <Tagged /> },
           { path: '/saves', element: <Saves /> },
           { path: '/search', element: <SearchPage /> },
+          {
+            path: '/more/blocklist',
+            element: <MorePage activeTab="blocklist" />,
+          },
+          {
+            path: '/more/closefriends',
+            element: <MorePage activeTab="closefriends" />,
+          },
         ],
       },
       {
         element: <PostLayout />,
         children: [{ path: '/post/:postId', element: <PostDetailsPage /> }],
+      },
+      {
+        path: '*',
+        element: <Error404 />,
       },
     ],
   },

@@ -121,10 +121,18 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/Error"
-              example:
-                success: false
-                message: "شما اجازه دسترسی به این پست را ندارید"
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - $ref: "#/components/schemas/Error"
+              examples:
+                notAllowed:
+                  value:
+                    success: false
+                    message: "شما اجازه دسترسی به این پست را ندارید"
+                closeFriendsOnly:
+                  value:
+                    success: false
+                    message: "شما اجازه دسترسی به پست برای دوستان نزدیک را ندارید"
         404:          
           description: User not found
           content:

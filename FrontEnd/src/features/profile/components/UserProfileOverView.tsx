@@ -3,7 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
-import { EllipsisVertical, Plus, UserRound } from 'lucide-react'
+import { EllipsisVertical, Plus, UserRound, Ban } from 'lucide-react'
 import { FollowersList } from '@/features/relationships/components/FollowersList'
 import { FollowingsList } from '@/features/relationships/components/FollowingList'
 import { Separator } from '@/features/common/components/ui/separator'
@@ -13,12 +13,18 @@ import {
   useFollowAction,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelations'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 
 export const UserProfileOverView = () => {
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false)
+  const ellipsisRef = useRef<HTMLDivElement | null>(null)
+  const [dialogPosition, setDialogPosition] = useState<{
+    top: number
+    left: number
+  } | null>(null)
   const { data } = useGetUser()
   const user = data?.data
   const { mutate: unFollowMutation } = useUnfollowAction()
@@ -30,6 +36,17 @@ export const UserProfileOverView = () => {
 
   const handleUnFollow = () => {
     unFollowMutation()
+  }
+
+  const handleEllipsisClick = () => {
+    if (ellipsisRef.current) {
+      const rect = ellipsisRef.current.getBoundingClientRect()
+      setDialogPosition({
+        top: rect.top + ellipsisRef.current.offsetHeight, // align top with icon
+        left: rect.right + ellipsisRef.current.offsetWidth + 8, // 8px to the right of icon
+      })
+    }
+    setBlockDialogOpen(true)
   }
 
   return (
@@ -52,8 +69,8 @@ export const UserProfileOverView = () => {
                 />
               </AvatarFallback>
             </Avatar>
-            <div className="flex max-md:w-full flex-col gap-4">
-              <div className="flex items-center max-md:justify-between gap-4">
+            <div className="flex max-md:w-full flex-col gap-4 w-full">
+              <div className="flex items-center max-md:justify-between gap-4 w-full">
                 <div className="flex items-center gap-2 md:gap-4">
                   <p className="md:text-2xl font-bold text-wrap text-justify">
                     <span>{user?.firstName} </span>
@@ -84,7 +101,16 @@ export const UserProfileOverView = () => {
                     </Button>
                   )}
                 </div>
-                <EllipsisVertical className="md:hidden" color="#ea5a69" />
+                <div
+                  ref={ellipsisRef}
+                  className="md:hidden cursor-pointer align-end"
+                  style={{ display: 'inline-block' }}
+                >
+                  <EllipsisVertical
+                    color="#ea5a69"
+                    onClick={handleEllipsisClick}
+                  />
+                </div>
               </div>
               <div className="hidden md:flex space-x-4 items-center h-4">
                 <div
@@ -161,11 +187,6 @@ export const UserProfileOverView = () => {
             </div>
           </div>
         </div>
-        <EllipsisVertical
-          className="hidden md:block cursor-pointer"
-          color="#ea5a69"
-          size={40}
-        />
       </div>
       {followingsListOpen && (
         <DialogAndDrawerWizard
@@ -184,6 +205,56 @@ export const UserProfileOverView = () => {
         >
           <FollowersList onClose={() => setFollowersListOpen(false)} />
         </DialogAndDrawerWizard>
+      )}
+      {/* Block dialog */}
+      {blockDialogOpen && dialogPosition && (
+        <div
+          className="fixed z-50"
+          style={{
+            top: dialogPosition.top,
+            left: dialogPosition.left,
+          }}
+        >
+          <div
+            className="bg-white rounded-[32px] shadow-lg flex flex-col gap-8 px-8 py-8 min-w-[303px] min-h-[104px] cursor-default border border-gray-300"
+            dir="rtl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
+              onClick={() => {
+                // TODO: implement add to close friends logic here
+                alert('افزودن به دوستان نزدیک')
+                // Example: addToCloseFriends(user?.id)
+              }}
+            >
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2 ">
+                <span className="text-xs font-medium">
+                  افزودن به دوستان نزدیک
+                </span>
+              </div>
+              <Plus size={30} color="#222" className="p-2" />
+            </div>
+            <div
+              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
+              // TODO: implement block user logic here
+              onClick={() => {
+                alert('بلاک کردن')
+              }}
+            >
+              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
+                <span className="text-xs font-medium">بلاک کردن</span>
+              </div>
+              <Ban size={30} color="#222" className="p-2" />
+            </div>
+          </div>
+          {/* Overlay for closing */}
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: -1 }}
+            onClick={() => setBlockDialogOpen(false)}
+          />
+        </div>
       )}
     </>
   )

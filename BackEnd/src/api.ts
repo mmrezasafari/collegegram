@@ -75,17 +75,17 @@ export const makeApp = (dataSource: DataSource) => {
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
-  const mentionService = new MentionService(mentionRepo, userService);
   const hashtagService = new HashtagService(hashtagRepo, userService);
+  const followService = new FollowService(followRepo, userService);
+  const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
+  const mentionService = new MentionService(mentionRepo, userService, closeFriendService);
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService);
-  const saveService = new SaveService(saveRepo, postService);
-  const commentService = new CommentService(commentRepo, postService, userService)
-  const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService);
-  const followService = new FollowService(followRepo, postService, userService, likeService, saveService, commentService);
-  const searchService = new SearchService(userService, hashtagService);
+  const saveService = new SaveService(saveRepo, postService, closeFriendService);
+  const commentService = new CommentService(commentRepo, postService, userService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
-  const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
+  const searchService = new SearchService(userService, hashtagService, closeFriendService);
+  const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService, closeFriendService, followService);
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
@@ -105,7 +105,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/posts", authMiddleware, saveRouter(saveService));
 
-  app.use("/posts", authMiddleware, feedRouter(feedService));
+  app.use("", authMiddleware, feedRouter(feedService));
 
   app.use("/search", authMiddleware, searchRouter(searchService));
 

@@ -1,7 +1,6 @@
 import { DataSource, Repository } from "typeorm";
 import { SavedPostEntity } from "./saved-posts.entity";
 import { SavePost } from "./models/saved-post";
-import { SavedPost } from "./models/save-page";
 
 
 export interface ISaveRepository {
@@ -9,7 +8,7 @@ export interface ISaveRepository {
   save(postId:string,userId:string):Promise<SavePost>;
   unSave(postId: string, userId: string):Promise<null>;
   countSave(postId:string):Promise<number | null>;
-  getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SavedPost[]>;
+  getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SavedPostEntity[]>;
 }
 
 export class SaveRepository implements ISaveRepository {
@@ -47,25 +46,15 @@ export class SaveRepository implements ISaveRepository {
   }
 
   async getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-    const saves = await this.saveRepository.createQueryBuilder("save")
+    return await this.saveRepository.createQueryBuilder("save")
       .leftJoinAndSelect("save.post", "post")
       .leftJoinAndSelect("post.images", "images")
+      .leftJoinAndSelect("post.user", "user")
       .where("save.userId = :userId", { userId })
       .orderBy("save.createdAt", sort)
       .skip(offset)
       .take(limit)
-      .getMany();
-
-    const posts = saves.map((m) => ({
-      id: m.post.id,
-      caption: m.post.caption,
-      images: m.post.images.map((img) => ({
-        id: img.id,
-        url: img.url,
-      })),
-    }));
-
-    return posts;
+      .getMany();;
   }
 
 }

@@ -7,7 +7,8 @@ export interface ICloseFriendRepository {
   existsCloseFriend(userId: string, friendId: string): Promise<CloseFriendEntity | null>;
   addCloseFriend(userId: string, friendId: string): Promise<CloseFriend | null>;
   removeCloseFriend(userId: string, friendId: string): Promise<null>;
-  getCloseFriends(userId: string): Promise<CloseFriendEntity[]>
+  getCloseFriends(userId: string): Promise<CloseFriendEntity[]>;
+  isCloseFriend(myId: string, resourceOwnerId: string): Promise<boolean>;
 }
 
 export class CloseFriendRepository implements ICloseFriendRepository {
@@ -42,6 +43,12 @@ export class CloseFriendRepository implements ICloseFriendRepository {
       where: {userId },
       relations: ['friend'],
     });
+  }
+
+  async isCloseFriend(myId: string, resourceOwnerId:string) {
+    return await this.closeFriendRepository.exists({
+      where: { userId: resourceOwnerId, friendId:myId },
+    })
   }
 
 }

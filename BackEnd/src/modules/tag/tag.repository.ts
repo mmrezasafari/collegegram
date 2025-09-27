@@ -66,6 +66,7 @@ export class HashtagRepository implements IHashtagRepository {
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.images", "images")
       .leftJoinAndSelect("post.tags", "tags")
+      .leftJoinAndSelect("post.user", "user")
       .where("tags.context LIKE :keyword", { keyword: `%${search}%` })
 
       .addOrderBy("post.createdAt", sort)
@@ -86,6 +87,7 @@ export class HashtagRepository implements IHashtagRepository {
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.images", "images")
       .leftJoinAndSelect("post.tags", "tags")
+      .leftJoinAndSelect("post.user", "user")
       .addOrderBy("post.createdAt", sort)
       .skip(offset)
       .take(limit)

@@ -1,56 +1,91 @@
 import api from '@/lib/axios'
-import type { ISearchTagsData, ISearchedUsersData } from '@/types/search'
-import { useQuery } from '@tanstack/react-query'
+import type { IErrorRes } from '@/types/error'
+import type {
+  ISearchUserGetRes,
+  ISearchTagsData,
+  ISearchedUsersData,
+} from '@/types/search'
+import {
+  useInfiniteQuery,
+  type QueryFunctionContext,
+} from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 
-export async function fetchSearchUsersData(
-  offset: number,
-  limit: number,
-  order: string,
-  query: string,
-  isSummary: boolean = false,
-): Promise<ISearchedUsersData> {
-  const res = await api.get(
-    `search/users?offset=${offset}&limit=${limit}&sort=${order}&search=${query}&isSummary=${isSummary}`,
+interface ISearchUsersPage {
+  data: ISearchedUsersData
+  nextOffset?: number
+}
+
+interface ISearchTagsPage {
+  data: ISearchTagsData
+  nextOffset?: number
+}
+
+// Fetch Users Data
+async function fetchSearchUsersData({
+  pageParam = 0,
+}: QueryFunctionContext): Promise<ISearchUsersPage> {
+  const limit = 10
+  const { data } = await api.get<ISearchUserGetRes>(
+    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=&isSummary=true`,
   )
 
-  return res.data
+  return {
+    data,
+    nextOffset:
+      data.data.length === limit ? (pageParam as number) + limit : undefined,
+  }
 }
 
-export function useUsersSearch(
-  offset: number,
-  limit: number,
-  order: string,
-  query: string,
-  isSummary: boolean = false,
-) {
-  return useQuery<ISearchedUsersData, Error>({
+export function useInfiniteSearch() {
+  const query = useInfiniteQuery<
+    ISearchUsersPage,
+    AxiosError<IErrorRes>,
+    ISearchUsersPage,
+    ['search'],
+    number
+  >({
     queryKey: ['search'],
-    queryFn: () => fetchSearchUsersData(offset, limit, order, query, isSummary),
+    queryFn: fetchSearchUsersData,
+    getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
   })
+
+  const allUsers: ISearchedUsersData[] =
+    query.data?.pages.flatMap((page) => page.data.data) ?? []
+
+  return { ...query, allUsers }
 }
 
-export async function fetchSearchTagsData(
-  offset: number,
-  limit: number,
-  order: string,
-  query: string,
-  isSummary: boolean = false,
-): Promise<ISearchTagsData> {
-  const res = await api.get(
-    `search/tags?offset=${offset}&limit=${limit}&sort=${order}&search=${query}&isSummary=${isSummary}`,
+// Fetch Tagged Data
+async function fetchSearchTagsData({
+  pageParam = 0,
+}: QueryFunctionContext): Promise<ISearchTagsPage> {
+  const limit = 0
+  const { data } = await api.get<ISearchTagsData>(
+    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&isSummary=false`,
   )
-  return res.data
+  return {
+    data: data,
+    nextOffset:
+      data.data.length === limit ? (pageParam as number) + limit : undefined,
+  }
 }
 
-export function useTagsSearch(
-  offset: number,
-  limit: number,
-  order: string,
-  query: string,
-  isSummary: boolean = false,
-) {
-  return useQuery<ISearchTagsData, Error>({
+export function useInfiniteTagSearch() {
+  const query = useInfiniteQuery<
+    ISearchTagsPage,
+    AxiosError<IErrorRes>,
+    ISearchTagsPage,
+    ['search'],
+    number
+  >({
     queryKey: ['search'],
-    queryFn: () => fetchSearchTagsData(offset, limit, order, query, isSummary),
+    queryFn: fetchSearchTagsData,
+    getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
   })
+
+  const allTags: ISearchTagsData[] =
+    query.data?.pages.flatMap((page) => page.data.data) ?? []
+
+  return { ...query, allTags }
 }

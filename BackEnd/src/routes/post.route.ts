@@ -10,16 +10,6 @@ import { errorResponse } from "../../utility/response";
 export const postRouter = (postService: PostService) => {
   const app = Router();
 
-  app.get("/users/:username/posts", (req, res) => {
-    const username = zod.string().parse(req.params.username);
-    const user = req.user
-    if (!user) {
-      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
-      return;
-    }
-    handleExpress(res, () => postService.getPosts(username, user.userId));
-  })
-
   app.patch("/posts/:id", upload.array('images', 10), (req, res) => {
     const postId = zod.uuid().parse(req.params.id);
     const dto = updatePostDto.parse(req.body);
