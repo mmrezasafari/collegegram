@@ -7,15 +7,15 @@ import {
 import type { IExplore } from '@/types/explore'
 import { Plus } from 'lucide-react'
 
-interface IUserCardDataRes {
-  success: boolean
-  data: IUserCardData[]
-}
-
-interface IUserCardData {
-  isFollowing: boolean
-  followerCount: number
-}
+// interface IUserCardDataRes {
+//   success: boolean
+//   data: IUserCardData[]
+// }
+//
+// interface IUserCardData {
+//   isFollowing: boolean
+//   followerCount: number
+// }
 
 interface FriendCardProps {
   friendData: IExplore

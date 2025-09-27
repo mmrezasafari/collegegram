@@ -1,5 +1,5 @@
 import api from '@/lib/axios'
-import type { ISearchTagedData, ISearchUserData } from '@/types/search'
+import type { ISearchTagsData, ISearchedUsersData } from '@/types/search'
 import { useQuery } from '@tanstack/react-query'
 
 export async function fetchSearchUsersData(
@@ -8,7 +8,7 @@ export async function fetchSearchUsersData(
   order: string,
   query: string,
   isSummary: boolean = false,
-): Promise<ISearchUserData> {
+): Promise<ISearchedUsersData> {
   const res = await api.get(
     `search/users?offset=${offset}&limit=${limit}&sort=${order}&search=${query}&isSummary=${isSummary}`,
   )
@@ -23,7 +23,7 @@ export function useUsersSearch(
   query: string,
   isSummary: boolean = false,
 ) {
-  return useQuery<ISearchUserData, Error>({
+  return useQuery<ISearchedUsersData, Error>({
     queryKey: ['search'],
     queryFn: () => fetchSearchUsersData(offset, limit, order, query, isSummary),
   })
@@ -35,7 +35,7 @@ export async function fetchSearchTagsData(
   order: string,
   query: string,
   isSummary: boolean = false,
-): Promise<ISearchTagedData> {
+): Promise<ISearchTagsData> {
   const res = await api.get(
     `search/tags?offset=${offset}&limit=${limit}&sort=${order}&search=${query}&isSummary=${isSummary}`,
   )
@@ -49,7 +49,7 @@ export function useTagsSearch(
   query: string,
   isSummary: boolean = false,
 ) {
-  return useQuery<ISearchTagedData, Error>({
+  return useQuery<ISearchTagsData, Error>({
     queryKey: ['search'],
     queryFn: () => fetchSearchTagsData(offset, limit, order, query, isSummary),
   })

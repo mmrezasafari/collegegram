@@ -36,7 +36,3 @@ export interface ISearchTagsData {
     url: string
   }>
 }
-//     id: string
-//     url: string
-//   }>
-// }
