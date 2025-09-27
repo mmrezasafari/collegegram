@@ -51,15 +51,18 @@ export class SearchService {
     else {
       const response = []
       for (const element of resultSearch) {
-        const imagePath = await minioGetClient.presignedGetObject(
-          "posts",
-          element.imagePath,
-          3600,
-          {
-            "response-content-disposition": "inline",
-            "response-content-type": element.mimeType
-          }
-        );
+        let imagePath = null;
+        if (element.imagePath) {
+          imagePath = await minioGetClient.presignedGetObject(
+            "posts",
+            element.imagePath,
+            3600,
+            {
+              "response-content-disposition": "inline",
+              "response-content-type": element.mimeType
+            }
+          );
+        }
         response.push({
           ...element,
           imagePath
