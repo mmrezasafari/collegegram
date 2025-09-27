@@ -11,6 +11,7 @@ import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
 import { PostLayout } from '@/layouts/PostLayout'
 import { SearchPage } from '@/features/search/pages/searchpage'
 import { MorePage } from '@/features/more/pages/morepage'
+import { Error404 } from '@/features/common/pages/Error404'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         element: <PostLayout />,
         children: [{ path: '/post/:postId', element: <PostDetailsPage /> }],
+      },
+      {
+        path: '*',
+        element: <Error404 />,
       },
     ],
   },
