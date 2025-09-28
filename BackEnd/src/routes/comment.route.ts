@@ -17,7 +17,7 @@ export const commentRouter = (commentService: CommentService) => {
     }
     const { content, parentId } = req.body;
     if (parentId == null) {
-      handleExpress(res, () => commentService.comment(postId, user.userId, content));
+      handleExpress(res, () => commentService.createCommentAndCreateNotification(postId, user.userId, content));
     }
     else {
       handleExpress(res, () => commentService.replyComment(postId, user.userId, content, parentId));

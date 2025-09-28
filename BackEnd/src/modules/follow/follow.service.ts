@@ -1,4 +1,6 @@
 import { HttpError } from "../../../utility/http-error";
+import { NotificationType } from "../notification/notification-type.enum";
+import { NotificationService } from "../notification/notification.service";
 import { UserService } from "../user/user.service";
 import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
 import { FollowStatusEnum } from "./follow-status.enum";
@@ -6,7 +8,7 @@ import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
 
 export interface IFollowService {
-  followUser(followerId: string, username: string): Promise<Follow>;
+  followUserAndCreateNotification(followerId: string, username: string): Promise<Follow>;
   unfollowUser(followerId: string, username: string): Promise<null>;
   getFollowers(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
   getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
@@ -17,8 +19,9 @@ export class FollowService implements IFollowService {
   constructor(
     private followRepository: FollowRepository,
     private userService: UserService,
+    private notificationService: NotificationService
   ) { }
-  async followUser(followerId: string, username: string) {
+  async followUserAndCreateNotification(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
     const userExists = await this.followRepository.isFollowing(followerId, following.id);
     if (userExists) {
@@ -26,9 +29,13 @@ export class FollowService implements IFollowService {
     }
     const user = await this.userService.getUser(following.id);
     if (user.isPrivate) {
-      return await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.PENDING);
+      const follow = await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.PENDING);
+      await this.notificationService.createNotification(following.id, followerId, NotificationType.FOLLOW_REQUEST);
+      return follow;
     }
-    return await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.ACCEPTED)
+    const follow = await this.followRepository.createFollow(followerId, following.id, FollowStatusEnum.ACCEPTED);
+    await this.notificationService.createNotification(following.id, followerId, NotificationType.FOLLOW);
+    return follow;
   }
   async unfollowUser(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
@@ -82,7 +89,7 @@ export class FollowService implements IFollowService {
     }
     return response;
   }
-  
+
   async countFollow(userId: string, type: "followers" | "followings") {
     return await this.followRepository.countFollow(userId, type);
   }
@@ -91,13 +98,13 @@ export class FollowService implements IFollowService {
     const following = await this.followRepository.isFollowing(followerId, followingId);
     return following ? true : false;
   }
-  
+
   async getFollows(userId: string, type: "followers" | "followings") {
     return await this.followRepository.getFollows(userId, type);
-  
+
   }
 
-  async respondToFollowRequests(userId: string, username: string, accept: boolean) {
+  async respondToFollowRequestsAndCreateNotification(userId: string, username: string, accept: boolean) {
     const follower = await this.userService.getUserByUsername(username);
     if (!follower) {
       throw new HttpError(404, "کاربر مورد نظر یافت نشد")
@@ -113,8 +120,11 @@ export class FollowService implements IFollowService {
     if (accept) {
       followRequest.status = FollowStatusEnum.ACCEPTED;
       await this.followRepository.updateFollow(followRequest);
+      await this.notificationService.createNotification(userId, follower.id, NotificationType.FOLLOW_ACCEPTED);
     } else {
       await this.followRepository.deleteFollow(follower.id, userId)
+      const notification = await this.notificationService.getNotification(userId, follower.id, NotificationType.FOLLOW_REQUEST);
+      await this.notificationService.deleteNotification(notification.id);
     }
     return null;
   }

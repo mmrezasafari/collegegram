@@ -7,6 +7,8 @@ import { Comment } from "./model/comment";
 import { ReplyCommentOutput } from "./model/reply-comment-output";
 import { UserService } from "../user/user.service";
 import { ILikeCommentService, LikeCommentService } from "../likeComment/likeComment.service";
+import { NotificationService } from "../notification/notification.service";
+import { NotificationType } from "../notification/notification-type.enum";
 
 export class CommentService {
     private likeCommentService!: ILikeCommentService;
@@ -14,15 +16,17 @@ export class CommentService {
         private commentRepo: ICommentRepository,
         private postService: PostService,
         private userService: UserService,
+        private notificationService: NotificationService,
     ) { }
 
     async setLikeComment(likeCommentService: ILikeCommentService) {
         this.likeCommentService = likeCommentService;
     }
 
-    async comment(postId: string, userId: string, content: string) {
+    async createCommentAndCreateNotification(postId: string, userId: string, content: string) {
         const post = await this.postService.getPostById(postId, userId)
         const comment = await this.commentRepo.comment(postId, userId, content)
+        await this.notificationService.createNotification(post.user!.id, userId, NotificationType.COMMENT, postId, comment.id);
         return { comment, message: "کامنت شما با موفقیت ثبت شد" };
     }
 

@@ -17,7 +17,7 @@ export const followRouter = (followService: FollowService) => {
       res.status(400).json(errorResponse("درخواست شما اشتباه است"))
       return;
     }
-    handleExpress(res, () => followService.followUser(user.userId, username))
+    handleExpress(res, () => followService.followUserAndCreateNotification(user.userId, username))
   })
 
   app.delete("/:username/unfollow", async (req, res) => {
@@ -67,7 +67,7 @@ export const followRouter = (followService: FollowService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
-    handleExpress(res, () => followService.respondToFollowRequests(user.userId, username, accept))
+    handleExpress(res, () => followService.respondToFollowRequestsAndCreateNotification(user.userId, username, accept))
   })
 
   return app;
