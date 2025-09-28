@@ -6,11 +6,13 @@ import { LoginRequestDto } from "./dto/login-request.dto";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { encryptJWT } from "../../../utility/jwt_utils";
 import { ISessionRepository } from "./session.repository";
+import { MailService } from "./mail.service";
 
 export class AuthService {
   constructor(
     private userRepo: IUserRepository,
-    private sessionRepo: ISessionRepository
+    private sessionRepo: ISessionRepository,
+    private mailService: MailService,
 
   ) { }
 
@@ -29,7 +31,15 @@ export class AuthService {
       throw new HttpError(409, "نام کاربری یا ایمیل تکراری است");
     }
     dto.password = hashingPassword(dto.password);
-    return await this.userRepo.create(dto)
+    const userFinal = await this.userRepo.create(dto)
+    await this.mailService.sendMail(user.email, "خوش آمدید",
+      `
+      عزیز ${userFinal?.username}
+      ثبت نام شما با موفقیت انجام شد.خوش آمدید
+      \n
+      ${process.env.FRONTEND_HOST}
+      `)
+    return userFinal
   }
 
   async login(dto: LoginRequestDto): Promise<LoginResponseDto> {
