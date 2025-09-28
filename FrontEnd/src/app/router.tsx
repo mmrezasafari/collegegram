@@ -4,14 +4,14 @@ import { ProfileLayout } from '@/layouts/ProfileLayout'
 import { OwnProfilePage } from '@/features/profile/pages/OwnProfilePage'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { UserProfilePage } from '@/features/profile/pages/UserProfilePage'
-import Explore from '@/features/explore/pages/explore'
-import { Tagged } from '@/features/tagged/pages/Tagged'
-import { Saves } from '@/features/saved/pages/Saves'
+import { ExplorePage } from '@/features/explore/pages/ExplorePage'
+import { BookmarkPage } from '@/features/bookmark/pages/BookmarkPage'
 import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
 import { PostLayout } from '@/layouts/PostLayout'
 import { SearchPage } from '@/features/search/pages/searchpage'
-import { MorePage } from '@/features/more/pages/morepage'
+import { MorePage } from '@/features/more/pages/MorePage'
 import { Error404 } from '@/features/common/pages/Error404'
+import { MentionPage } from '@/features/mention/pages/MentionPage'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -35,11 +35,11 @@ export const router = createBrowserRouter([
       {
         element: <ProfileLayout />,
         children: [
-          { index: true, path: '/explore', element: <Explore /> },
+          { index: true, path: '/explore', element: <ExplorePage /> },
           { path: '/profile', element: <OwnProfilePage /> },
           { path: '/profile/:username', element: <UserProfilePage /> },
-          { path: '/tagged', element: <Tagged /> },
-          { path: '/saves', element: <Saves /> },
+          { path: '/mentions', element: <MentionPage /> },
+          { path: '/bookmarks', element: <BookmarkPage /> },
           { path: '/search', element: <SearchPage /> },
           {
             path: '/more/blocklist',
