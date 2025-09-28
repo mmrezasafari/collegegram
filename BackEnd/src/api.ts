@@ -44,6 +44,7 @@ import { CloseFriendService } from "./modules/closeFriend/close-friend.service";
 import { closeFriendRouter } from "./routes/closeFriend.route";
 import { NotificationRepository } from "./modules/notification/notification.repository";
 import { NotificationService } from "./modules/notification/notification.service";
+import { MailService } from "./modules/auth/mail.service";
 
 declare global {
   namespace Express {
@@ -76,7 +77,8 @@ export const makeApp = (dataSource: DataSource) => {
   const closeFriendRepo = new CloseFriendRepository(dataSource);
   const notificationRepo = new NotificationRepository(dataSource);
 
-  const authService = new AuthService(userRepo, sessionRepo);
+  const mailService = new MailService();
+  const authService = new AuthService(userRepo, sessionRepo, mailService);
   const userService = new UserService(userRepo);
   const notificationService = new NotificationService(notificationRepo)
   const hashtagService = new HashtagService(hashtagRepo);
