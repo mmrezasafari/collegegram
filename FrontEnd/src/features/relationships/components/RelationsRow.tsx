@@ -4,10 +4,12 @@ import {
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
 import { UserRound } from 'lucide-react'
-import { ProfileDropdownShortcut } from '@/features/relationships/components/ProfileDropdownShortcut'
-import type { IFollower, IFollowing } from '@/types/relations'
+import { RelationsRowDropdownShortcut } from '@/features/relationships/components/RelatiosRowDropdownShortcut'
+import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
 
-export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
+export const RelationsRow = (user: {
+  user: IFollowing | IFollower | ICloseFriend
+}) => {
   const data = user?.user
   return (
     <div className="flex  w-full justify-between items-center">
@@ -24,7 +26,7 @@ export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
             )}
           </p>
           <div className="md:text-base text-xs font-normal text-grey felx">
-            <span>{data.followerCount} </span>
+            {'followerCount' in data ? data.followerCount : data.followersCount}
             <span>دنبال کننده </span>
           </div>
         </div>
@@ -44,7 +46,7 @@ export const RelationsRow = (user: { user: IFollowing | IFollower }) => {
           </AvatarFallback>
         </Avatar>
       </div>
-      <ProfileDropdownShortcut user={data} />
+      <RelationsRowDropdownShortcut user={data} />
     </div>
   )
 }

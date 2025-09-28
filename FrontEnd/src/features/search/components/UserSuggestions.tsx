@@ -1,16 +1,16 @@
-import React from "react";
-import type { ISearchedUsersData } from "src/types/search";
+import React from 'react'
+import type { ISearchedUsersData } from 'src/types/search'
 
 interface UserSuggestionsProps {
-  users: ISearchedUsersData[];
-  onSelect: (user: ISearchedUsersData) => void;
+  users: ISearchedUsersData[]
+  onSelect: (user: ISearchedUsersData) => void
 }
 
 export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
   users,
   onSelect,
 }) => {
-  if (!users || users.length === 0) return null;
+  if (!users || users.length === 0) return null
 
   return (
     <div className="px-6 pt-4 pb-2 relative">
@@ -29,5 +29,5 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
         </div>
       ))}
     </div>
-  );
-};
+  )
+}

@@ -1,6 +1,6 @@
 interface PostCardProps {
-  image: string;
-  onSelectItem: () => void;
+  image: string
+  onSelectItem: () => void
 }
 
 export function PostCard({ image, onSelectItem }: PostCardProps) {
@@ -11,5 +11,5 @@ export function PostCard({ image, onSelectItem }: PostCardProps) {
     >
       <img src={image} className="w-full h-full object-cover" alt="" />
     </div>
-  );
+  )
 }

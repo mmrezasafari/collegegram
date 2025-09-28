@@ -1,5 +1,3 @@
-// searchbar.tsx
-
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { ISearchUserGetRes, ISearchTagsGetRes } from 'src/types/search'

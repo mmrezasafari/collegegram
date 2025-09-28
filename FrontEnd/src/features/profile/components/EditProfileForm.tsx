@@ -238,7 +238,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 type="text"
                 placeholder="نام"
                 className="pr-9"
-                name={firstName.name}
                 ref={firstName.ref}
                 value={firstName.value}
                 onChange={firstName.onChange}
@@ -261,7 +260,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 type="text"
                 placeholder="نام خانوادگی"
                 className="pr-9"
-                name={lastName.name}
                 ref={lastName.ref}
                 value={lastName.value}
                 onChange={lastName.onChange}
@@ -284,7 +282,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 type="email"
                 placeholder="ایمیل"
                 className="pr-9"
-                name={email.name}
                 ref={email.ref}
                 value={email.value}
                 onChange={email.onChange}
@@ -307,7 +304,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 type="password"
                 placeholder="رمز عبور"
                 className="pr-9"
-                name={password.name}
                 ref={password.ref}
                 value={password.value}
                 onChange={password.onChange}
@@ -331,7 +327,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 type="password"
                 placeholder="تکرار رمز عبور"
                 className="pr-9"
-                name={rePassword.name}
                 ref={rePassword.ref}
                 value={rePassword.value}
                 onChange={rePassword.onChange}

@@ -1,16 +1,16 @@
-import React from "react";
-import type { ISearchTagsData } from "src/types/search";
+import React from 'react'
+import type { ISearchTagsData } from 'src/types/search'
 
 interface TagSuggestionsProps {
-  tags: ISearchTagsData[];
-  onTagSelect: (tag: ISearchTagsData) => void;
+  tags: ISearchTagsData[]
+  onTagSelect: (tag: ISearchTagsData) => void
 }
 
 export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
   tags,
   onTagSelect,
 }) => {
-  if (!tags || tags.length === 0) return null;
+  if (!tags || tags.length === 0) return null
 
   return (
     <div className="px-6 pb-4 relative">
@@ -34,5 +34,5 @@ export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
         </div>
       ))}
     </div>
-  );
-};
+  )
+}

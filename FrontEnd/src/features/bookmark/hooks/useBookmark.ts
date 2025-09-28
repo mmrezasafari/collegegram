@@ -2,7 +2,11 @@ import api from '@/lib/axios'
 import type { IErrorRes, ISuccessRes } from '@/types/error'
 import type { IExploreGetRes } from '@/types/explore'
 import type { IGetPostRes } from '@/types/posts'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
 type TMutationVars = 'save' | 'unsave'
@@ -38,12 +42,14 @@ export function useToggleSavePost(postId: string) {
 
     onMutate: async (context) => {
       await queryClient.cancelQueries({ queryKey: ['post', postId] })
+      await queryClient.cancelQueries({ queryKey: ['explore-posts'] })
+
       const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
         'post',
         postId,
       ])
       const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
-        'explore',
+        'explore-posts',
       ])
 
       if (previousPostDetails) {
@@ -62,22 +68,33 @@ export function useToggleSavePost(postId: string) {
       }
 
       if (previousExploreData) {
-        queryClient.setQueryData<IExploreGetRes>(['explore'], (old) => {
-          if (!old) return old
+        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+          ['explore-posts'],
+          (old: any) => {
+            if (!old) return old
 
-          return {
-            ...old,
-            data: old?.data.map((data) =>
-              postId === data.post.id
-                ? {
-                  ...data,
-                  isSaved: context === 'save',
-                  savedCount: data.savedCount + (context === 'save' ? 1 : -1),
-                }
-                : data,
-            ),
-          }
-        })
+            return {
+              ...old,
+              pages: old.pages.map((page: any) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  data: page.data.data.map((item: any) =>
+                    item.post.id === postId
+                      ? {
+                          ...item,
+                          isSaved: !item.isSaved,
+                          savedCount: item.isSaved
+                            ? item.savedCount - 1
+                            : item.savedCount + 1,
+                        }
+                      : item,
+                  ),
+                },
+              })),
+            }
+          },
+        )
       }
 
       return { previousPostDetails, previousExploreData, action: context }
