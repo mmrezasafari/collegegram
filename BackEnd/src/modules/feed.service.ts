@@ -37,7 +37,7 @@ export class FeedService {
         }
         const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, existPost.user!.id);
         if (existPost.onlyCloseFriends && !isCloseFriend) {
-            throw new HttpError(403, "شما اجازه دسترسی به پست برای دوستان نزدیک را ندارید");
+            throw new HttpError(403, "شما اجازه دسترسی به این پست را ندارید");
         }
         existPost.images = existPost.images.map(image => {
             const lastSlashIndex = image.url.lastIndexOf("/");

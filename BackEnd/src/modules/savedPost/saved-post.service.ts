@@ -47,8 +47,7 @@ export class SaveService {
         if (!savePosts) return [];
 
         const posts: Post[] = [];
-        for (const savePost of savePosts) {
-            const post = savePost.post;
+        for (const post of savePosts) {
             const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
             if (post.onlyCloseFriends && !isCloseFriend) {
                 continue;

@@ -42,12 +42,11 @@ export class MentionService {
     }
 
     async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-        const mentions = await this.mentionRepo.getMentionPage(userId, offset, limit, sort);
-        if (!mentions) return [];
+        const mentionPosts = await this.mentionRepo.getMentionPage(userId, offset, limit, sort);
+        if (!mentionPosts) return [];
 
         const posts: Post[] = [];
-        for (const mention of mentions) {
-            const post = mention.post;
+        for (const post of mentionPosts) {
             const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
             if (post.onlyCloseFriends && !isCloseFriend) {
                 continue;

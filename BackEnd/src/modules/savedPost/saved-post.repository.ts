@@ -1,6 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { SavedPostEntity } from "./saved-posts.entity";
 import { SavePost } from "./models/saved-post";
+import { Post } from "../post/model/post";
 
 
 export interface ISaveRepository {
@@ -8,7 +9,7 @@ export interface ISaveRepository {
   save(postId:string,userId:string):Promise<SavePost>;
   unSave(postId: string, userId: string):Promise<null>;
   countSave(postId:string):Promise<number | null>;
-  getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SavedPostEntity[]>;
+  getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<Post[]>;
 }
 
 export class SaveRepository implements ISaveRepository {
@@ -46,7 +47,7 @@ export class SaveRepository implements ISaveRepository {
   }
 
   async getSavePage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-    return await this.saveRepository.createQueryBuilder("save")
+    const savePosts = await this.saveRepository.createQueryBuilder("save")
       .leftJoinAndSelect("save.post", "post")
       .leftJoinAndSelect("post.images", "images")
       .leftJoinAndSelect("post.user", "user")
@@ -54,7 +55,9 @@ export class SaveRepository implements ISaveRepository {
       .orderBy("save.createdAt", sort)
       .skip(offset)
       .take(limit)
-      .getMany();;
+      .getMany();
+    
+    return savePosts.map(sp => sp.post);
   }
 
 }

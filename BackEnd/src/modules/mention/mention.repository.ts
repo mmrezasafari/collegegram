@@ -1,13 +1,14 @@
 import { DataSource, DeleteResult, Repository } from "typeorm";
 import { MentionEntity } from "./mention.entity";
 import { Mention } from "./models/mention";
+import { Post } from "../post/model/post";
 
 
 export interface IMentionRepository {
     saveMention(userId: string, postId: string):Promise<Mention | null>;
     getUsernames(postId: string): Promise<string[]>;
     deleteMentionsByPostId(postId: string): Promise<DeleteResult>;
-    getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<MentionEntity[] | null>
+    getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<Post[] | null>
 }
 
 export class MentionRepository implements IMentionRepository {
@@ -39,7 +40,7 @@ export class MentionRepository implements IMentionRepository {
   }
 
   async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
-    return await this.mentionRepository.createQueryBuilder("mention")
+    const mentionPosts = await this.mentionRepository.createQueryBuilder("mention")
       .leftJoinAndSelect("mention.post", "post")
       .leftJoinAndSelect("post.images", "images")
       .leftJoinAndSelect("post.user", "user")
@@ -48,6 +49,8 @@ export class MentionRepository implements IMentionRepository {
       .skip(offset)
       .take(limit)
       .getMany();
+    
+    return mentionPosts.map(mp => mp.post);
   }
 
 }

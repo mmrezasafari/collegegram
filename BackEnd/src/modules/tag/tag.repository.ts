@@ -2,10 +2,11 @@ import { DataSource, Repository } from "typeorm";
 import { TagEntity } from "./tag.entity";
 import { PostEntity } from "../post/post.entity";
 import { SearchTag } from "../search/models/searchTags";
+import { Tag } from "./model/tag";
 
 
 export interface IHashtagRepository {
-    saveHashtag(postId: string, hashtags: string[]):Promise<TagEntity[]  | undefined>;
+    saveHashtag(postId: string, hashtags: string[]):Promise<Tag[]  | undefined>;
     removePostHashtags(postId: string): Promise<void>;
     searchTagInExplore(offset: number, limit: number, sort: "ASC" | "DESC", search: string): Promise<SearchTag[]>
     getTagsExplore(offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SearchTag[]>;

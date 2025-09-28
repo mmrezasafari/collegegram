@@ -6,7 +6,7 @@ import { PostImage } from "./model/post-image";
 export interface IPostRepository {
   createPost(id: string, imagesUrls: Partial<PostImage>[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null>;
   getPosts(userId: string): Promise<Post[] | null>;
-  getById(postId: string): Promise<PostEntity | null>;
+  getById(postId: string): Promise<Post | null>;
   countPost(userId: string): Promise<number>;
   updatePost(postId: string, userId: string, imageUrls?: Partial<PostImage>[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null>
   getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string): Promise<Post[] | null>;

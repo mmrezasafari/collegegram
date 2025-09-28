@@ -4,10 +4,10 @@ import { CloseFriend } from "./models/closeFriend";
 
 
 export interface ICloseFriendRepository {
-  existsCloseFriend(userId: string, friendId: string): Promise<CloseFriendEntity | null>;
+  existsCloseFriend(userId: string, friendId: string): Promise<CloseFriend| null>;
   addCloseFriend(userId: string, friendId: string): Promise<CloseFriend | null>;
   removeCloseFriend(userId: string, friendId: string): Promise<null>;
-  getCloseFriends(userId: string): Promise<CloseFriendEntity[]>;
+  getCloseFriends(userId: string): Promise<CloseFriend[]>;
   isCloseFriend(myId: string, resourceOwnerId: string): Promise<boolean>;
 }
 
