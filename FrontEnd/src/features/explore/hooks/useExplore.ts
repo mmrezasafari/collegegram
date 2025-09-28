@@ -3,6 +3,7 @@ import type { IErrorRes } from '@/types/error'
 import type { IExplore, IExploreGetRes } from '@/types/explore'
 import {
   useInfiniteQuery,
+  type InfiniteData,
   type QueryFunctionContext,
 } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
@@ -12,7 +13,7 @@ interface IExplorePostsPage {
   nextOffset?: number
 }
 
-async function fetchSavedPosts({
+export async function fetchSavedPosts({
   pageParam = 0,
 }: QueryFunctionContext): Promise<IExplorePostsPage> {
   const limit = 10
@@ -31,13 +32,16 @@ export function useInfiniteExplore() {
   const query = useInfiniteQuery<
     IExplorePostsPage,
     AxiosError<IErrorRes>,
-    IExplorePostsPage,
-    ['saved-posts'],
+    InfiniteData<IExplorePostsPage>,
+    ['explore-posts'],
     number
   >({
-    queryKey: ['saved-posts'],
+    queryKey: ['explore-posts'],
     queryFn: fetchSavedPosts,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
+    initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   })
 
   const allPosts: IExplore[] =

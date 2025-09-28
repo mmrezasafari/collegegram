@@ -70,10 +70,10 @@ export function useToggleSavePost(postId: string) {
             data: old?.data.map((data) =>
               postId === data.post.id
                 ? {
-                    ...data,
-                    isSaved: context === 'save',
-                    savedCount: data.savedCount + (context === 'save' ? 1 : -1),
-                  }
+                  ...data,
+                  isSaved: context === 'save',
+                  savedCount: data.savedCount + (context === 'save' ? 1 : -1),
+                }
                 : data,
             ),
           }
