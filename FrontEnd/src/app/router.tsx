@@ -9,24 +9,25 @@ import { BookmarkPage } from '@/features/bookmark/pages/BookmarkPage'
 import { PostDetailsPage } from '@/features/post/pages/PostDetailsPage'
 import { PostLayout } from '@/layouts/PostLayout'
 import { SearchPage } from '@/features/search/pages/searchpage'
-import { MorePage } from '@/features/more/pages/MorePage'
+import { BlockedListPage } from '@/features/relationships/pages/BlockedListPage'
+import { CloseFriendsPage } from '@/features/relationships/pages/CloseFriendsPage'
 import { Error404 } from '@/features/common/pages/Error404'
 import { MentionPage } from '@/features/mention/pages/MentionPage'
 
 function ProtectedRoute() {
-  const { data: me, isLoading } = useMe();
+  const { data: me, isLoading } = useMe()
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>
   if (!me) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" replace />
   }
 
-  return <Outlet />;
+  return <Outlet />
 }
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <AuthLayout />,
   },
   {
@@ -41,24 +42,18 @@ export const router = createBrowserRouter([
           { path: '/mentions', element: <MentionPage /> },
           { path: '/bookmarks', element: <BookmarkPage /> },
           { path: '/search', element: <SearchPage /> },
-          {
-            path: "/more/blocklist",
-            element: <MorePage activeTab="blocklist" />,
-          },
-          {
-            path: "/more/closefriends",
-            element: <MorePage activeTab="closefriends" />,
-          },
+          { path: '/block-list', element: <BlockedListPage /> },
+          { path: '/close-friends', element: <CloseFriendsPage /> },
         ],
       },
       {
         element: <PostLayout />,
-        children: [{ path: "/post/:postId", element: <PostDetailsPage /> }],
+        children: [{ path: '/post/:postId', element: <PostDetailsPage /> }],
       },
       {
-        path: "*",
+        path: '*',
         element: <Error404 />,
       },
     ],
   },
-]);
+])
