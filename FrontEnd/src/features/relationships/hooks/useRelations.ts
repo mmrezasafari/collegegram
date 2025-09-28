@@ -27,12 +27,8 @@ export async function getFollowings(
   return res.data
 }
 
-export async function getCloseFriends(
-  userName: string,
-): Promise<ICloseFriendsListRes> {
-  const res = await api.get<ICloseFriendsListRes>(
-    `users/${userName}/close-friends`,
-  )
+export async function getCloseFriends(): Promise<ICloseFriendsListRes> {
+  const res = await api.get<ICloseFriendsListRes>('users/me/close-friends')
   return res.data
 }
 
@@ -73,13 +69,9 @@ export function useGetFollowings() {
 }
 
 export function useGetCloseFriends() {
-  const userName = useGetUserName()
   return useQuery({
-    queryKey: ['closeFriendsList', userName],
-    queryFn: async () => {
-      if (!userName) throw new Error('Username is not available yet!')
-      return getCloseFriends(userName)
-    },
+    queryKey: ['closeFriendsList'],
+    queryFn: getCloseFriends,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   })

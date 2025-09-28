@@ -95,7 +95,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
           <div className="relative w-full max-w-sm">
             <Input
               type="text"
-              name={userName.name}
               ref={userName.ref}
               placeholder="نام کاربری"
               className="pr-9"
@@ -120,7 +119,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
           <div className="relative w-full max-w-sm">
             <Input
               type="email"
-              name={email.name}
               ref={email.ref}
               placeholder="ایمیل"
               className="pr-9"
@@ -145,7 +143,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
           <div className="relative w-full max-w-sm">
             <Input
               type="password"
-              name={password.name}
               ref={password.ref}
               placeholder="رمز عبور"
               className="pr-9"
@@ -170,7 +167,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
           <div className="relative w-full max-w-sm">
             <Input
               type="password"
-              name={rePassword.name}
               ref={rePassword.ref}
               placeholder="رمز عبور"
               className="pr-9"

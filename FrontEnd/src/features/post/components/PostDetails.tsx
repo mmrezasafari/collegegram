@@ -262,17 +262,17 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
             <div className="flex gap-2 flex-wrap">
               {post?.mentionedUsernames?.length
                 ? post.mentionedUsernames.map((user, i) => (
-                  <div key={i} className="text-light">
-                    <Link to={`/profile/${user}`}>
-                      <Badge
-                        className="text-sm hover:scale-103 transition-all"
-                        variant="secondary"
-                      >
-                        {user}
-                      </Badge>
-                    </Link>
-                  </div>
-                ))
+                    <div key={i} className="text-light">
+                      <Link to={`/profile/${user}`}>
+                        <Badge
+                          className="text-sm hover:scale-103 transition-all"
+                          variant="secondary"
+                        >
+                          {user}
+                        </Badge>
+                      </Link>
+                    </div>
+                  ))
                 : ''}
             </div>
             <div className="max-md:hidden flex justify-end gap-4">

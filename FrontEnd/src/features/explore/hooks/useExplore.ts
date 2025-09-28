@@ -1,6 +1,6 @@
 import api from '@/lib/axios'
-import type { IErrorRes } from '@/types/error'
 import type { IExplore, IExploreGetRes } from '@/types/explore'
+import type { IErrorRes } from '@/types/error'
 import {
   useInfiniteQuery,
   type InfiniteData,
@@ -13,7 +13,7 @@ interface IExplorePostsPage {
   nextOffset?: number
 }
 
-export async function fetchSavedPosts({
+export async function fetchExplorePosts({
   pageParam = 0,
 }: QueryFunctionContext): Promise<IExplorePostsPage> {
   const limit = 10
@@ -37,7 +37,7 @@ export function useInfiniteExplore() {
     number
   >({
     queryKey: ['explore-posts'],
-    queryFn: fetchSavedPosts,
+    queryFn: fetchExplorePosts,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
     initialPageParam: 0,
     staleTime: 1000 * 60 * 5,

@@ -1,63 +1,63 @@
-import { PostCard } from "./PostCard";
-import { useInfiniteTagSearch } from "../hooks/useSearch";
-import type { ISearchTagsData } from "src/types/search";
-import { useEffect, useRef, useState } from "react";
-import { DialogAndDrawerWizard } from "@/features/common/components/layout/DialogAndDrawerWizard";
-import { PostDetails } from "@/features/post/components/PostDetails";
+import { PostCard } from './PostCard'
+import { useInfiniteTagSearch } from '../hooks/useSearch'
+import type { ISearchTagsData } from 'src/types/search'
+import { useEffect, useRef, useState } from 'react'
+import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
+import { PostDetails } from '@/features/post/components/PostDetails'
 
 const chunkPosts = (posts: ISearchTagsData[]) => {
-  const chunks: ISearchTagsData[][] = [];
-  let idx = 0;
+  const chunks: ISearchTagsData[][] = []
+  let idx = 0
 
   // First row: 3 items
   if (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 3));
-    idx += 3;
+    chunks.push(posts.slice(idx, idx + 3))
+    idx += 3
   }
   // second row: 4 items
   if (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 4));
-    idx += 4;
+    chunks.push(posts.slice(idx, idx + 4))
+    idx += 4
   }
   // subsequent rows: 5 items
   while (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 6));
-    idx += 6;
+    chunks.push(posts.slice(idx, idx + 6))
+    idx += 6
   }
 
-  return chunks;
-};
+  return chunks
+}
 
 export const PostsGrid = () => {
   const { allTags, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteTagSearch();
+    useInfiniteTagSearch()
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const container = containerRef.current
+    if (!container) return
 
     const handleScroll = () => {
-      if (!hasNextPage || isFetchingNextPage) return;
+      if (!hasNextPage || isFetchingNextPage) return
 
-      const { scrollTop, scrollHeight, clientHeight } = container;
+      const { scrollTop, scrollHeight, clientHeight } = container
 
-      console.log(scrollTop + clientHeight >= scrollHeight - 50);
+      console.log(scrollTop + clientHeight >= scrollHeight - 50)
 
       // Trigger fetch when scrolled to bottom (or within 50px)
       if (scrollTop + clientHeight >= scrollHeight - 50) {
-        fetchNextPage();
+        fetchNextPage()
       }
-    };
+    }
 
-    container.addEventListener("scroll", handleScroll);
+    container.addEventListener('scroll', handleScroll)
 
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
-  const [postModalOpen, setPostModalOpen] = useState(false);
-  const [postId, setPostId] = useState("");
+  const [postModalOpen, setPostModalOpen] = useState(false)
+  const [postId, setPostId] = useState('')
 
   return (
     <>
@@ -71,13 +71,13 @@ export const PostsGrid = () => {
               key={rowIdx}
               className={`flex gap-4 mb-8 ${
                 rowIdx === 0
-                  ? "grid-cols-3"
+                  ? 'grid-cols-3'
                   : rowIdx === 1
-                    ? "grid-cols-4 h-[220px]"
-                    : "grid-cols-6 h-[110px]"
+                    ? 'grid-cols-4 h-[220px]'
+                    : 'grid-cols-6 h-[110px]'
               }`}
               style={{
-                display: "grid",
+                display: 'grid',
               }}
             >
               {row.map((post, idx) => (
@@ -86,10 +86,10 @@ export const PostsGrid = () => {
                   className="rounded-2xl overflow-hidden flex items-center justify-center"
                 >
                   <PostCard
-                    image={post?.images[0]?.url ?? ""}
+                    image={post?.images[0]?.url ?? ''}
                     onSelectItem={() => {
-                      setPostModalOpen(true);
-                      setPostId(post.id);
+                      setPostModalOpen(true)
+                      setPostId(post.id)
                     }}
                   />
                 </div>
@@ -108,7 +108,7 @@ export const PostsGrid = () => {
         </div>
       </span>
     </>
-  );
-};
+  )
+}
 
-export default PostsGrid;
+export default PostsGrid

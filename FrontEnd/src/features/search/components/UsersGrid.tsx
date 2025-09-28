@@ -1,34 +1,34 @@
-import { useInfiniteSearch } from "../hooks/useSearch";
-import { UserCard } from "./UserCard";
-import { useEffect, useRef } from "react";
+import { useInfiniteSearch } from '../hooks/useSearch'
+import { UserCard } from './UserCard'
+import { useEffect, useRef } from 'react'
 
 export const UsersGrid = () => {
   const { allUsers, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteSearch();
+    useInfiniteSearch()
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const container = containerRef.current
+    if (!container) return
 
     const handleScroll = () => {
-      if (!hasNextPage || isFetchingNextPage) return;
+      if (!hasNextPage || isFetchingNextPage) return
 
-      const { scrollTop, scrollHeight, clientHeight } = container;
+      const { scrollTop, scrollHeight, clientHeight } = container
 
-      console.log(scrollTop + clientHeight >= scrollHeight - 50);
+      console.log(scrollTop + clientHeight >= scrollHeight - 50)
 
       // Trigger fetch when scrolled to bottom (or within 50px)
       if (scrollTop + clientHeight >= scrollHeight - 50) {
-        fetchNextPage();
+        fetchNextPage()
       }
-    };
+    }
 
-    container.addEventListener("scroll", handleScroll);
+    container.addEventListener('scroll', handleScroll)
 
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
   return (
     <div className="flex flex-col gap-6 h-full">
@@ -49,5 +49,5 @@ export const UsersGrid = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

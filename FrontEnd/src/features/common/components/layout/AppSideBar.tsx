@@ -2,6 +2,7 @@ import { AvatarFallback } from '@/features/common/components/ui/avatar'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -19,13 +20,20 @@ import {
   PinIcon,
   SearchIcon,
   TagIcon,
+  UserLock,
   UserRound,
+  UserRoundPlus,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMe } from '../../hooks/users/useGetMe'
-import { Separator } from '@radix-ui/react-separator'
-import { useRef, useState } from 'react'
-import { Plus, Ban } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
+import { Separator } from '../ui/separator'
 
 const links = [
   {
@@ -69,24 +77,6 @@ export function AppSidebar() {
   const onNavigate = (url: string) => {
     navigate(url)
     if (isMobile) toggleSidebar()
-  }
-
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogPosition, setDialogPosition] = useState<{
-    top: number
-    left: number
-  } | null>(null)
-  const moreBtnRef = useRef<HTMLDivElement | null>(null)
-
-  const handleMoreClick = () => {
-    if (moreBtnRef.current) {
-      const rect = moreBtnRef.current.getBoundingClientRect()
-      setDialogPosition({
-        top: rect.top + window.scrollY - 180, // show above button, adjust as needed
-        left: rect.left + window.scrollX - 100, // align left edge, adjust as needed
-      })
-    }
-    setDialogOpen(true)
   }
 
   return (
@@ -151,58 +141,42 @@ export function AppSidebar() {
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
-        <div className="mt-auto px-8 pb-4">
-          <div ref={moreBtnRef}>
-            <SidebarMenuItem onClick={handleMoreClick} className="list-none">
+      </SidebarContent>
+      <SidebarFooter>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuItem className="list-none">
               <SidebarMenuButton className="rounded-[75px] !py-4 !px-8 w-full h-min justify-start gap-4 cursor-pointer hover:bg-geryVeryLight text-base">
                 <List />
                 <span>بیشتر</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          </div>
-        </div>
-        {dialogOpen && dialogPosition && (
-          <div
-            className="fixed z-50"
-            style={{
-              top: dialogPosition.top,
-              left: dialogPosition.left,
-            }}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="border border-geryLight w-64 rounded-4xl"
+            align="center"
           >
-            <div
-              className="bg-white rounded-[32px] shadow-lg flex flex-col gap-8 px-8 py-8 min-w-[303px] min-h-[104px] border border-gray-300"
-              dir="rtl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div
-                className="rounded-[55px] flex items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
-                onClick={() => {
-                  setDialogOpen(false)
-                  onNavigate('/more/closefriends')
-                }}
-              >
-                <span className="text-base font-medium">دوستان نزدیک</span>
-                <Plus size={20} />
-              </div>
-              <div
-                className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2"
-                onClick={() => {
-                  setDialogOpen(false)
-                  onNavigate('/more/blocklist')
-                }}
-              >
-                <span className="text-base font-medium">لیست سیاه</span>
-                <Ban size={20} color="#222" />
-              </div>
-            </div>
-            <div
-              className="fixed inset-0"
-              style={{ zIndex: -1 }}
-              onClick={() => setDialogOpen(false)}
-            />
-          </div>
-        )}
-      </SidebarContent>
+            <DropdownMenuGroup className="flex flex-col gap-2 py-6 px-1">
+              <DropdownMenuItem className="rounded-full px-8 py-4">
+                <Link to={'/close-friends'}>
+                  <div className="flex items-start gap-4 text-base">
+                    <span>دوستان نزدیک</span>
+                    <UserRoundPlus />
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-full px-8 py-4">
+                <Link to={'/block-list'}>
+                  <div className="flex items-start gap-4 text-base">
+                    <span>لیست سیاه</span>
+                    <UserLock size={32} />
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }
