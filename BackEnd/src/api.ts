@@ -42,6 +42,8 @@ import { LikeCommentService } from "./modules/likeComment/likeComment.service";
 import { CloseFriendRepository } from "./modules/closeFriend/close-friend.repository";
 import { CloseFriendService } from "./modules/closeFriend/close-friend.service";
 import { closeFriendRouter } from "./routes/closeFriend.route";
+import { NotificationRepository } from "./modules/notification/notification.repository";
+import { NotificationService } from "./modules/notification/notification.service";
 
 declare global {
   namespace Express {
@@ -72,6 +74,7 @@ export const makeApp = (dataSource: DataSource) => {
   const commentRepo = new CommentRepository(dataSource)
   const likeCommentRepo = new LikeCommentRepository(dataSource);
   const closeFriendRepo = new CloseFriendRepository(dataSource);
+  const notificationRepo = new NotificationRepository(dataSource);
 
   const authService = new AuthService(userRepo, sessionRepo);
   const userService = new UserService(userRepo);
@@ -86,6 +89,7 @@ export const makeApp = (dataSource: DataSource) => {
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
   const searchService = new SearchService(userService, hashtagService, closeFriendService);
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService, closeFriendService, followService);
+  const notificationService = new NotificationService(notificationRepo)
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
