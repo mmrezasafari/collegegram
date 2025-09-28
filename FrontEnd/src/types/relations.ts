@@ -39,9 +39,10 @@ export interface IUnfollowRes {
 export interface ICloseFriend {
   id: string
   username: string
-  firstname: string
-  lastname: string
+  firstName: string
+  lastName: string
   imageUrl: string
+  followersCount: number
 }
 
 export interface ICloseFriendsListRes {
@@ -77,6 +78,7 @@ export interface IBlockedUserData {
   firstname: string
   lastname: string
 }
+
 export interface IBlockedUsersListRes {
   success: boolean
   data: Array<IBlockedUserData>
