@@ -134,7 +134,7 @@ export function useFollowAction() {
         },
       )
 
-      // Optimistic update for me
+      // Optimistic update for me -> just followings count
       queryClient.setQueryData<IRegisteredUser | undefined>(['me'], (old) => {
         if (!old) return old
         return {
@@ -146,10 +146,11 @@ export function useFollowAction() {
         }
       })
 
-      // Optimistic update for followers list
+      // Optimistic update for user followers list
       queryClient.setQueryData<IFollowersListRes | undefined>(
         ['followersList', userName],
         (old) => {
+          // check old exist
           if (!old || !me?.data) return old
 
           if (old.data.find((u) => u.username === me.data.username)) return old
@@ -173,13 +174,12 @@ export function useFollowAction() {
         },
       )
 
-      // Optimistic update for followings list
+      // Optimistic update for me followings list
       queryClient.setQueryData<IFollowingsListRes | undefined>(
         ['followingsList', me?.data.username],
         (old) => {
           if (!old || !me?.data) return old
 
-          if (old.data.find((u) => u.username === me.data.username)) return old
           return {
             ...old,
             data: [
@@ -299,27 +299,13 @@ export function useUnfollowAction() {
 
       // Optimistic update for followers list
       queryClient.setQueryData<IFollowersListRes | undefined>(
-        ['followersList', me?.data.username],
+        ['followersList', userName],
         (old) => {
           if (!old || !me?.data) return old
-          if (old.data.find((u) => u.username === me.data.username)) return old
 
           return {
             ...old,
-            data: [
-              ...old.data,
-              {
-                id: me.data.id,
-                username: me.data.username,
-                firstName: me.data.firstName,
-                lastName: me.data.lastName,
-                imageUrl: me.data.imagePath,
-                followerCount: me.data.followerCount,
-                followingCount: me.data.followingCount,
-                isFollowing: me.data.isFollowing,
-                email: me.data.email,
-              },
-            ],
+            data: old.data.filter((u) => u.firstName !== me.data.username),
           }
         },
       )
@@ -329,24 +315,10 @@ export function useUnfollowAction() {
         ['followingsList', me?.data.username],
         (old) => {
           if (!old || !me?.data) return old
-          if (old.data.find((u) => u.username === me.data.username)) return old
 
           return {
             ...old,
-            data: [
-              ...old.data,
-              {
-                id: me.data.id,
-                username: me.data.username,
-                firstName: me.data.firstName,
-                lastName: me.data.lastName,
-                imageUrl: me.data.imagePath,
-                followerCount: me.data.followerCount,
-                followingCount: me.data.followingCount,
-                isFollowing: me.data.isFollowing,
-                email: me.data.email,
-              },
-            ],
+            data: old.data.filter((u) => u.username !== me.data.username),
           }
         },
       )
