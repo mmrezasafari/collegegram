@@ -6,6 +6,8 @@ import type { ISearchUserGetRes, ISearchTagsGetRes } from 'src/types/search'
 import api from '@/lib/axios'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { PostDetails } from '@/features/post/components/PostDetails'
+import { UserSuggestions } from './UserSuggestions'
+import { TagSuggestions } from './TagSuggestions'
 
 const fetchUser = async (query: string) => {
   const res = await api.get<ISearchUserGetRes>(
@@ -68,62 +70,30 @@ export const SearchBar = () => {
           ((Users.data?.length ?? 0) > 0 || (Tags.data?.length ?? 0) > 0) && (
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
               {/* User Suggestions ***************************************************************************/}
-              {(Users.data?.length ?? 0) > 0 && (
-                <div className="px-6 pt-4 pb-2 relative">
-                  {Users.data?.map((user, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between mb-3 cursor-pointer"
-                      onMouseDown={() => {
-                        setQuery(user.firstName)
-                        window.location.href = `/profile/${user.firstName}`
-                      }}
-                    >
-                      <span className="text-right">{user.firstName}</span>
-                      <img
-                        src={user.imagePath}
-                        alt={user.firstName}
-                        className="w-8 h-8 rounded-full object-cover ml-2"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Tag Suggestions */}
-              {(Tags.data?.length ?? 0) > 0 && (
-                <div className="px-6 pb-4">
-                  {Tags.data?.map((tag, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
-                      onMouseDown={() => {
-                        // setQuery(tag.caption)
-                        setPostModalOpen(true)
-                        setPostId(tag.id)
-                      }}
-                    >
-                      <span className="text-right w-full">{tag.caption}</span>
-                      <svg
-                        className="w-5 h-5 text-gray-500 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                      </svg>
-                    </div>
-                  ))}
-                  {/* ...button content... ****************************************************************************/}
-                  <button
-                    className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6"
-                    onClick={() => alert('item selected')}
-                  >
-                    بیشتر
-                  </button>
-                </div>
-              )}
+              <UserSuggestions
+                users={Users.data ?? []}
+                onSelect={(user) => {
+                  setQuery(user.firstName)
+                  window.location.href = `/profile/${user.firstName}`
+                }}
+              />
+
+              {/* Tag Suggestions ***************************************************************************/}
+              <TagSuggestions
+                tags={Tags.data ?? []}
+                onTagSelect={(tag) => {
+                  setQuery(tag.caption)
+                  setPostModalOpen(true)
+                  setPostId(tag.id)
+                }}
+              />
+
+              <button
+                className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6"
+                onClick={() => alert('More features coming soon!')}
+              >
+                بیشتر
+              </button>
               {/* Divider */}
               <div className="border-t border-gray-200 my-2 mx-6" />
               {/* Search Suggestions */}

@@ -29,11 +29,11 @@ export function UserCard({ cardData }: UserCardProps) {
       <FriendBar
         firstName={cardData?.firstName}
         lastName={cardData?.lastName}
-        avatarUrl={cardData.imagePath}
-        followCount={cardData.followerCount}
+        followCount={cardData?.followerCount}
+        avatarUrl={cardData?.imagePath}
       />
 
-      {cardData.isFollowing ? (
+      {cardData?.isFollowing ? (
         <Button
           className="flex w-full"
           variant="outline"

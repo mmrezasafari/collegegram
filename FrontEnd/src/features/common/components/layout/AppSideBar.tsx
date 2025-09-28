@@ -154,7 +154,7 @@ export function AppSidebar() {
         <div className="mt-auto px-8 pb-4">
           <div ref={moreBtnRef}>
             <SidebarMenuItem onClick={handleMoreClick} className="list-none">
-              <SidebarMenuButton className="rounded-[75px] !py-4 !px-8 w-full h-min justify-start gap-4 cursor-pointer hover:bg-geryVeryLight">
+              <SidebarMenuButton className="rounded-[75px] !py-4 !px-8 w-full h-min justify-start gap-4 cursor-pointer hover:bg-geryVeryLight text-base">
                 <List />
                 <span>بیشتر</span>
               </SidebarMenuButton>
@@ -181,7 +181,7 @@ export function AppSidebar() {
                   onNavigate('/more/closefriends')
                 }}
               >
-                <span className="text-s font-medium">دوستان نزدیک</span>
+                <span className="text-base font-medium">دوستان نزدیک</span>
                 <Plus size={20} />
               </div>
               <div
@@ -191,7 +191,7 @@ export function AppSidebar() {
                   onNavigate('/more/blocklist')
                 }}
               >
-                <span className="text-s font-medium">لیست سیاه</span>
+                <span className="text-base font-medium">لیست سیاه</span>
                 <Ban size={20} color="#222" />
               </div>
             </div>
