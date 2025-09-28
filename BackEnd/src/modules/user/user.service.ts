@@ -46,6 +46,24 @@ export class UserService {
 
     async saveProfileImage(file: Express.Multer.File, userId: string) {
         const user = await this.getUser(userId);
+        if (!file) {
+            if (user.imagePath) {
+                const lastSlashIndex = user.imagePath.lastIndexOf("/");
+                const questionMarkIndex = user.imagePath.indexOf("?", lastSlashIndex);
+                let fileName: string;
+                if (questionMarkIndex === -1) {
+                    // اگر ? نبود، کل رشته بعد از / میگیریم
+                    fileName = user.imagePath.slice(lastSlashIndex + 1);
+                } else {
+                    // اگر ? بود، فقط تا قبلش
+                    fileName = user.imagePath.slice(lastSlashIndex + 1, questionMarkIndex);
+                }
+                await minioClient.removeObject("profile-image", fileName);
+            }
+            await this.userRepo.deleteImage(user);
+
+            return;
+        }
         const name = file.originalname.split(".");
         const extension = name[name.length - 1];
         const objectName = `${Date.now()}-${user.username}`;

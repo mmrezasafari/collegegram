@@ -64,7 +64,7 @@ export class PostRepository implements IPostRepository {
     })
   }
 
-  async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string, onlyCloseFriends?: boolean) {
+  async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null> {
     const existingPost: Post | null = await this.getById(postId);
     if (!existingPost) return null;
     const postImage: PostImage[] = [];

@@ -27,6 +27,7 @@ export interface IUserRepository {
   create(userDto: CreateUser): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUser): Promise<User | null>;
   saveImage(id: string, imagePath: string, mimeType: ImageMimeType): Promise<void>;
+  deleteImage(user: User): Promise<void | null>;
   searchUserInExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC", search: string): Promise<SearchUserByDetails[] | null>
   getUsersExplore(userId: string, offset: number, limit: number, sort: "ASC" | "DESC"): Promise<SearchUserByDetails[] | null>
 
@@ -38,51 +39,36 @@ export class UserRepository implements IUserRepository {
   }
 
   async getById(id: string) {
-    const existingUser = await this.userRepository.findOneBy({ id });
-    if (existingUser) {
-      const { password, ...user } = existingUser;
-      return user;
-    }
-    return null
-
+    return await this.userRepository.findOneBy({ id });
   }
 
   async getByUsername(username: string) {
-    const existingUser = await this.userRepository.findOneBy({ username });
-    if (existingUser) {
-      const { password, ...user } = existingUser;
-      return user;
-    }
-    return null
+    return await this.userRepository.findOneBy({ username });
   }
   async getByEmail(email: string) {
-    const existingUser = await this.userRepository.findOneBy({ email });
-    if (existingUser) {
-      const { password, ...user } = existingUser;
-      return user;
-    }
-    return null
+    return await this.userRepository.findOneBy({ email });
   }
   async getForLogin(usernameOrEmail: string): Promise<Login | null> {
     return await this.userRepository.findOne({
       where: [
         { email: usernameOrEmail },
         { username: usernameOrEmail }
-      ]
+      ],
+      select: {
+        id: true,
+        username: true,
+        password: true,
+        email: true
+      }
     });
   }
   async create(userDto: CreateUser): Promise<User | null> {
-    const userSaved = await this.userRepository.save(userDto);
-    const { password, ...user } = userSaved;
-    return user;
+    return await this.userRepository.save(userDto);
   }
 
   async update(id: string, updateUserDto: UpdateUser): Promise<User | null> {
     await this.userRepository.update(id, updateUserDto);
-    const updateUser = await this.userRepository.findOne({ where: { id } });
-    if (!updateUser) return null;
-    const { password, ...user } = updateUser;
-    return user;
+    return await this.userRepository.findOne({ where: { id } });
   }
 
   async saveImage(id: string, imagePath: string, mimeType: ImageMimeType): Promise<void> {
@@ -90,6 +76,12 @@ export class UserRepository implements IUserRepository {
 
   }
 
+  async deleteImage(user: User): Promise<void | null> {
+    await this.userRepository.update({ id: user.id }, {
+      imagePath: null,
+      mimeType: null
+    } as any);
+  }
   async searchUserInExplore(
     userId: string,
     offset: number,

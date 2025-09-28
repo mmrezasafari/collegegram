@@ -1,3 +1,5 @@
+import { ImageMimeType } from "../../../../utility/image-mime-type.enum";
+
 export interface User {
   id: string;
   username: string;
@@ -7,6 +9,7 @@ export interface User {
   lastName?: string;
   bio?: string;
   imagePath?: string;
+  mimeType?: ImageMimeType;
 }
 export interface UserWithoutEmail {
   userId: string;
