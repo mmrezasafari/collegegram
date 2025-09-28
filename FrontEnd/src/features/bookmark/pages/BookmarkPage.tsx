@@ -1,11 +1,12 @@
-import { useInfiniteTagged } from '../hooks/useTagged'
-import { TaggedImageCard } from '../components/TaggedImageCard'
-import { TaggedEmpty } from '../components/TaggedEmpty'
+import { useInfiniteSavedPosts } from '../hooks/useInfiniteBookmark'
+import { SavesImageCard } from '../../bookmark/components/SavedImageCard'
+import { TaggedEmpty } from '../../bookmark/components/SavesEmpty'
 import { useEffect, useRef } from 'react'
+import { Loader } from 'lucide-react'
 
-export const Tagged = () => {
+export const BookmarkPage = () => {
   const { allPosts, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteTagged()
+    useInfiniteSavedPosts()
 
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -31,22 +32,24 @@ export const Tagged = () => {
 
   return (
     <div className="flex flex-col gap-6 h-full">
-      <h2 className="font-bold text-2xl mt-2">تگ‌‌شده‌ها</h2>
+      <h2 className="font-bold text-2xl mt-2">ذخیره‌ها</h2>
       <div ref={containerRef} className="overflow-y-auto">
-        {isFetchingNextPage && !allPosts?.length ? (
-          <div>در حال بارگذاری...</div>
-        ) : allPosts?.length > 0 ? (
+        {allPosts?.length > 0 ? (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 h-full justify-items-center items-center">
               {allPosts?.map((item) => (
-                <TaggedImageCard key={item.id} taggedPosts={item} />
+                <SavesImageCard key={item.id} savesPosts={item} />
               ))}
+              {isFetchingNextPage && (
+                <div className="absolute bottom-10 col-span-full flex justify-center">
+                  <Loader size={30} color="#f6881f" className="animate-spin" />
+                </div>
+              )}
             </div>
           </>
         ) : (
           <TaggedEmpty />
         )}
-        {isFetchingNextPage && <div>در حال بارگذاری...</div>}
       </div>
     </div>
   )

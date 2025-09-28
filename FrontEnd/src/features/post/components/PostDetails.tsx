@@ -31,10 +31,10 @@ import { useToggleSavePost } from '@/features/bookmark/hooks/useBookmark'
 import { useToggleLike } from '@/features/like/hooks/useLike'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
-import { Link, useParams } from 'react-router-dom'
-import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
+import { Link } from 'react-router-dom'
 import { CommentSection } from '@/features/comment/components/CommentsSection'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface IProp {
   postId: string
@@ -45,10 +45,11 @@ dayjs.extend(relativeTime)
 dayjs.locale('fa')
 
 export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
+  const queryClient = useQueryClient()
   const { data } = useGetPost(postId)
+  const me = queryClient.getQueryData(['me'])
   const post = data?.data
   const [api, setApi] = useState<CarouselApi>()
-  const userName = useGetUserName()
   const [current, setCurrent] = useState(0)
   const [_count, setCount] = useState(post?.post.images.length)
   const { mutate: toggleSavePostMutata, isPending: savePending } =
@@ -56,7 +57,6 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
   const { mutate: toggleLikeMutate, isPending: likePending } =
     useToggleLike(postId)
   const [editPostModalOpen, setEditPostModalOpen] = useState(false)
-  const params = useParams()
 
   const onBookmarkAction = () => {
     if (!post?.saved) {
@@ -88,7 +88,7 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
   return (
     <>
       <div className="flex flex-col justify-between gap-6 max-md:overflow-y-auto">
-        {!Object.keys(params).length && (
+        {mode === 'modal' && (
           <Link className="max-md:px-5" to={`/post/${postId}`}>
             <Expand color="#ea5a69" />
           </Link>
@@ -109,7 +109,10 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   </AvatarFallback>
                 </Avatar>
                 {/* fullName in mobile */}
-                <p className="font-bold text-secondary">
+                <Link
+                  className="font-bold text-secondary cursor-pointer"
+                  to={`/profile/${post?.post.username}`}
+                >
                   {post?.post.firstName ? (
                     <span>
                       {post.post.firstName} {post.post.lastName}
@@ -117,10 +120,10 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   ) : (
                     <span className="rtl">{post?.post.username}@</span>
                   )}
-                </p>
+                </Link>
               </div>
               {/* eidt btn in mobile */}
-              {userName === post?.post.username && (
+              {me?.data.username === post?.post.username && (
                 <Button
                   className="md:hidden min-w-min p-0"
                   variant="link"
@@ -217,7 +220,10 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   </AvatarFallback>
                 </Avatar>
                 {/* fullName in desktop */}
-                <p className="font-bold text-secondary">
+                <Link
+                  className="font-bold text-secondary"
+                  to={`/profile/${post?.post.username}`}
+                >
                   {post?.post.firstName ? (
                     <span>
                       {post.post.firstName} {post.post.lastName}
@@ -225,10 +231,10 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                   ) : (
                     <span>{post?.post.username}@</span>
                   )}
-                </p>
+                </Link>
               </div>
               {/* Eidt btn in desktop ratio */}
-              {userName === post?.post.username && (
+              {me?.data.username === post?.post.username && (
                 <Button onClick={() => setEditPostModalOpen(true)}>
                   <Pencil />
                   <span>ویرایش پست</span>
@@ -256,17 +262,17 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
             <div className="flex gap-2 flex-wrap">
               {post?.mentionedUsernames?.length
                 ? post.mentionedUsernames.map((user, i) => (
-                    <div key={i} className="text-light">
-                      <Link to={`/profile/${user}`}>
-                        <Badge
-                          className="text-sm hover:scale-103 transition-all"
-                          variant="secondary"
-                        >
-                          {user}
-                        </Badge>
-                      </Link>
-                    </div>
-                  ))
+                  <div key={i} className="text-light">
+                    <Link to={`/profile/${user}`}>
+                      <Badge
+                        className="text-sm hover:scale-103 transition-all"
+                        variant="secondary"
+                      >
+                        {user}
+                      </Badge>
+                    </Link>
+                  </div>
+                ))
                 : ''}
             </div>
             <div className="max-md:hidden flex justify-end gap-4">

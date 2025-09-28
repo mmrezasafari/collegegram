@@ -35,7 +35,7 @@ const links = [
   },
   {
     title: 'ذخیره ها',
-    url: '/saves',
+    url: '/bookmarks',
     icon: Bookmark,
   },
   {
@@ -50,7 +50,7 @@ const links = [
   },
   {
     title: 'تگ شده‌ها',
-    url: '/tagged',
+    url: '/mentions',
     icon: TagIcon,
   },
 ]
