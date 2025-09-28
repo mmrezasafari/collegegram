@@ -9,6 +9,7 @@ import { CommentEntity } from "../comment/comment.entity";
 import { minioGetClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 import { CloseFriendEntity } from "../closeFriend/close-friend.entity";
+import { NotificationEntity } from "../notification/notification.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -91,5 +92,8 @@ export class UserEntity {
   
   @OneToMany(() => CloseFriendEntity, cf => cf.user)
   closeFriends!: CloseFriendEntity[];
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.receiver)
+  notifications!: NotificationEntity[];
 
 }
