@@ -2,7 +2,11 @@ import api from '@/lib/axios'
 import type { IErrorRes, ISuccessRes } from '@/types/error'
 import type { IExploreGetRes } from '@/types/explore'
 import type { IGetPostRes } from '@/types/posts'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
 type TMutationVars = 'like' | 'unlike'
@@ -33,17 +37,17 @@ export function useToggleLike(postId: string) {
     TMutationVars,
     IMutationContext
   >({
-    mutationKey: ['post', postId, 'like'],
+    mutationKey: ['post', postId, 'toggleLike'],
     mutationFn: (action) => toggleLikePost(postId, action),
     onMutate: async (action) => {
       await queryClient.cancelQueries({ queryKey: ['post', postId] })
-      await queryClient.cancelQueries({ queryKey: ['explore'] })
+      await queryClient.cancelQueries({ queryKey: ['explore-posts'] })
       const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
         'post',
         postId,
       ])
       const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
-        'explore',
+        'explore-posts',
       ])
 
       if (previousPostDetails) {
@@ -61,21 +65,33 @@ export function useToggleLike(postId: string) {
       }
 
       if (previousExploreData) {
-        queryClient.setQueryData<IExploreGetRes>(['explore'], (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            data: old?.data.map((data) =>
-              postId === data.post.id
-                ? {
-                    ...data,
-                    isLiked: action === 'like',
-                    likeCount: data.likeCount + (action === 'like' ? 1 : -1),
-                  }
-                : data,
-            ),
-          }
-        })
+        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+          ['explore-posts'],
+          (old: any) => {
+            if (!old) return old
+
+            return {
+              ...old,
+              pages: old.pages.map((page: any) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  data: page.data.data.map((item: any) =>
+                    item.post.id === postId
+                      ? {
+                          ...item,
+                          isLiked: !item.isLiked,
+                          likeCount: item.isLiked
+                            ? item.likeCount - 1
+                            : item.likeCount + 1,
+                        }
+                      : item,
+                  ),
+                },
+              })),
+            }
+          },
+        )
       }
 
       return { previousExploreData, previousPostDetails, acion: action }
@@ -85,7 +101,6 @@ export function useToggleLike(postId: string) {
         queryClient.setQueryData(['post', postId], context.previousPostDetails)
       }
       if (context?.previousExploreData) {
-        console.log(context?.previousExploreData)
         queryClient.setQueryData(['explore'], context.previousExploreData)
       }
     },
