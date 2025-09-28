@@ -45,7 +45,7 @@ export class PostService {
 
         const usernames = dto.mention ? extract(dto.mention, "mention") : null;
         if (usernames) {
-            mentionedUsernames = await this.mentionService.savePostMention(usernames, post.id);
+            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(usernames, post.id, userId);
         }
 
         const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
@@ -67,7 +67,7 @@ export class PostService {
         }
         return post;
     }
-    
+
     async countPost(userId: string): Promise<number> {
         return await this.postRepo.countPost(userId);
     }
@@ -125,7 +125,7 @@ export class PostService {
         const usernames = dto.mention ? extract(dto.mention, "mention") : null;
         await this.mentionService.removePostMentions(postId);
         if (usernames) {
-            mentionedUsernames = await this.mentionService.savePostMention(usernames, postId);
+            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(usernames, postId, userId);
         }
         const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
         await this.hashtagService.removePostHashtags(postId);

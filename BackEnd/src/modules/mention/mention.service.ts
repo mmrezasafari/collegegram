@@ -1,4 +1,6 @@
 import { CloseFriendService } from "../closeFriend/close-friend.service";
+import { NotificationType } from "../notification/notification-type.enum";
+import { NotificationService } from "../notification/notification.service";
 import { Post } from "../post/model/post";
 import { UserService } from "../user/user.service";
 import { IMentionRepository } from "./mention.repository";
@@ -8,16 +10,23 @@ export class MentionService {
     constructor(
         private mentionRepo: IMentionRepository,
         private userService: UserService,
-        private closeFriendService: CloseFriendService
+        private closeFriendService: CloseFriendService,
+        private notificationService: NotificationService,
     ) { }
 
-    async savePostMention(usernames: string[], postId: string) {
+    async savePostMentionAndCreateNotification(usernames: string[], postId: string, myId: string): Promise<string[]> {
         const savedUsernames: string[] = [];
         for (const username of usernames) {
             const mentionedUser = await this.userService.getUserByUsername(username);
             if (mentionedUser) {
                 await this.mentionRepo.saveMention(mentionedUser.id, postId)
                 savedUsernames.push(username);
+                await this.notificationService.createNotification(
+                    mentionedUser.id,
+                    myId,
+                    NotificationType.TAG,
+                    postId
+                )
             }
         }
         return savedUsernames;
@@ -46,7 +55,7 @@ export class MentionService {
             posts.push({
                 id: post.id,
                 caption: post.caption,
-                onlyCloseFriends: post.onlyCloseFriends, 
+                onlyCloseFriends: post.onlyCloseFriends,
                 images: post.images,
                 createdAt: post.createdAt,
             });

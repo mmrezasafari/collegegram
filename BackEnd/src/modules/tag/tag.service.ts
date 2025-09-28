@@ -1,4 +1,3 @@
-import { Post } from "../post/model/post";
 import { UserService } from "../user/user.service";
 import { IHashtagRepository } from "./tag.repository";
 
@@ -6,7 +5,6 @@ import { IHashtagRepository } from "./tag.repository";
 export class HashtagService {
     constructor(
         private tagRepo: IHashtagRepository,
-        private userService: UserService
     ) { }
 
     async savePostHashtags(postId: string, hashtags: string[]) {
