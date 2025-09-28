@@ -231,9 +231,7 @@ export const UserProfileOverView = () => {
               }}
             >
               <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2 ">
-                <span className="text-xs font-medium">
-                  افزودن به دوستان نزدیک
-                </span>
+                <span className="text-base">افزودن به دوستان نزدیک</span>
               </div>
               <Plus size={30} color="#222" className="p-2" />
             </div>
@@ -245,7 +243,7 @@ export const UserProfileOverView = () => {
               }}
             >
               <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
-                <span className="text-xs font-medium">بلاک کردن</span>
+                <span className="text-base">بلاک کردن</span>
               </div>
               <Ban size={30} color="#222" className="p-2" />
             </div>

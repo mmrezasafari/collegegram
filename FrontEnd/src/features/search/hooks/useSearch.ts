@@ -24,14 +24,15 @@ interface ISearchTagsPage {
 // Fetch Users Data
 async function fetchSearchUsersData({
   pageParam = 0,
-}: QueryFunctionContext): Promise<ISearchUsersPage> {
+  query = '',
+}: QueryFunctionContext & { query?: string }): Promise<ISearchUsersPage> {
   const limit = 10
   const { data } = await api.get<ISearchUserGetRes>(
-    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=&isSummary=true`,
+    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=true`,
   )
 
   return {
-    data,
+    data: data.data,
     nextOffset:
       data.data.length === limit ? (pageParam as number) + limit : undefined,
   }
@@ -48,6 +49,7 @@ export function useInfiniteSearch() {
     queryKey: ['search'],
     queryFn: fetchSearchUsersData,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
+    initialPageParam: 0,
   })
 
   const allUsers: ISearchedUsersData[] =
@@ -59,10 +61,11 @@ export function useInfiniteSearch() {
 // Fetch Tagged Data
 async function fetchSearchTagsData({
   pageParam = 0,
-}: QueryFunctionContext): Promise<ISearchTagsPage> {
-  const limit = 0
+  query = '',
+}: QueryFunctionContext & { query?: string }): Promise<ISearchTagsPage> {
+  const limit = 10
   const { data } = await api.get<ISearchTagsData>(
-    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&isSummary=false`,
+    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
   )
   return {
     data: data,
@@ -82,6 +85,7 @@ export function useInfiniteTagSearch() {
     queryKey: ['search'],
     queryFn: fetchSearchTagsData,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
+    initialPageParam: 0,
   })
 
   const allTags: ISearchTagsData[] =
