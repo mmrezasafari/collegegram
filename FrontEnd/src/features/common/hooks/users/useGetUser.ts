@@ -15,5 +15,9 @@ export function useGetUser() {
   return useQuery({
     queryKey: ['user', userName],
     queryFn: () => getUser(userName as string),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userName,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   })
 }
