@@ -58,10 +58,6 @@ export const profileRouter = (
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
-    if (!req.file) {
-      res.status(400).json({ message: "فایل ارسال نشده" });
-      return;
-    }
     handleExpress(res, () => userService.saveProfileImage(req.file as Express.Multer.File, user.userId))
   });
 
@@ -76,7 +72,7 @@ export const profileRouter = (
       return;
     }
     const dto = createPostDto.parse(req.body);
-    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], dto , user.userId));
+    handleExpress(res, () => postService.savePost(req.files as Express.Multer.File[], dto, user.userId));
   });
 
   app.get("/mentioned-page", (req, res) => {
