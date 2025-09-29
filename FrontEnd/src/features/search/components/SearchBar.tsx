@@ -67,14 +67,14 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
         onSearchMore(query, Users.data, Tags.data || [])
         setShowSuggestions(false)
       } else {
-        alert('جستجوی مورد نظر خود را وارد کنید')
+        alert('شخصی با این نام یافت نشد.')
       }
     } else if (isTabActive('posts')) {
       if (Tags.data && Tags.data.length > 0 && onSearchMore) {
         onSearchMore(query, Users.data || [], Tags.data)
         setShowSuggestions(false)
       } else {
-        alert('جستجوی مورد نظر خود را وارد کنید')
+        alert('این کلمه تا به حال تگ نشده.')
       }
     }
   }
