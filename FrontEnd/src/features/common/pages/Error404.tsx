@@ -23,7 +23,7 @@ export function Error404() {
       <img
         src={OrangeCloud}
         alt="orange cloud"
-        className="absolute bottom-24 right-32 w-72 h-24 object-contain z-0"
+        className="absolute bottom-40 right-32 w-72 h-24 object-contain z-0"
         draggable={false}
       />
       {/* Main content */}

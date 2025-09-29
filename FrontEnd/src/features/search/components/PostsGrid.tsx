@@ -14,17 +14,17 @@ const chunkPosts = (posts: ISearchTagsData[]) => {
   const chunks: ISearchTagsData[][] = []
   let idx = 0
 
-  // First row: 3 items
+  // First row: 1 item (mobile) / 3 items (desktop)
   if (posts.length > idx) {
     chunks.push(posts.slice(idx, idx + 3))
     idx += 3
   }
-  // second row: 4 items
+  // Second row: 2 items (mobile) / 4 items (desktop)
   if (posts.length > idx) {
     chunks.push(posts.slice(idx, idx + 4))
     idx += 4
   }
-  // subsequent rows: 5 items
+  // Subsequent rows: 3 items (mobile) / 6 items (desktop)
   while (posts.length > idx) {
     chunks.push(posts.slice(idx, idx + 6))
     idx += 6
@@ -98,12 +98,12 @@ export const PostsGrid = ({ searchResults }: PostsGridProps) => {
             ).map((row, rowIdx) => (
               <div
                 key={rowIdx}
-                className={`flex gap-4 mb-8 ${
+                className={`flex gap-2 mb-2 ${
                   rowIdx === 0
-                    ? 'grid-cols-3'
+                    ? 'grid-cols-1 md:grid-cols-3'
                     : rowIdx === 1
-                      ? 'grid-cols-4 h-[220px]'
-                      : 'grid-cols-6 h-[110px]'
+                      ? 'grid-cols-2 md:grid-cols-4'
+                      : 'grid-cols-3 md:grid-cols-6'
                 }`}
                 style={{
                   display: 'grid',
