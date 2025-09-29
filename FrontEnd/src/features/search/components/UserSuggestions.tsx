@@ -17,7 +17,7 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
       {users.map((user, idx) => (
         <div
           key={idx}
-          className="flex items-center justify-between mb-3 cursor-pointer"
+          className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
           onMouseDown={() => onSelect(user)}
         >
           <span className="text-right">{user.firstName}</span>

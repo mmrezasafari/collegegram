@@ -8,8 +8,9 @@ export interface ISearchedUsersData {
   firstName: string
   lastName: string
   imagePath: string
-  isFollowing: boolean
+  mimeType: string
   followerCount: number
+  isFollowing: boolean
 }
 
 export interface ISearchTagsGetRes {

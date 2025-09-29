@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import type { ISearchUserGetRes, ISearchTagsGetRes } from 'src/types/search'
+import type {
+  ISearchUserGetRes,
+  ISearchTagsGetRes,
+  ISearchedUsersData,
+  ISearchTagsData,
+} from 'src/types/search'
 import api from '@/lib/axios'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { PostDetails } from '@/features/post/components/PostDetails'
@@ -21,7 +26,16 @@ const fetchTags = async (query: string) => {
   return res.data.data
 }
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  activeTab?: 'users' | 'posts'
+  onSearchMore?: (
+    query: string,
+    users: ISearchedUsersData[],
+    tags?: ISearchTagsData[],
+  ) => void
+}
+
+export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
   const [query, setQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [postModalOpen, setPostModalOpen] = useState(false)
@@ -39,6 +53,32 @@ export const SearchBar = () => {
     enabled: query.trim().length > 0,
   })
 
+  const getCurrentTab = () => {
+    return activeTab || 'users'
+  }
+
+  const isTabActive = (tabName: 'users' | 'posts') => {
+    return getCurrentTab() === tabName
+  }
+
+  const onToggleMore = () => {
+    if (isTabActive('users')) {
+      if (Users.data && Users.data.length > 0 && onSearchMore) {
+        onSearchMore(query, Users.data, Tags.data || [])
+        setShowSuggestions(false)
+      } else {
+        alert('جستجوی مورد نظر خود را وارد کنید')
+      }
+    } else if (isTabActive('posts')) {
+      if (Tags.data && Tags.data.length > 0 && onSearchMore) {
+        onSearchMore(query, Users.data || [], Tags.data)
+        setShowSuggestions(false)
+      } else {
+        alert('جستجوی مورد نظر خود را وارد کنید')
+      }
+    }
+  }
+
   return (
     <>
       <div className="w-full flex flex-col items-center relative">
@@ -49,16 +89,22 @@ export const SearchBar = () => {
             onChange={(e) => setQuery(e.target.value)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             onFocus={() => setShowSuggestions(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onToggleMore()
+              }
+            }}
             placeholder="جستجو در افراد، تگ‌ها، واژه‌ها و ..."
-            className="bg-transparent border-none outline-none text-gray-500 text-xl pr-6 w-full text-right"
+            className="bg-transparent border-none outline-none text-gray-500 text-md pr-6 w-full text-right"
             dir="rtl"
           />
           <svg
-            className="w-7 h-7 text-gray-500 ml-2"
+            className="w-7 h-7 text-gray-500 ml-2 cursor-pointer"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
+            onClick={onToggleMore}
           >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -69,16 +115,15 @@ export const SearchBar = () => {
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
               {/* User Suggestions ***************************************************************************/}
               <UserSuggestions
-                users={Users.data ?? []}
+                users={(Users.data ?? []).slice(0, 3)}
                 onSelect={(user) => {
                   setQuery(user.firstName)
                   window.location.href = `/profile/${user.firstName}`
                 }}
               />
-
               {/* Tag Suggestions ***************************************************************************/}
               <TagSuggestions
-                tags={Tags.data ?? []}
+                tags={(Tags.data ?? []).slice(0, 4)}
                 onTagSelect={(tag) => {
                   setQuery(tag.caption)
                   setPostModalOpen(true)
@@ -87,8 +132,8 @@ export const SearchBar = () => {
               />
 
               <button
-                className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6"
-                onClick={() => alert('More features coming soon!')}
+                className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6 cursor-pointer hover:bg-primary"
+                onClick={onToggleMore}
               >
                 بیشتر
               </button>

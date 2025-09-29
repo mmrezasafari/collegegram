@@ -28,7 +28,7 @@ async function fetchSearchUsersData({
 }: QueryFunctionContext & { query?: string }): Promise<ISearchUsersPage> {
   const limit = 10
   const { data } = await api.get<ISearchUserGetRes>(
-    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=true`,
+    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
   )
 
   return {
