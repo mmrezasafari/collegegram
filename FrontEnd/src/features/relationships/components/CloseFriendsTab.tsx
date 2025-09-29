@@ -1,13 +1,23 @@
 import { useGetCloseFriends } from '@/features/relationships/hooks/useRelations'
-import { FriendsAndBlockedTab } from '../components/FriendsAndBlockedTab'
-import { RelationsRow } from '../components/RelationsRow'
+import { RelationsRow } from './RelationsRow'
+import { useEffect } from 'react'
 
 export const CloseFriendsPage = () => {
-  const { data: closeFriends } = useGetCloseFriends()
+  const { data: closeFriends, refetch } = useGetCloseFriends()
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      refetch()
+    }
+
+    window.addEventListener('refreshCloseFriends', handleRefresh)
+    return () => {
+      window.removeEventListener('refreshCloseFriends', handleRefresh)
+    }
+  }, [refetch])
 
   return (
     <div className="h-full flex flex-col max-md:items-center py-2">
-      <FriendsAndBlockedTab />
       <div className="flex flex-col gap-8 max-w-lg ml-auto">
         {closeFriends?.data &&
           closeFriends.data.map((closefriend) => (
