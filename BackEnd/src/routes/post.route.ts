@@ -18,6 +18,10 @@ export const postRouter = (postService: PostService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
+    if ((!req.files || req.files.length === 0) && (!dto.imageUrls || dto.imageUrls.length === 0 || dto.imageUrls[0] === "")) {
+      res.status(400).json({ message: "پست ارسال نشده است" });
+      return;
+    }
     handleExpress(res, () => postService.editPost(postId, user.userId, req.files as Express.Multer.File[], dto, user.userId));
 
   })

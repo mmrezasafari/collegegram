@@ -67,8 +67,8 @@ export const profileRouter = (
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
-    if (!req.files) {
-      res.status(400).json({ message: "فایل ارسال نشده" });
+    if (!req.files || req.files.length === 0) {
+      res.status(400).json({ message: "پست ارسال نشده است" });
       return;
     }
     const dto = createPostDto.parse(req.body);
