@@ -2,6 +2,7 @@ import { CloseFriendService } from "../closeFriend/close-friend.service";
 import { NotificationType } from "../notification/notification-type.enum";
 import { NotificationService } from "../notification/notification.service";
 import { Post } from "../post/model/post";
+import { User } from "../user/model/user";
 import { UserService } from "../user/user.service";
 import { IMentionRepository } from "./mention.repository";
 
@@ -9,25 +10,21 @@ import { IMentionRepository } from "./mention.repository";
 export class MentionService {
     constructor(
         private mentionRepo: IMentionRepository,
-        private userService: UserService,
         private closeFriendService: CloseFriendService,
         private notificationService: NotificationService,
     ) { }
 
-    async savePostMentionAndCreateNotification(usernames: string[], postId: string, myId: string): Promise<string[]> {
+    async savePostMentionAndCreateNotification(mentionedUsers: User[], postId: string, myId: string): Promise<string[]> {
         const savedUsernames: string[] = [];
-        for (const username of usernames) {
-            const mentionedUser = await this.userService.getUserByUsername(username);
-            if (mentionedUser) {
-                await this.mentionRepo.saveMention(mentionedUser.id, postId)
-                savedUsernames.push(username);
-                await this.notificationService.createNotification(
-                    mentionedUser.id,
-                    myId,
-                    NotificationType.TAG,
-                    postId
-                )
-            }
+        for (const mentionedUser of mentionedUsers) {
+            await this.mentionRepo.saveMention(mentionedUser.id, postId)
+            savedUsernames.push(mentionedUser.username);
+            await this.notificationService.createNotification(
+                mentionedUser.id,
+                myId,
+                NotificationType.TAG,
+                postId
+            )
         }
         return savedUsernames;
 
