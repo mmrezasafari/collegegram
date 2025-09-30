@@ -34,7 +34,7 @@ import { UploadPostForm } from './UploadPostForm'
 import { Link } from 'react-router-dom'
 import { CommentSection } from '@/features/comment/components/CommentsSection'
 import { cn } from '@/lib/utils'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMe } from '@/features/common/hooks/users/useGetMe'
 
 interface IProp {
   postId: string
@@ -45,9 +45,8 @@ dayjs.extend(relativeTime)
 dayjs.locale('fa')
 
 export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
-  const queryClient = useQueryClient()
   const { data } = useGetPost(postId)
-  const me = queryClient.getQueryData(['me'])
+  const { data: me } = useMe()
   const post = data?.data
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)

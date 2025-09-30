@@ -32,9 +32,10 @@ export function useToggleLikeComment(postId: string, commentId: string) {
         postId,
       ])
 
+      // TODO fix comment update
       if (previousComments) {
         queryClient.setQueryData<ICommentRes>(['comments', postId], (old) => {
-          console.log(old)
+          return old
         })
       }
     },

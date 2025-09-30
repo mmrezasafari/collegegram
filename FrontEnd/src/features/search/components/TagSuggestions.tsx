@@ -3,7 +3,7 @@ import type { ISearchTagsData } from 'src/types/search'
 
 interface TagSuggestionsProps {
   tags: ISearchTagsData[]
-  onTagSelect: (tag: ISearchTagsData) => void
+  onTagSelect: (_tag: ISearchTagsData) => void
 }
 
 export const TagSuggestions: React.FC<TagSuggestionsProps> = ({

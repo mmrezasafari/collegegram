@@ -3,7 +3,7 @@ import type { ISearchedUsersData } from 'src/types/search'
 
 interface UserSuggestionsProps {
   users: ISearchedUsersData[]
-  onSelect: (user: ISearchedUsersData) => void
+  onSelect: (_user: ISearchedUsersData) => void
 }
 
 export const UserSuggestions: React.FC<UserSuggestionsProps> = ({

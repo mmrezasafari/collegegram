@@ -29,9 +29,9 @@ const fetchTags = async (query: string) => {
 interface SearchBarProps {
   activeTab?: 'users' | 'posts'
   onSearchMore?: (
-    query: string,
-    users: ISearchedUsersData[],
-    tags?: ISearchTagsData[],
+    _query: string,
+    _users: ISearchedUsersData[],
+    _tags?: ISearchTagsData[],
   ) => void
 }
 

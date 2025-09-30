@@ -13,8 +13,8 @@ interface UserCardProps {
 }
 
 export function UserCard({ cardData }: UserCardProps) {
-  const { mutate: unFollowMutation } = useUnfollowAction()
-  const { mutate: followMutation } = useFollowAction()
+  const { mutate: unFollowMutation } = useUnfollowAction(cardData.username)
+  const { mutate: followMutation } = useFollowAction(cardData.username)
 
   const handleFollow = () => {
     followMutation()
@@ -52,7 +52,5 @@ export function UserCard({ cardData }: UserCardProps) {
         </Button>
       )}
     </div>
-    // </div>
-    // </div>
   )
 }
