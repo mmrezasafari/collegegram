@@ -64,6 +64,7 @@ export class CloseFriendService {
     }
 
     async isCloseFriend (myId: string, resourceOwnerId: string) {
+        if (myId === resourceOwnerId) return true;
         return await this.closeFriendRepo.isCloseFriend(myId, resourceOwnerId)
     }
 
