@@ -6,7 +6,6 @@ import { LikeEntity } from "../like/like.entity";
 import { SavedPostEntity } from "../savedPost/saved-posts.entity";
 import { FollowEntity } from "../follow/follow.entity";
 import { CommentEntity } from "../comment/comment.entity";
-import { minioGetClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 import { CloseFriendEntity } from "../closeFriend/close-friend.entity";
 import { NotificationEntity } from "../notification/notification.entity";
@@ -77,17 +76,7 @@ export class UserEntity {
 
   @AfterLoad()
   async getUrlFromMinio() {
-    if (this.imagePath) {
-      this.imagePath = await minioGetClient.presignedGetObject(
-        "profile-image",
-        this.imagePath,
-        3600,
-        {
-          "response-content-disposition": "inline",
-          "response-content-type": this.mimeType ?? "image/jpeg"
-        }
-      );
-    }
+    this.imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${this.imagePath}`;
   }
 
   @OneToMany(() => CloseFriendEntity, cf => cf.user)
