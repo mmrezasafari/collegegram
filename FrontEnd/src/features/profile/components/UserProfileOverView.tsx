@@ -131,7 +131,10 @@ export const UserProfileOverView = () => {
               <div className="hidden md:flex space-x-4 items-center h-4">
                 <div
                   className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
-                  onClick={() => setFollowingsListOpen(true)}
+                  onClick={() =>
+                    (user.isFollowing || !user.isPrivate) &&
+                    setFollowingsListOpen(true)
+                  }
                 >
                   <span>{user?.followingCount}</span>
                   <span>دنبال‌شونده</span>
@@ -139,7 +142,10 @@ export const UserProfileOverView = () => {
                 <Separator orientation="vertical" className="bg-black " />
                 <div
                   className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
-                  onClick={() => setFollowersListOpen(true)}
+                  onClick={() =>
+                    (user.isFollowing || !user.isPrivate) &&
+                    setFollowersListOpen(true)
+                  }
                 >
                   <span>{user?.followerCount}</span>
                   <span>دنبال‌کننده‌</span>
