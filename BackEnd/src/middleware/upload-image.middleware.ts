@@ -1,4 +1,4 @@
-import multer, { FileFilterCallback } from 'multer';
+import multer, { FileFilterCallback, MulterError } from 'multer';
 import path from 'path';
 
 function checkFileFilter(file: Express.Multer.File, cb: FileFilterCallback) {
@@ -8,8 +8,7 @@ function checkFileFilter(file: Express.Multer.File, cb: FileFilterCallback) {
   if (extname) {
     cb(null, true);
   } else {
-    cb(null, false);
-    cb(new Error("فرمت فایل پشتیبانی نمی‌شود"))
+    cb(new MulterError("LIMIT_FIELD_VALUE", "فرمت فایل پشتیبانی نمی‌شود"));
   }
 }
 export const upload = multer({
