@@ -14,7 +14,7 @@ export interface IFollowService {
   getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
   countFollow(userId: string, type: "followers" | "followings"): Promise<number>;
   isFollowing(followerId: string, followingId: string): Promise<boolean>;
-  getFollows(userId: string, type: "followers" | "followings"): Promise<Follow[]> ;
+  getFollows(userId: string, type: "followers" | "followings"): Promise<Follow[]>;
 }
 export class FollowService implements IFollowService {
   constructor(
@@ -139,5 +139,14 @@ export class FollowService implements IFollowService {
       return { status: "PENDING" }
     }
     return { status: "ACCEPTED" }
+  }
+  async deleteFollower(userId: string, username: string) {
+    const follower = await this.userService.getUserByUsername(username);
+    const follow = await this.followRepository.getFollowById(follower.id, userId);
+    if (!follow) {
+      throw new HttpError(400, "این کاربر دنبال کننده شما نیست")
+    }
+    await this.followRepository.deleteFollow(follower.id, userId);
+    return null;
   }
 }

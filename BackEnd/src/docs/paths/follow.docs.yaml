@@ -260,6 +260,73 @@ paths:
               example:
                 success: false
                 message: "خطای سرور"
+  /users/{username}/follower:
+    delete:
+      summary: Delete follower by username
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Follower Deleted
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "دنبال‌کننده با موفقیت حذف شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "این کاربر دنبال کننده شما نیست"
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
   /users/{username}/respond:
     post:
       summary: Respond to follow request
