@@ -1,6 +1,4 @@
-import { minioGetClient } from "../../config/minio.config";
 import { CloseFriendService } from "../closeFriend/close-friend.service";
-import { PostService } from "../post/post.service";
 import { HashtagService } from "../tag/tag.service";
 import { UserService } from "../user/user.service";
 import { SearchUserBySummary } from "./models/searchUsers";
@@ -25,15 +23,7 @@ export class SearchService {
       for (const element of resultSearch) {
         let imagePath = "";
         if (element.imagePath !== null) {
-          imagePath = await minioGetClient.presignedGetObject(
-            "posts",
-            element.imagePath,
-            3600,
-            {
-              "response-content-disposition": "inline",
-              "response-content-type": element.mimeType
-            }
-          );
+          imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${element.imagePath}`;
         }
         response.push({
           username: element.username,
@@ -53,15 +43,7 @@ export class SearchService {
       for (const element of resultSearch) {
         let imagePath = null;
         if (element.imagePath) {
-          imagePath = await minioGetClient.presignedGetObject(
-            "posts",
-            element.imagePath,
-            3600,
-            {
-              "response-content-disposition": "inline",
-              "response-content-type": element.mimeType
-            }
-          );
+          imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${element.imagePath}`;
         }
         response.push({
           ...element,
