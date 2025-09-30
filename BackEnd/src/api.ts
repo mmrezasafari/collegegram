@@ -85,7 +85,7 @@ export const makeApp = (dataSource: DataSource) => {
   const hashtagService = new HashtagService(hashtagRepo);
   const followService = new FollowService(followRepo, userService, notificationService);
   const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
-  const mentionService = new MentionService(mentionRepo, userService, closeFriendService, notificationService);
+  const mentionService = new MentionService(mentionRepo, closeFriendService, notificationService);
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService, notificationService);
   const saveService = new SaveService(saveRepo, postService, closeFriendService);
@@ -124,7 +124,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService));
 
-  app. use("/notifications", authMiddleware, notificationRouter(notificationService));
+  app.use("/notifications", authMiddleware, notificationRouter(notificationService));
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));

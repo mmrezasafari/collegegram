@@ -37,7 +37,16 @@ export class PostService {
                 mimeType: mimeType
             });
         });
-
+        const usernames = dto.mention ? extract(dto.mention, "mention") : null;
+        const mentionedUsers = []
+        if (usernames) {
+            for (const username of usernames) {
+                const mentionedUser = await this.userService.getUserByUsername(username);
+                if (mentionedUser) {
+                    mentionedUsers.push(mentionedUser)
+                }
+            }
+        }
         const post = await this.postRepo.createPost(userId, uploads, dto.caption, dto.onlyCloseFriends);
         if (!post) {
             throw new HttpError(404, "پست ایجاد نشد")
@@ -46,9 +55,8 @@ export class PostService {
         let mentionedUsernames: string[] | null = null;
         let savedHashtags: string[] | null = null;
 
-        const usernames = dto.mention ? extract(dto.mention, "mention") : null;
-        if (usernames) {
-            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(usernames, post.id, userId);
+        if (mentionedUsers && mentionedUsers.length > 0) {
+            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(mentionedUsers, post.id, userId);
         }
 
         const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
@@ -122,16 +130,25 @@ export class PostService {
                 mimeType,
             });
         });
+        const usernames = dto.mention ? extract(dto.mention, "mention") : null;
+        const mentionedUsers = []
+        if (usernames) {
+            for (const username of usernames) {
+                const mentionedUser = await this.userService.getUserByUsername(username);
+                if (mentionedUser) {
+                    mentionedUsers.push(mentionedUser)
+                }
+            }
+        }
         await this.postRepo.updatePost(postId, userId, uploads, dto.caption, dto.onlyCloseFriends);
         const updatedPost = await this.getPostById(postId, myId);
 
         let mentionedUsernames: string[] | null = null;
         let savedHashtags: string[] | null = null;
 
-        const usernames = dto.mention ? extract(dto.mention, "mention") : null;
         await this.mentionService.removePostMentions(postId);
-        if (usernames) {
-            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(usernames, postId, userId);
+        if (mentionedUsers && mentionedUsers.length > 0) {
+            mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(mentionedUsers, postId, userId);
         }
         const hashtags = dto.caption ? extract(dto.caption, "hashtag") : null;
         await this.hashtagService.removePostHashtags(postId);
