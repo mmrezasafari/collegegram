@@ -14,6 +14,7 @@ export interface IFollowService {
   getFollowings(userId: string, username: string): Promise<GetFollowsResponseDto[]>;
   countFollow(userId: string, type: "followers" | "followings"): Promise<number>;
   isFollowing(followerId: string, followingId: string): Promise<boolean>;
+  getFollows(userId: string, type: "followers" | "followings"): Promise<Follow[]> ;
 }
 export class FollowService implements IFollowService {
   constructor(

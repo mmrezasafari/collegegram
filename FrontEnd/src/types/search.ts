@@ -1,8 +1,3 @@
-export interface ISearchUserGetRes {
-  success: boolean
-  data: Array<ISearchedUsersData>
-}
-
 export interface ISearchedUsersData {
   username: string
   firstName: string
@@ -11,6 +6,11 @@ export interface ISearchedUsersData {
   mimeType: string
   followerCount: number
   isFollowing: boolean
+}
+
+export interface ISearchUserGetRes {
+  data: Array<ISearchedUsersData>
+  success: boolean
 }
 
 export interface ISearchTagsGetRes {

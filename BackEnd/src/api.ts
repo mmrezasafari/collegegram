@@ -45,6 +45,7 @@ import { closeFriendRouter } from "./routes/closeFriend.route";
 import { NotificationRepository } from "./modules/notification/notification.repository";
 import { NotificationService } from "./modules/notification/notification.service";
 import { MailService } from "./modules/auth/mail.service";
+import { notificationRouter } from "./routes/notification.route";
 
 declare global {
   namespace Express {
@@ -96,6 +97,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
+  notificationService.setFollowService(followService);
 
   setupSwagger(app);
 
@@ -120,7 +122,9 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/comments", authMiddleware, likeCommentRouter(likeCommentService));
 
-  app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
+  app.use("/users", authMiddleware, closeFriendRouter(closeFriendService));
+
+  app. use("/notifications", authMiddleware, notificationRouter(notificationService));
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));

@@ -4,9 +4,11 @@ import type {
   ISearchUserGetRes,
   ISearchTagsData,
   ISearchedUsersData,
+  ISearchTagsGetRes,
 } from '@/types/search'
 import {
   useInfiniteQuery,
+  type InfiniteData,
   type QueryFunctionContext,
 } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
@@ -32,17 +34,17 @@ async function fetchSearchUsersData({
   )
 
   return {
-    data: data.data,
+    data: data.data as any,
     nextOffset:
       data.data.length === limit ? (pageParam as number) + limit : undefined,
   }
 }
 
-export function useInfiniteSearch() {
+export function useInfiniteSearch(enabled: boolean = false) {
   const query = useInfiniteQuery<
     ISearchUsersPage,
     AxiosError<IErrorRes>,
-    ISearchUsersPage,
+    InfiniteData<ISearchUsersPage>,
     ['search'],
     number
   >({
@@ -50,10 +52,13 @@ export function useInfiniteSearch() {
     queryFn: fetchSearchUsersData,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
     initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    enabled: enabled, // Only run when explicitly enabled
   })
 
   const allUsers: ISearchedUsersData[] =
-    query.data?.pages.flatMap((page) => page.data.data) ?? []
+    (query.data as any)?.pages.flatMap((page: any) => page.data) ?? []
 
   return { ...query, allUsers }
 }
@@ -64,11 +69,11 @@ async function fetchSearchTagsData({
   query = '',
 }: QueryFunctionContext & { query?: string }): Promise<ISearchTagsPage> {
   const limit = 10
-  const { data } = await api.get<ISearchTagsData>(
+  const { data } = await api.get<ISearchTagsGetRes>(
     `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
   )
   return {
-    data: data,
+    data: data.data as any,
     nextOffset:
       data.data.length === limit ? (pageParam as number) + limit : undefined,
   }
@@ -86,10 +91,12 @@ export function useInfiniteTagSearch() {
     queryFn: fetchSearchTagsData,
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
     initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   })
 
   const allTags: ISearchTagsData[] =
-    query.data?.pages.flatMap((page) => page.data.data) ?? []
+    (query.data as any)?.pages.flatMap((page: any) => page.data.data) ?? []
 
   return { ...query, allTags }
 }

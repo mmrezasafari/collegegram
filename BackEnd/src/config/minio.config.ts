@@ -10,11 +10,3 @@ export const minioClient = new MinioClient({
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,
 });
-
-export const minioGetClient = new MinioClient({
-  endPoint: process.env.MINIO_GET_ENDPOINT || "localhost",
-  port: Number(process.env.MINIO_PORT),
-  useSSL: process.env.MINIO_USE_SSL === "true",
-  accessKey: process.env.MINIO_ACCESS_KEY,
-  secretKey: process.env.MINIO_SECRET_KEY,
-});

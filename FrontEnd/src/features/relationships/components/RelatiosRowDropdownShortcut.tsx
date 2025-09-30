@@ -3,7 +3,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/features/common/components/ui/dropdown-menu'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
