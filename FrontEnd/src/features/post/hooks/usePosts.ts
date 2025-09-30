@@ -1,3 +1,5 @@
+import { useMe } from '@/features/common/hooks/users/useGetMe'
+import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import { useGetUserName } from '@/features/common/hooks/users/useGetUserName'
 import api from '@/lib/axios'
 import type { IGetPostRes, IPostsRes } from '@/types/posts'
@@ -17,14 +19,22 @@ export async function getPost(postId: string): Promise<IGetPostRes> {
 
 export function useGetPosts() {
   const userName = useGetUserName()
+  const { data: user } = useGetUser(userName!)
+  const { data: me } = useMe()
+  const isMyProfile = me?.data.username === user?.data.username
+  const canFetch =
+    isMyProfile ||
+    user?.data.isPrivate === false ||
+    (user?.data.isPrivate === true && user.data.isFollowing === true)
 
   return useQuery<IPostsRes, Error>({
     queryKey: ['posts', userName],
     queryFn: async () => getPosts(userName!),
-    enabled: !!userName,
+    enabled: !!user && canFetch,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
+    retry: false,
   })
 }
 
