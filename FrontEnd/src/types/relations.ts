@@ -83,3 +83,12 @@ export interface IBlockedUsersListRes {
   success: boolean
   data: Array<IBlockedUserData>
 }
+
+export type TStatus = 'ACCEPTED' | 'PENDING' | 'NONE'
+
+export interface IStatusRes {
+  success: boolean
+  data: {
+    status: TStatus
+  }
+}

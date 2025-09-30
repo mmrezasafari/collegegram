@@ -5,10 +5,11 @@ import { Button } from '@/features/common/components/ui/button'
 
 interface IProps {
   onClose: () => void
+  userName: string
 }
 
-export const FollowersList = ({ onClose }: IProps) => {
-  const { data: followersRes } = useGetFollowers()
+export const FollowersList = ({ onClose, userName }: IProps) => {
+  const { data: followersRes } = useGetFollowers(userName)
   const followersList = followersRes?.data
 
   return (
@@ -18,7 +19,7 @@ export const FollowersList = ({ onClose }: IProps) => {
           {followersList?.length ? (
             followersList?.map((friend) => (
               <div key={friend.id}>
-                <RelationsRow user={friend} />
+                <RelationsRow user={friend} mode="followers" />
                 <Separator className="bg-geryLight h-1 my-4" />
               </div>
             ))

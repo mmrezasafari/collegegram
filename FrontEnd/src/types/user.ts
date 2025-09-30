@@ -17,4 +17,5 @@ export interface IUser {
   followingCount: number
   postCount: number
   isFollowing?: boolean
+  isPrivate: boolean
 }

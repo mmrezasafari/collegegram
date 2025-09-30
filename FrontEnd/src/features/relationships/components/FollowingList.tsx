@@ -5,20 +5,21 @@ import { Button } from '@/features/common/components/ui/button'
 
 interface IProps {
   onClose: () => void
+  userName: string
 }
 
-export const FollowingsList = ({ onClose }: IProps) => {
-  const { data: followingsRes } = useGetFollowings()
+export const FollowingsList = ({ onClose, userName }: IProps) => {
+  const { data: followingsRes } = useGetFollowings(userName)
   const followingList = followingsRes?.data
 
   return (
     <div className="h-full w-full flex justify-center mt-4">
-      <div className="w-[350px] flex flex-col gap-8">
-        <div className="h-[400px] overflow-y-auto px-2">
+      <div className="w-full flex flex-col gap-8 px-6">
+        <div className="h-[400px] overflow-y-auto px-4">
           {followingList?.length ? (
             followingList?.map((friend) => (
               <div key={friend.id}>
-                <RelationsRow key={friend.id} user={friend} />
+                <RelationsRow user={friend} mode="followings" />
                 <Separator className="bg-geryLight h-1 my-4" />
               </div>
             ))

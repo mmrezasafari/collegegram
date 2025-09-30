@@ -4,6 +4,7 @@ export interface IProfileEditForm {
   email?: string
   password?: string
   bio?: string
+  isPrivate?: boolean
 }
 
 export interface IProfileImagesRes {

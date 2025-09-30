@@ -7,36 +7,38 @@ import { UserRound } from 'lucide-react'
 import { RelationsRowDropdownShortcut } from '@/features/relationships/components/RelatiosRowDropdownShortcut'
 import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
 
-export const RelationsRow = (user: {
-  user: IFollowing | IFollower | ICloseFriend
-}) => {
-  const data = user?.user
+interface IProps {
+  mode: 'followers' | 'followings' | 'closeFriends' | 'blockList'
+  user: IFollower | IFollowing | ICloseFriend
+}
+
+export const RelationsRow = ({ user, mode }: IProps) => {
   return (
-    <div className="flex  w-full justify-between items-center">
+    <div className="flex w-full justify-between items-center">
       <div className="flex flex-row-reverse items-center gap-4">
         <div className="flex flex-col gap-2">
           <p className="md:text-base text-sm font-bold">
-            {data.firstName ? (
+            {user.firstName ? (
               <>
-                <span>{data.firstName} </span>
-                <span>{data.lastName}</span>
+                <span>{user.firstName} </span>
+                <span>{user.lastName}</span>
               </>
             ) : (
-              <span>{data.username}@</span>
+              <span>{user.username}@</span>
             )}
           </p>
-          <div className="md:text-base text-xs font-normal text-grey felx">
-            {'followerCount' in data ? data.followerCount : data.followersCount}
-            <span>دنبال کننده </span>
+          <div className="md:text-base text-sm font-normal text-grey felx">
+            {'followerCount' in user ? user.followerCount : user.followersCount}
+            <span> دنبال کننده</span>
           </div>
         </div>
         <Avatar className="w-[56px] h-[56px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
           <AvatarImage
-            src={data.imageUrl}
+            src={user.imageUrl}
             className="w-full h-full object-cover"
             alt="avatar"
           />
-          <AvatarFallback className="w-[45px] h-auto">
+          <AvatarFallback className="w-[35px] h-auto">
             <UserRound
               className="w-full h-full object-cover"
               color="#A5A5A5A5"
@@ -46,7 +48,7 @@ export const RelationsRow = (user: {
           </AvatarFallback>
         </Avatar>
       </div>
-      <RelationsRowDropdownShortcut user={data} />
+      <RelationsRowDropdownShortcut user={user} mode={mode} />
     </div>
   )
 }
