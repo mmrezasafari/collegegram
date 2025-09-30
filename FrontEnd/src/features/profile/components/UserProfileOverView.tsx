@@ -3,7 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
-import { EllipsisVertical, Plus, UserRound, Ban } from 'lucide-react'
+import { EllipsisVertical, Plus, UserRound, UserLock } from 'lucide-react'
 import { FollowersList } from '@/features/relationships/components/FollowersList'
 import { FollowingsList } from '@/features/relationships/components/FollowingList'
 import { Separator } from '@/features/common/components/ui/separator'
@@ -12,23 +12,29 @@ import { Button } from '@/features/common/components/ui/button'
 import {
   useFollowAction,
   useUnfollowAction,
-} from '@/features/relationships/hooks/useRelations'
-import { useState, useRef } from 'react'
+} from '@/features/relationships/hooks/useRelationsActions'
+import { useState } from 'react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
+import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/features/common/components/ui/dropdown-menu'
+import { Link } from 'react-router-dom'
+import type { IUser } from '@/types/user'
 
 export const UserProfileOverView = () => {
+  const { data } = useGetUser()
+  const user = data?.data as IUser
+  const { data: relationStatus } = useGetRelationStatus(user?.username)
+  const followStatus = relationStatus?.data
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
-  const [blockDialogOpen, setBlockDialogOpen] = useState(false)
-  const ellipsisRef = useRef<HTMLDivElement | null>(null)
-  const [dialogPosition, setDialogPosition] = useState<{
-    top: number
-    left: number
-  } | null>(null)
-  const { data } = useGetUser()
-  const user = data?.data
-  const { mutate: unFollowMutation } = useUnfollowAction()
-  const { mutate: followMutation } = useFollowAction()
+  const { mutate: unFollowMutation } = useUnfollowAction(user?.username)
+  const { mutate: followMutation } = useFollowAction(user?.username)
 
   const handleFollow = () => {
     followMutation()
@@ -36,17 +42,6 @@ export const UserProfileOverView = () => {
 
   const handleUnFollow = () => {
     unFollowMutation()
-  }
-
-  const handleEllipsisClick = () => {
-    if (ellipsisRef.current) {
-      const rect = ellipsisRef.current.getBoundingClientRect()
-      setDialogPosition({
-        top: rect.top + ellipsisRef.current.offsetHeight, // align top with icon
-        left: rect.right + ellipsisRef.current.offsetWidth + 8, // 8px to the right of icon
-      })
-    }
-    setBlockDialogOpen(true)
   }
 
   return (
@@ -71,7 +66,7 @@ export const UserProfileOverView = () => {
             </Avatar>
             <div className="flex max-md:w-full flex-col gap-4 w-full">
               <div className="flex items-center max-md:justify-between gap-4 w-full justify-between">
-                <div>
+                <div className="flex gap-4 items-center">
                   <div className="flex items-center gap-2 md:gap-4">
                     <p className="md:text-2xl font-bold text-wrap text-justify">
                       <span>{user?.firstName} </span>
@@ -83,13 +78,22 @@ export const UserProfileOverView = () => {
                     </p>
                   </div>
                   <div className="max-md:hidden">
-                    {user?.isFollowing ? (
+                    {user?.isFollowing &&
+                    followStatus?.status === 'ACCEPTED' ? (
                       <Button
                         className="flex w-[150px]"
                         variant="outline"
                         onClick={handleUnFollow}
                       >
                         <span>دنبال نکردن</span>
+                      </Button>
+                    ) : followStatus && followStatus?.status === 'PENDING' ? (
+                      <Button
+                        className="flex w-[150px]"
+                        variant="outline"
+                        onClick={handleUnFollow}
+                      >
+                        <span>لغو در‌خواست</span>
                       </Button>
                     ) : (
                       <Button
@@ -103,16 +107,26 @@ export const UserProfileOverView = () => {
                     )}
                   </div>
                 </div>
-                <div
-                  ref={ellipsisRef}
-                  className="md:hidden cursor-pointer align-end"
-                  style={{ display: 'inline-block' }}
-                >
-                  <EllipsisVertical
-                    color="#ea5a69"
-                    onClick={handleEllipsisClick}
-                  />
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild className="cursor-pointer">
+                    <EllipsisVertical color="#ea5a69" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="border bg-light border-geryLight rounded-4xl rounded-tl-none ml-4"
+                    align="start"
+                  >
+                    <DropdownMenuGroup className="flex flex-col gap-2 p-2">
+                      <DropdownMenuItem className="rounded-full py-4 px-6">
+                        <Link to={'/close-friends'}>
+                          <div className="flex justify-end gap-4 text-base">
+                            <span>بلاک کردن</span>
+                            <UserLock />
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <div className="hidden md:flex space-x-4 items-center h-4">
                 <div
@@ -168,13 +182,21 @@ export const UserProfileOverView = () => {
               {user?.bio}
             </p>
             <div className="md:hidden flex">
-              {user?.isFollowing ? (
+              {user?.isFollowing && followStatus?.status === 'ACCEPTED' ? (
                 <Button
                   className="flex w-full"
                   variant="outline"
                   onClick={handleUnFollow}
                 >
                   <span>دنبال نکردن</span>
+                </Button>
+              ) : (followStatus && followStatus?.status) === 'PENDING' ? (
+                <Button
+                  className="flex w-full"
+                  variant="default"
+                  onClick={handleUnFollow}
+                >
+                  <span>لغو در‌خواست</span>
                 </Button>
               ) : (
                 <Button
@@ -196,7 +218,10 @@ export const UserProfileOverView = () => {
           setOpen={setFollowingsListOpen}
           title="دنبال شونده‌‌ها"
         >
-          <FollowingsList onClose={() => setFollowingsListOpen(false)} />
+          <FollowingsList
+            onClose={() => setFollowingsListOpen(false)}
+            userName={user.username}
+          />
         </DialogAndDrawerWizard>
       )}
       {followersListOpen && (
@@ -205,56 +230,11 @@ export const UserProfileOverView = () => {
           setOpen={setFollowersListOpen}
           title="دنبال‌کننده‌ها"
         >
-          <FollowersList onClose={() => setFollowersListOpen(false)} />
-        </DialogAndDrawerWizard>
-      )}
-      {/* Block dialog */}
-      {blockDialogOpen && dialogPosition && (
-        <div
-          className="fixed z-50"
-          style={{
-            top: dialogPosition.top,
-            left: dialogPosition.left,
-          }}
-        >
-          <div
-            className="bg-white rounded-[32px] shadow-lg flex flex-col gap-8 px-8 py-8 min-w-[303px] min-h-[104px] cursor-default border border-gray-300"
-            dir="rtl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
-              onClick={() => {
-                // TODO: implement add to close friends logic here
-                alert('افزودن به دوستان نزدیک')
-                // Example: addToCloseFriends(user?.id)
-              }}
-            >
-              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2 ">
-                <span className="text-base">افزودن به دوستان نزدیک</span>
-              </div>
-              <Plus size={30} color="#222" className="p-2" />
-            </div>
-            <div
-              className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition"
-              // TODO: implement block user logic here
-              onClick={() => {
-                alert('بلاک کردن')
-              }}
-            >
-              <div className="rounded-[55px] flex flex-row items-center justify-between cursor-pointer hover:bg-gray-100 transition p-2">
-                <span className="text-base">بلاک کردن</span>
-              </div>
-              <Ban size={30} color="#222" className="p-2" />
-            </div>
-          </div>
-          {/* Overlay for closing */}
-          <div
-            className="fixed inset-0"
-            style={{ zIndex: -1 }}
-            onClick={() => setBlockDialogOpen(false)}
+          <FollowersList
+            onClose={() => setFollowersListOpen(false)}
+            userName={user.username}
           />
-        </div>
+        </DialogAndDrawerWizard>
       )}
     </>
   )
