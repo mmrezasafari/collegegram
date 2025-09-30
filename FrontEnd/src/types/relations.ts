@@ -36,6 +36,11 @@ export interface IUnfollowRes {
   data: string
 }
 
+export interface IRemoveFollowerRes {
+  success: boolean
+  data: string
+}
+
 export interface ICloseFriend {
   id: string
   username: string

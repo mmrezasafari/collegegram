@@ -9,7 +9,10 @@ import { useMe } from '@/features/common/hooks/users/useGetMe'
 import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
 import { EllipsisVertical } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useUnfollowAction } from '../hooks/useRelationsActions'
+import {
+  useRemoveFollower,
+  useUnfollowAction,
+} from '../hooks/useRelationsActions'
 import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu'
 
 interface IProps {
@@ -20,13 +23,14 @@ interface IProps {
 export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
   const { data: me } = useMe()
   const { mutate: unFollowAction } = useUnfollowAction(user.username)
+  const { mutate: removeFollower } = useRemoveFollower(user.username)
 
   const handleUnfollow = () => {
     unFollowAction()
   }
 
   const handleRemove = () => {
-    return null
+    removeFollower()
   }
 
   return (

@@ -1,9 +1,11 @@
 import { useMe } from '@/features/common/hooks/users/useGetMe'
+import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
 import type {
   IFollowersListRes,
   IFollowingsListRes,
   IFollowRes,
+  IRemoveFollowerRes,
   IUnfollowRes,
 } from '@/types/relations'
 import type { IRegisteredUser } from '@/types/user'
@@ -20,9 +22,62 @@ export async function unfollowAction(userName: string): Promise<IUnfollowRes> {
   return res.data
 }
 
+export async function removeFollower(
+  userName: string,
+): Promise<IRemoveFollowerRes> {
+  const res = await api.delete(`users/${userName}/follower`)
+  return res.data
+}
+
+export function useRemoveFollower(userName: string) {
+  const queryClient = useQueryClient()
+  const { data: me } = useMe()
+
+  return useMutation({
+    mutationKey: ['remove-follower', userName],
+    mutationFn: () => removeFollower(userName),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['me'] })
+      await queryClient.cancelQueries({ queryKey: ['followersList', userName] })
+
+      const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
+      const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
+        'followersList',
+        me?.data.username,
+      ])
+
+      queryClient.setQueryData<IFollowersListRes | undefined>(
+        ['followersList', me?.data.username],
+        (old) => {
+          if (!old || !me?.data) return old
+
+          return {
+            ...old,
+            data: old.data.filter((u) => u.username !== userName),
+          }
+        },
+      )
+
+      queryClient.setQueryData<IRegisteredUser>(['me'], (old) => {
+        if (!old) return old
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            followerCount: (old.data.followerCount ?? 0) - 1,
+          },
+        }
+      })
+
+      return { previousFollowers, previousMe }
+    },
+  })
+}
+
 export function useFollowAction(userName: string) {
   const queryClient = useQueryClient()
   const { data: me } = useMe()
+  const { data: user } = useGetUser(userName)
 
   const mutation = useMutation({
     mutationKey: ['follow', userName],
@@ -31,6 +86,8 @@ export function useFollowAction(userName: string) {
       return followAction(userName)
     },
     onMutate: async () => {
+      if (user?.data.isPrivate && !user.data.isFollowing) return
+
       await queryClient.cancelQueries({ queryKey: ['user', userName] })
       await queryClient.cancelQueries({ queryKey: ['me'] })
       await queryClient.cancelQueries({ queryKey: ['followersList', userName] })
@@ -264,7 +321,7 @@ export function useUnfollowAction(userName: string) {
           }
         },
       )
-      console.log(previousFollowings)
+
       return { previousUser, previousMe, previousFollowers, previousFollowings }
     },
     onSuccess: () => {
