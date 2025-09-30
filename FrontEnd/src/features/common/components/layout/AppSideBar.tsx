@@ -157,7 +157,10 @@ export function AppSidebar() {
           >
             <DropdownMenuGroup className="flex flex-col gap-2 py-6 px-1">
               <DropdownMenuItem className="rounded-full px-8 py-4">
-                <Link to={'/close-friends'} onClick={toggleSidebar}>
+                <Link
+                  to={'/close-friends'}
+                  onClick={() => isMobile && toggleSidebar()}
+                >
                   <div className="flex items-start gap-4 text-base">
                     <span>دوستان نزدیک</span>
                     <UserRoundPlus />
@@ -165,7 +168,10 @@ export function AppSidebar() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-full px-8 py-4">
-                <Link to={'/block-list'} onClick={toggleSidebar}>
+                <Link
+                  to={'/block-list'}
+                  onClick={() => isMobile && toggleSidebar()}
+                >
                   <div className="flex items-start gap-4 text-base">
                     <span>لیست سیاه</span>
                     <UserLock />
