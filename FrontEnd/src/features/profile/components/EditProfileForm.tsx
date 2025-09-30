@@ -70,7 +70,10 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
     'bio',
     user && user.bio ? user.bio : '',
   )
-  const isPrivate = useInput<boolean>('isPrivate', false)
+  const isPrivate = useInput<boolean>(
+    'isPrivate',
+    user && user.isPrivate ? user.isPrivate : false,
+  )
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
@@ -79,14 +82,15 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const changedValues = useMemo(() => {
     if (!user) return {}
 
-    const diff: Record<string, string> = {}
+    const diff: Record<string, string | boolean> = {}
 
     if (firstName.value !== user.firstName) diff.firstName = firstName.value
     if (lastName.value !== user.lastName) diff.lastName = lastName.value
     if (email.value !== user.email) diff.email = email.value
     if (bio.value !== user.bio) diff.bio = bio.value
     if (password.value) diff.password = password.value
-    if (user.imagePath !== userAvatar) diff.userAvatar = userAvatar || ''
+    if (previewUrl || !userAvatar) diff.userAvatar = previewUrl || ''
+    if (isPrivate.value !== user.isPrivate) diff.isPrivate = isPrivate.value
 
     return diff
   }, [
@@ -95,6 +99,8 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
     email.value,
     bio.value,
     password.value,
+    isPrivate.value,
+    previewUrl,
     userAvatar,
     user,
   ])
@@ -118,6 +124,7 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
       firstName: firstName.value,
       lastName: lastName.value,
       email: email.value,
+      isPrivate: isPrivate.value,
     }
 
     const passwordValuesForValidate = {

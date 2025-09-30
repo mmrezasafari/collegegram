@@ -2,8 +2,14 @@ import { useState } from 'react'
 import { useGetPosts } from '../hooks/usePosts'
 import { PostDetails } from './PostDetails'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
+import { useGetUser } from '@/features/common/hooks/users/useGetUser'
+import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
 
 export const UserPostArea = () => {
+  const { data: user } = useGetUser()
+  const { data: relationStatus } = useGetRelationStatus(
+    user?.data.username as string,
+  )
   const { data } = useGetPosts()
   const images = data?.data
   const [postModalOpen, setPostModalOpen] = useState(false)
@@ -11,7 +17,25 @@ export const UserPostArea = () => {
 
   return (
     <>
-      {images?.length ? (
+      {relationStatus?.data.status === 'PENDING' ? (
+        <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
+          <div className="flex flex-col text-center gap-4">
+            <div className="font-bold text-sm md:text-xl text-center px-10">
+              منتظر باش تا {user?.data.firstName ?? user?.data.username} درخواست
+              دوستی‌ات رو قبول کنه
+            </div>
+          </div>
+        </div>
+      ) : user?.data?.isPrivate ? (
+        <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
+          <div className="flex flex-col text-center gap-4">
+            <div className="font-semibold text-sm md:text-xl text-justify px-2">
+              برای دیدن صفحه {user.data.firstName ?? user.data.username} باید
+              دنبالش کنی.
+            </div>
+          </div>
+        </div>
+      ) : images?.length ? (
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
           {images?.map((data, i) => (
             <div
@@ -38,7 +62,7 @@ export const UserPostArea = () => {
             </div>
           </div>
         </div>
-      )}
+      )}{' '}
       {postModalOpen && (
         <DialogAndDrawerWizard
           open={postModalOpen}

@@ -15,9 +15,11 @@ import { Button } from '@/features/common/components/ui/button'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from '@/features/post/components/UploadPostForm'
 import { FixedMenu } from '@/features/common/components/layout/FixedMenu'
+import { useMe } from '@/features/common/hooks/users/useGetMe'
 
 export const ProfileLayout = () => {
   const [uploadPostWizardOpen, setUploadPostWizardOpen] = useState(false)
+  const { data: me } = useMe()
 
   return (
     <div className="bg-backgroundLight h-[calc(100vh)] py-4 px-8 md:py-6 md:px-14">
@@ -45,7 +47,8 @@ export const ProfileLayout = () => {
         <div className="md:hidden col-start-1 row-start-1 col-end-2 row-end-2 flex justify-between border-b border-geryLight pb-4 mb-4">
           <Avatar className="w-[48px] h-[48px] border border-geryLight">
             <AvatarImage
-              className="w-full h-full object-cover object-center scale-160"
+              src={me?.data.imagePath}
+              className="w-full h-full object-cover"
               alt="avatar"
             />
             <AvatarFallback className="bg-geryVeryLight">

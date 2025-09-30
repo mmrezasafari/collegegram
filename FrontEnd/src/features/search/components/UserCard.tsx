@@ -3,7 +3,7 @@ import FriendBar from '@/features/explore/components/FriendBar'
 import {
   useFollowAction,
   useUnfollowAction,
-} from '@/features/relationships/hooks/useRelations'
+} from '@/features/relationships/hooks/useRelationsActions'
 import type { ISearchedUsersData } from '@/types/search'
 import { Plus } from 'lucide-react'
 
