@@ -92,15 +92,14 @@ export function AppSidebar() {
               <Avatar className="w-[48px] h-auto">
                 <AvatarImage
                   src={user?.imagePath}
-                  className="w-full h-full object-contain scale-160"
+                  className="w-full h-full object-cover"
                   alt="avatar"
                 />
                 <AvatarFallback className="bg-geryVeryLight">
                   <UserRound
-                    className="w-full h-full object-cover"
+                    className="w-full h-full p-2"
                     color="#A5A5A5A5"
-                    fill="#A5A5A5A5"
-                    strokeWidth={0}
+                    strokeWidth={1}
                   />
                 </AvatarFallback>
               </Avatar>
@@ -142,7 +141,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="max-md:bg-geryVeryLight">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuItem className="list-none">
@@ -158,7 +157,7 @@ export function AppSidebar() {
           >
             <DropdownMenuGroup className="flex flex-col gap-2 py-6 px-1">
               <DropdownMenuItem className="rounded-full px-8 py-4">
-                <Link to={'/close-friends'}>
+                <Link to={'/close-friends'} onClick={toggleSidebar}>
                   <div className="flex items-start gap-4 text-base">
                     <span>دوستان نزدیک</span>
                     <UserRoundPlus />
@@ -166,10 +165,10 @@ export function AppSidebar() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-full px-8 py-4">
-                <Link to={'/block-list'}>
+                <Link to={'/block-list'} onClick={toggleSidebar}>
                   <div className="flex items-start gap-4 text-base">
                     <span>لیست سیاه</span>
-                    <UserLock size={32} />
+                    <UserLock />
                   </div>
                 </Link>
               </DropdownMenuItem>
