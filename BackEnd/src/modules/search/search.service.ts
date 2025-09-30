@@ -69,10 +69,13 @@ export class SearchService {
 
     const visiblePosts = [];
     for (const post of resultSearch) {
+
+      const canAccess = await this.userService.canAccessResource(userId, post.user!.id);
+      if (!canAccess) continue;
+
       const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
-      if (post.onlyCloseFriends && !isCloseFriend) {
-        continue;
-      }
+      if (post.onlyCloseFriends && !isCloseFriend) continue;
+      
       visiblePosts.push({
         id: post.id,
         caption: post.caption,

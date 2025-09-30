@@ -12,6 +12,7 @@ export class MentionService {
         private mentionRepo: IMentionRepository,
         private closeFriendService: CloseFriendService,
         private notificationService: NotificationService,
+        private userService: UserService,
     ) { }
 
     async savePostMentionAndCreateNotification(mentionedUsers: User[], postId: string, myId: string): Promise<string[]> {
@@ -44,10 +45,12 @@ export class MentionService {
 
         const posts: Post[] = [];
         for (const post of mentionPosts) {
+            const canAccess = await this.userService.canAccessResource(userId, post.user!.id);
+            if (!canAccess) continue;
+            
             const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
-            if (post.onlyCloseFriends && !isCloseFriend) {
-                continue;
-            }
+            if (post.onlyCloseFriends && !isCloseFriend) continue;
+
             posts.push({
                 id: post.id,
                 caption: post.caption,

@@ -85,10 +85,10 @@ export const makeApp = (dataSource: DataSource) => {
   const hashtagService = new HashtagService(hashtagRepo);
   const followService = new FollowService(followRepo, userService, notificationService);
   const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
-  const mentionService = new MentionService(mentionRepo, closeFriendService, notificationService);
+  const mentionService = new MentionService(mentionRepo, closeFriendService, notificationService, userService);
   const postService = new PostService(postRepo, userService, mentionService, hashtagService);
   const likeService = new LikeService(likeRepo, postService, notificationService);
-  const saveService = new SaveService(saveRepo, postService, closeFriendService);
+  const saveService = new SaveService(saveRepo, postService, closeFriendService, userService);
   const commentService = new CommentService(commentRepo, postService, userService, notificationService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
   const searchService = new SearchService(userService, hashtagService, closeFriendService);

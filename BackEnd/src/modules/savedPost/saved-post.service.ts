@@ -2,6 +2,7 @@ import { HttpError } from "../../../utility/http-error";
 import { CloseFriendService } from "../closeFriend/close-friend.service";
 import { Post } from "../post/model/post";
 import { PostService } from "../post/post.service";
+import { UserService } from "../user/user.service";
 import { ISaveRepository } from "./saved-post.repository";
 
 
@@ -10,6 +11,7 @@ export class SaveService {
         private saveRepo: ISaveRepository,
         private postService: PostService,
         private closeFriendService: CloseFriendService,
+        private userService: UserService,
     ) { }
 
     async savePost(postId: string, userId: string,) {
@@ -48,10 +50,12 @@ export class SaveService {
 
         const posts: Post[] = [];
         for (const post of savePosts) {
+            const canAccess = await this.userService.canAccessResource(userId, post.user!.id);
+            if (!canAccess) continue;
+
             const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, post.user!.id);
-            if (post.onlyCloseFriends && !isCloseFriend) {
-                continue;
-            }
+            if (post.onlyCloseFriends && !isCloseFriend) continue;
+            
             posts.push({
                 id: post.id,
                 caption: post.caption,
