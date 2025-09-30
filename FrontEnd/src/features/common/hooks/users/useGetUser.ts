@@ -9,14 +9,15 @@ export async function getUser(userName: string): Promise<IRegisteredUser> {
   return res.data
 }
 
-export function useGetUser() {
-  const userName = useGetUserName()
+export function useGetUser(userName?: string) {
+  const paramUserName = useGetUserName()
+  const mainUserName = userName || paramUserName
 
   return useQuery({
-    queryKey: ['user', userName],
-    queryFn: () => getUser(userName as string),
+    queryKey: ['user', mainUserName],
+    queryFn: () => getUser(mainUserName as string),
     staleTime: 5 * 60 * 1000,
-    enabled: !!userName,
+    enabled: !!mainUserName,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   })

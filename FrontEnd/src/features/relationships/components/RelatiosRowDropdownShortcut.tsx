@@ -5,15 +5,28 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/features/common/components/ui/dropdown-menu'
+import { useMe } from '@/features/common/hooks/users/useGetMe'
 import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
 import { EllipsisVertical } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import api from '@/lib/axios'
+import { useUnfollowAction } from '../hooks/useRelationsActions'
 
-export const RelationsRowDropdownShortcut = (user: {
+interface IProps {
+  mode: 'followers' | 'followings' | 'closeFriends' | 'blockList'
   user: IFollower | IFollowing | ICloseFriend
-}) => {
-  const data = user?.user
+}
+
+export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
+  const { data: me } = useMe()
+  const { mutate: unFollowAction } = useUnfollowAction(user.username)
+
+  const handleUnfollow = () => {
+    unFollowAction()
+  }
+
+  const handleRemove = () => {
+    return null
+  }
 
   return (
     <DropdownMenu>
@@ -21,40 +34,45 @@ export const RelationsRowDropdownShortcut = (user: {
         <EllipsisVertical color="#ea5a69" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="border border-geryLight w-64 rounded-4xl"
-        align="center"
+        className="ml-4 rounded-4xl rounded-tl-none border border-geryLight p-4"
+        align="start"
       >
-        <DropdownMenuGroup className="flex flex-col gap-2 py-6 px-1">
-          <DropdownMenuItem className="rounded-full px-8 py-4">
-            <Link to={`/profile/${data.username}`}>
-              <div className="flex items-start gap-4 text-base">
-                <span>مشاهده پروفایل</span>
-              </div>
-            </Link>
+        <DropdownMenuLabel hidden></DropdownMenuLabel>
+        <DropdownMenuGroup className="flex flex-col gap-2 text-end">
+          <DropdownMenuItem className="rounded-4xl">
+            {user.username === me?.data?.username ? (
+              <Link className="w-full h-full px-2" to={`/profile`}>
+                مشاهده پروفایل
+              </Link>
+            ) : (
+              <Link
+                className="w-full h-full px-2"
+                to={`/profile/${user.username}`}
+              >
+                مشاهده پروفایل
+              </Link>
+            )}
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="rounded-full px-8 py-4 cursor-pointer"
-            onClick={async () => {
-              try {
-                await api.delete(`/users/${data.username}/close-friends`)
-                // Refresh just the current tab content by triggering a re-render
-                window.dispatchEvent(new CustomEvent('refreshCloseFriends'))
-              } catch (error) {
-                console.error('Error removing from close friends:', error)
-              }
-            }}
-          >
-            <div className="flex items-start gap-4 text-base">
-              <span>حذف از دوستان نزدیک</span>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="rounded-full px-8 py-4">
-            <Link to={`/profile/${data.username}`}>
-              <div className="flex items-start gap-4 text-base">
-                <span>بلاک کردن</span>
-              </div>
-            </Link>
-          </DropdownMenuItem>
+          {user.username !== me?.data.username && (
+            <DropdownMenuItem className="rounded-4xl">
+              {mode === 'followings' && (
+                <button
+                  className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                  onClick={handleUnfollow}
+                >
+                  حذف از دنبال‌شونده‌
+                </button>
+              )}
+              {mode === 'followers' && (
+                <button
+                  className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                  onClick={handleRemove}
+                >
+                  حذف از دنبال‌کننده‌ها
+                </button>
+              )}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

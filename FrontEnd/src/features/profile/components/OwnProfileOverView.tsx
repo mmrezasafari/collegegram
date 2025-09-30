@@ -8,13 +8,14 @@ import { DialogAndDrawerWizard } from '@/features/common/components/layout/Dialo
 import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import { EditProfileForm } from './EditProfileForm'
+import type { IUser } from '@/types/user'
 
 export const OwnProfileOverView = () => {
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
-  const { data: me } = useMe()
   const [editProfileOpen, setEditProfileOpen] = useState(false)
-  const user = me?.data
+  const { data: me } = useMe()
+  const user = me?.data as IUser
 
   return (
     <>
@@ -113,7 +114,10 @@ export const OwnProfileOverView = () => {
           setOpen={setFollowingsListOpen}
           title="دنبال شونده‌‌ها"
         >
-          <FollowingsList onClose={() => setFollowingsListOpen(false)} />
+          <FollowingsList
+            onClose={() => setFollowingsListOpen(false)}
+            userName={user?.username}
+          />
         </DialogAndDrawerWizard>
       )}
       {followersListOpen && (
@@ -122,7 +126,10 @@ export const OwnProfileOverView = () => {
           setOpen={setFollowersListOpen}
           title="دنبال‌کننده‌ها"
         >
-          <FollowersList onClose={() => setFollowersListOpen(false)} />
+          <FollowersList
+            onClose={() => setFollowersListOpen(false)}
+            userName={user?.username}
+          />
         </DialogAndDrawerWizard>
       )}
       {editProfileOpen && (
