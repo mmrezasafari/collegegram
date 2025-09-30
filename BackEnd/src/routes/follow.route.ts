@@ -70,5 +70,14 @@ export const followRouter = (followService: FollowService) => {
     handleExpress(res, () => followService.respondToFollowRequestsAndCreateNotification(user.userId, username, accept))
   })
 
+  app.delete("/:username/follower", async (req, res) => {
+    const username = zod.string().nonempty().parse(req.params.username);
+    const user = req.user;
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => followService.deleteFollower(user.userId, username))
+  })
   return app;
 }
