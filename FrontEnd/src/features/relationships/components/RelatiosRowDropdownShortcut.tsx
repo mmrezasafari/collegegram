@@ -10,6 +10,7 @@ import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
 import { EllipsisVertical } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useUnfollowAction } from '../hooks/useRelationsActions'
+import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu'
 
 interface IProps {
   mode: 'followers' | 'followings' | 'closeFriends' | 'blockList'
