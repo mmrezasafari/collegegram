@@ -67,7 +67,10 @@ export class UserService {
         const name = file.originalname.split(".");
         const extension = name[name.length - 1];
         const objectName = `${Date.now()}-${user.username}`;
-        await minioClient.putObject("profile-image", `${objectName}.${extension}`, file.buffer);
+        await minioClient.putObject("profile-image", `${objectName}.${extension}`, file.buffer, file.size, {
+            "Content-Type": file.mimetype,
+            "Content-Disposition": "inline",
+        });
         await this.userRepo.saveImage(userId, `${objectName}.${extension}`, file.mimetype as ImageMimeType);
         return;
     }

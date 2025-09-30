@@ -76,7 +76,7 @@ export class UserEntity {
 
   @AfterLoad()
   async getUrlFromMinio() {
-    this.imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${this.imagePath}`;
+    this.imagePath = `${process.env.MINIO_HOST}/profile-image/${this.imagePath}`;
   }
 
   @OneToMany(() => CloseFriendEntity, cf => cf.user)

@@ -27,7 +27,10 @@ export class PostService {
         const uploads: Partial<PostImage>[] = [];
         files.map((file, index) => {
             const objectName = `${Date.now()}${index}-${file.originalname}`;
-            minioClient.putObject("posts", objectName, file.buffer);
+            minioClient.putObject("posts", objectName, file.buffer, file.size, {
+                "Content-Type": file.mimetype,
+                "Content-Disposition": "inline",
+            });
             const mimeType = file.mimetype as ImageMimeType
             uploads.push({
                 url: objectName,
@@ -109,7 +112,10 @@ export class PostService {
         // Add new image to post
         files.map((file, index) => {
             const objectName = `${Date.now()}${index}-${file.originalname}`;
-            minioClient.putObject("posts", objectName, file.buffer);
+            minioClient.putObject("posts", objectName, file.buffer, file.size, {
+                "Content-Type": file.mimetype,
+                "Content-Disposition": "inline",
+            });
             const mimeType = file.mimetype as ImageMimeType
             uploads.push({
                 url: objectName,

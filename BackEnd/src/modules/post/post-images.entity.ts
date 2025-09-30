@@ -24,6 +24,6 @@ export class PostImagesEntity {
 
   @AfterLoad()
   async getUrlFromMinio() {
-    this.url = `${process.env.FRONTEND_HOST}/files/posts/${this.url}`;
+    this.url = `${process.env.MINIO_HOST}/posts/${this.url}`;
   }
 }

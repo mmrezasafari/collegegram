@@ -23,7 +23,7 @@ export class SearchService {
       for (const element of resultSearch) {
         let imagePath = "";
         if (element.imagePath !== null) {
-          imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${element.imagePath}`;
+          imagePath = `${process.env.MINIO_HOST}/profile-image/${element.imagePath}`;
         }
         response.push({
           username: element.username,
@@ -43,7 +43,7 @@ export class SearchService {
       for (const element of resultSearch) {
         let imagePath = null;
         if (element.imagePath) {
-          imagePath = `${process.env.FRONTEND_HOST}/files/profile-image/${element.imagePath}`;
+          imagePath = `${process.env.MINIO_HOST}/profile-image/${element.imagePath}`;
         }
         response.push({
           ...element,
