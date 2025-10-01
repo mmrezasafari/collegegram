@@ -146,7 +146,7 @@ export class PostService {
         let mentionedUsernames: string[] | null = null;
         let savedHashtags: string[] | null = null;
 
-        await this.mentionService.removePostMentions(postId);
+        await this.mentionService.removePostMentionsAndRemoveNotification(userId, postId);
         if (mentionedUsers && mentionedUsers.length > 0) {
             mentionedUsernames = await this.mentionService.savePostMentionAndCreateNotification(mentionedUsers, postId, userId);
         }

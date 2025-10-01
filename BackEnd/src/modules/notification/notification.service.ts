@@ -37,6 +37,12 @@ export class NotificationService {
     async deleteNotification(id: string) {
         await this.notificationRepo.deleteNotification(id);
     }
+
+    async deleteNotifications(actorId:string, receiversId:string[], type: NotificationType, postId:string){ 
+        await this.notificationRepo.deleteNotifications(actorId, receiversId, type, postId)
+
+    }
+
     async getNotification(
         receiverId: string,
         actorId: string,

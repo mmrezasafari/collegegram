@@ -7,6 +7,7 @@ import { Notification, NotificationDetails } from "./models/notification";
 export interface INotificationRepository {
     createNotification(receiverId: string, actorId: string, type: NotificationType, postId?: string, commentId?: string): Promise<Notification | null>;
     deleteNotification(id: string): Promise<void>;
+    deleteNotifications(actorId:string, receiversId:string[], type: NotificationType, postId: string): Promise<void>;
     getNotification(type: NotificationType, receiverId: string, actorId: string, postId?: string, commentId?: string): Promise<Notification | null>;
     getMyNotifications(userId: string, offset: number, limit: number): Promise<NotificationDetails[]>;
     getFriendsNotifications(userId: string, friendsId: string[], offset: number, limit: number): Promise<NotificationDetails[]>;
@@ -33,6 +34,18 @@ export class NotificationRepository implements INotificationRepository {
 
     async deleteNotification(id: string): Promise<void> {
         await this.notificationRepository.delete(id);
+    }
+
+    async deleteNotifications(actorId: string,  receiversId: string[], type: NotificationType, postId: string) {
+        await this.notificationRepository
+            .createQueryBuilder()
+            .delete()
+            .from(NotificationEntity)
+            .where("actorId = :actorId", { actorId })
+            .andWhere("type = :type", { type })
+            .andWhere("postId = :postId", { postId })
+            .andWhere("receiverId IN (:...receiversId)", { receiversId })
+            .execute();
     }
 
     async getNotification(type: NotificationType, receiverId: string, actorId: string, postId?: string, commentId?: string) {

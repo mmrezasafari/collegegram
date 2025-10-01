@@ -28,13 +28,16 @@ export class UserService {
             throw new HttpError(404, "کاربر یافت نشد");
         }
         return user;
+    }
 
+    async getUsersByUsernames(usernames: string[]) {
+        return await this.userRepo.getUsersByUsernames(usernames);
     }
 
     async editProfile(id: string, dto: UpdateUserDto) {
         if (dto.email) {
             const existingEmail = await this.userRepo.getByEmail(dto.email);
-            if (existingEmail) {
+            if (existingEmail && existingEmail.id !== id) {
                 throw new HttpError(409, "ایمیل تکراری است");
             }
         }

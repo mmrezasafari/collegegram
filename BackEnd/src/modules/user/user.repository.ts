@@ -1,4 +1,4 @@
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, In, Repository } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { User } from "./model/user";
 import { Login } from "../auth/model/login";
@@ -22,6 +22,7 @@ export interface UpdateUser {
 export interface IUserRepository {
   getById(id: string): Promise<User | null>;
   getByUsername(username: string): Promise<User | null>;
+  getUsersByUsernames(usernames: string[]): Promise<User[] | null>;
   getByEmail(email: string): Promise<User | null>;
   getForLogin(usernameOrEmail: string): Promise<Login | null>;
   create(userDto: CreateUser): Promise<User | null>;
@@ -44,6 +45,12 @@ export class UserRepository implements IUserRepository {
 
   async getByUsername(username: string) {
     return await this.userRepository.findOneBy({ username });
+  }
+
+  async getUsersByUsernames(usernames: string[]) {
+    return this.userRepository.find({
+      where: { username: In(usernames) },
+    });
   }
   async getByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });

@@ -35,8 +35,19 @@ export class MentionService {
         return this.mentionRepo.getUsernames(postId);
     }
 
-    async removePostMentions(postId: string) {
+    async removePostMentionsAndRemoveNotification(userId: string, postId: string) {
+        const mentions: string[] = await this.getMentionedUsernames(postId);
+
         await this.mentionRepo.deleteMentionsByPostId(postId);
+        
+        if (!mentions.length) return;
+
+        const users = await this.userService.getUsersByUsernames(mentions) ?? [];
+        const usersId = users.map((u) => u.id);
+
+        if (usersId.length > 0) {
+            await this.notificationService.deleteNotifications(userId, usersId, NotificationType.TAG, postId);
+        }
     }
 
     async getMentionPage(userId: string, offset: number, limit: number, sort: "ASC" | "DESC") {
