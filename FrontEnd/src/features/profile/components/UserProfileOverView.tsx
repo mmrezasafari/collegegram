@@ -3,13 +3,20 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/features/common/components/ui/avatar'
-import { EllipsisVertical, Plus, UserRound, UserLock } from 'lucide-react'
+import {
+  EllipsisVertical,
+  Plus,
+  UserRound,
+  UserLock,
+  UserRoundPlus,
+} from 'lucide-react'
 import { FollowersList } from '@/features/relationships/components/FollowersList'
 import { FollowingsList } from '@/features/relationships/components/FollowingList'
 import { Separator } from '@/features/common/components/ui/separator'
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import { Button } from '@/features/common/components/ui/button'
 import {
+  useAddToCloseFriends,
   useFollowAction,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
@@ -35,6 +42,7 @@ export const UserProfileOverView = () => {
   const [followersListOpen, setFollowersListOpen] = useState(false)
   const { mutate: unFollowMutation } = useUnfollowAction(user?.username)
   const { mutate: followMutation } = useFollowAction(user?.username)
+  const { mutate: addToCloseFriendsMutation } = useAddToCloseFriends(user)
 
   const handleFollow = () => {
     followMutation()
@@ -42,6 +50,11 @@ export const UserProfileOverView = () => {
 
   const handleUnFollow = () => {
     unFollowMutation()
+  }
+
+  const onAddToCloseFriends = () => {
+    console.log(user)
+    addToCloseFriendsMutation()
   }
 
   return (
@@ -118,11 +131,22 @@ export const UserProfileOverView = () => {
                     <DropdownMenuGroup className="flex flex-col gap-2 p-2">
                       <DropdownMenuItem className="rounded-full py-4 px-6">
                         <Link to={'/close-friends'}>
-                          <div className="flex justify-end gap-4 text-base">
+                          <div className="flex  gap-4 text-base">
                             <span>بلاک کردن</span>
                             <UserLock />
                           </div>
                         </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="rounded-full py-4 px-6"
+                        onClick={onAddToCloseFriends}
+                      >
+                        <button className="w-full h-full cursor-pointer rounded-4xl">
+                          <div className="flex justify-end gap-4 text-base">
+                            <span>افزودن به دوستان نزدیک</span>
+                            <UserRoundPlus />
+                          </div>
+                        </button>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                   </DropdownMenuContent>

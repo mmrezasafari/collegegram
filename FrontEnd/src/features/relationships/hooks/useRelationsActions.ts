@@ -1,15 +1,20 @@
+import { notify } from '@/features/common/components/ui/sonner'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
 import type {
+  IAddCloseFriendRes,
+  ICloseFriend,
+  ICloseFriendsListRes,
   IFollowersListRes,
   IFollowingsListRes,
   IFollowRes,
   IRemoveFollowerRes,
   IUnfollowRes,
 } from '@/types/relations'
-import type { IRegisteredUser } from '@/types/user'
+import type { IRegisteredUser, IUser } from '@/types/user'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { useEffect } from 'react'
 
 export async function followAction(userName: string): Promise<IFollowRes> {
@@ -27,6 +32,137 @@ export async function removeFollower(
 ): Promise<IRemoveFollowerRes> {
   const res = await api.delete(`users/${userName}/follower`)
   return res.data
+}
+
+export async function addToCloseFriend(
+  userName: string,
+): Promise<IAddCloseFriendRes> {
+  const res = await api.post(`users/${userName}/close-friends`)
+  return res.data
+}
+
+export async function removeFromCloseFriends(
+  userName: string,
+): Promise<IAddCloseFriendRes> {
+  const res = await api.delete(`users/${userName}/close-friends`)
+  return res.data
+}
+
+export function useAddToCloseFriends(user: IUser) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['add-closeFriends', user?.username],
+    mutationFn: () => addToCloseFriend(user?.username),
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
+
+      const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
+        'closeFriendsList',
+      ])
+
+      queryClient.setQueryData<ICloseFriendsListRes>(
+        ['closeFriendsList'],
+        (old) => {
+          if (!old || !user) return old
+
+          const optimisticFriend: ICloseFriend = {
+            id: user.id,
+            username: user.username,
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            imageUrl: user.imagePath ?? '',
+            followersCount: user.followerCount ?? 0,
+          }
+
+          return {
+            ...old,
+            data: [...old.data, optimisticFriend],
+          }
+        },
+      )
+
+      return { previousList }
+    },
+
+    onError: (error, _variables, context) => {
+      if (context?.previousList) {
+        queryClient.setQueryData(['closeFriendsList'], context.previousList)
+      }
+
+      if (error instanceof AxiosError) {
+        notify.error(error.response?.data.message, {
+          position: 'top-right',
+          duration: 10000,
+        })
+      } else {
+        console.error(error)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['closeFriendsList'] })
+    },
+
+    onSuccess: () => {
+      notify.success(
+        `${user?.firstName || user?.username} با موفقیت به لیست دوستان نزدیک اضافه شد`,
+        {
+          position: 'top-right',
+          duration: 10000,
+        },
+      )
+    },
+  })
+}
+
+export function useRemoveFromCloseFriends(user: IUser) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: ['remove-closeFriends', user?.username],
+    mutationFn: () => removeFromCloseFriends(user?.username),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
+
+      const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
+        'closeFriendsList',
+      ])
+
+      queryClient.setQueryData<ICloseFriendsListRes>(
+        ['closeFriendsList'],
+        (old) => {
+          if (!old || !user) return old
+
+          return {
+            ...old,
+            data: old.data.filter((item) => item.username !== user.username),
+          }
+        },
+      )
+
+      return { previousList }
+    },
+    onSuccess: () => {
+      notify.success(
+        `${user?.firstName || user?.username} با موفقیت از لیست دوستان نزدیک حذف شد`,
+        {
+          position: 'top-right',
+          duration: 10000,
+        },
+      )
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        notify.error(error.response?.data.message, {
+          position: 'top-right',
+          duration: 10000,
+        })
+      } else {
+        console.error(error)
+      }
+    },
+  })
 }
 
 export function useRemoveFollower(userName: string) {
