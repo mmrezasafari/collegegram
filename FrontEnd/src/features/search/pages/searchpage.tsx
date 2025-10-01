@@ -25,12 +25,6 @@ export const SearchPage = () => {
     }
   }
 
-  const handleSearchError = (message: string) => {
-    setErrorMessage(message)
-    // Clear error message after 5 seconds
-    setTimeout(() => setErrorMessage(''), 5000)
-  }
-
   return (
     <div className="space-y-2">
       {/* Search Bar */}
