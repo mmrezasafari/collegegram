@@ -49,6 +49,7 @@ import { notificationRouter } from "./routes/notification.route";
 import { BlockRepository } from "./modules/block/block.repository";
 import { BlockService } from "./modules/block/block.service";
 import { blockRouter } from "./routes/block.route";
+import { GetNotificationService } from "./modules/notification/get-notification.service";
 
 
 declare global {
@@ -91,18 +92,18 @@ export const makeApp = (dataSource: DataSource) => {
   const followService = new FollowService(followRepo, userService, notificationService);
   const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
   const mentionService = new MentionService(mentionRepo, closeFriendService, notificationService, userService);
-  const postService = new PostService(postRepo, userService, mentionService, hashtagService);
+  const postService = new PostService(postRepo, userService, mentionService, hashtagService, closeFriendService);
   const likeService = new LikeService(likeRepo, postService, notificationService);
   const saveService = new SaveService(saveRepo, postService, closeFriendService, userService);
   const commentService = new CommentService(commentRepo, postService, userService, notificationService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
   const searchService = new SearchService(userService, hashtagService, closeFriendService);
+  const getNotificationService = new GetNotificationService(userService, closeFriendService, followService, notificationService)
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService, closeFriendService, followService);
 
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
-  notificationService.setFollowService(followService);
   const blockService = new BlockService(blockRepo, userService, followService, commentService);
 
   commentService.setLikeComment(likeCommentService);
@@ -135,7 +136,8 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService));
 
-  app.use("/notifications", authMiddleware, notificationRouter(notificationService));
+  app.use("/notifications", authMiddleware, notificationRouter(notificationService, getNotificationService));
+
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
   
   app.use("/users", authMiddleware, blockRouter(blockService))
