@@ -1,12 +1,14 @@
+// SearchPage
 import { useState } from 'react'
 import { SearchBar } from '../components/SearchBar'
-import TabsBar from '../components/TabBar'
+import type { ISearchedUsersData, ISearchTagsData } from '@/types/search'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
+import { Separator } from '@radix-ui/react-separator'
 import { UsersGrid } from '../components/UsersGrid'
 import PostsGrid from '../components/PostsGrid'
-import type { ISearchedUsersData, ISearchTagsData } from '@/types/search'
 
 export const SearchPage = () => {
-  const [activeTab, setActiveTab] = useState<'users' | 'posts'>('users')
+  const [defaultTab, setDefaultTab] = useState('useres')
   const [searchResults, setSearchResults] = useState<ISearchedUsersData[]>([])
   const [tagsResults, setTagsResults] = useState<ISearchTagsData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -23,19 +25,51 @@ export const SearchPage = () => {
     }
   }
 
+  const handleSearchError = (message: string) => {
+    setErrorMessage(message)
+    // Clear error message after 5 seconds
+    setTimeout(() => setErrorMessage(''), 5000)
+  }
+
   return (
-    <>
+    <div className="space-y-2">
       {/* Search Bar */}
-      <SearchBar activeTab={activeTab} onSearchMore={handleSearchMore} />
-      {/* TabsBar */}
-      <TabsBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="mt-4">
-        {activeTab === 'users' ? (
-          <UsersGrid searchResults={searchResults} searchQuery={searchQuery} />
-        ) : (
-          <PostsGrid searchResults={tagsResults} searchQuery={searchQuery} />
-        )}
+      <SearchBar onSearchMore={handleSearchMore} />
+
+      {/* Tabs Section */}
+      <div className="w-full flex justify-center items-start bg-backgroundLight md:rounded-3xl">
+        <Tabs
+          value={defaultTab}
+          onValueChange={setDefaultTab}
+          className="w-full max-w-4xl"
+        >
+          <TabsList className="flex justify-center items-center w-full gap-6 py-4 bg-transparent">
+            <TabsTrigger
+              className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black cursor-pointer px-4 py-2"
+              value="posts"
+            >
+              پست‌ها
+            </TabsTrigger>
+            <Separator orientation="vertical" className="bg-black h-6" />
+            <TabsTrigger
+              className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black cursor-pointer px-4 py-2"
+              value="useres"
+            >
+              افراد
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="useres" className="mt-6">
+            <UsersGrid
+              searchResults={searchResults}
+              searchQuery={searchQuery}
+            />
+          </TabsContent>
+          <TabsContent value="posts" className="mt-6">
+            <PostsGrid searchResults={tagsResults} searchQuery={searchQuery} />
+          </TabsContent>
+        </Tabs>
       </div>
-    </>
+    </div>
   )
 }
