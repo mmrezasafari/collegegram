@@ -72,6 +72,7 @@ paths:
   
   /login: 
     post: 
+      summary: User login
       response: User login
       requestBody: 
         require: true
@@ -116,6 +117,50 @@ paths:
               example:
                 success: false,
                 message: "اطلاعات وارد شده اشتباه است"
+        
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /logout: 
+    post:
+      summary: Logout user 
+      security:
+        - accessToken: []
+        - refreshToken: []
+      response: logout user
+      responses: 
+        "200": 
+          description: Logout successful
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data: 
+                    message: 
+                      type: string
+                  
+                example: 
+                  success: true
+                  data: 
+                    message: "کاربر با موفقیت خارج شد"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
         "500": 
           description: Internal Server Error
           content: 
