@@ -21,6 +21,10 @@ export async function uploadPosts(
     formData.append('images', file)
   })
   formData.append('mention', value.mention)
+  formData.append(
+    'onlyCloseFriends',
+    value.onlyCloseFriends === true ? 'true' : 'false',
+  )
 
   const res = await api.post<IUploadedPostsRes>('/profile/posts', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -50,12 +54,12 @@ export function useUploadPost() {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-              ...old,
-              data: {
-                ...old.data,
-                postCount: old.data.postCount + 1,
-              },
-            }
+            ...old,
+            data: {
+              ...old.data,
+              postCount: old.data.postCount + 1,
+            },
+          }
           : old,
       )
 
