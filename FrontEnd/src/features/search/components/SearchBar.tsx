@@ -11,6 +11,7 @@ import { DialogAndDrawerWizard } from '@/features/common/components/layout/Dialo
 import { PostDetails } from '@/features/post/components/PostDetails'
 import { UserSuggestions } from './UserSuggestions'
 import { TagSuggestions } from './TagSuggestions'
+import { useDebounce } from '../hooks/useDebounce'
 
 const fetchUser = async (query: string) => {
   const res = await api.get<ISearchUserGetRes>(
@@ -29,9 +30,12 @@ const fetchTags = async (query: string) => {
 interface SearchBarProps {
   activeTab?: 'users' | 'posts'
   onSearchMore?: (
-    _query: string,
-    _users: ISearchedUsersData[],
-    _tags?: ISearchTagsData[],
+    // eslint-disable-next-line no-unused-vars
+    query: string,
+    // eslint-disable-next-line no-unused-vars
+    users: ISearchedUsersData[],
+    // eslint-disable-next-line no-unused-vars
+    tags?: ISearchTagsData[],
   ) => void
 }
 
@@ -41,16 +45,19 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
   const [postModalOpen, setPostModalOpen] = useState(false)
   const [postId, setPostId] = useState('')
 
+  // Debounce the query with 300ms delay after first character
+  const debouncedQuery = useDebounce(query, query.length > 0 ? 500 : 0)
+
   const Users = useQuery({
-    queryKey: ['search', query],
+    queryKey: ['search', debouncedQuery],
     queryFn: ({ queryKey }) => fetchUser(queryKey[1] as string),
-    enabled: query.trim().length > 0,
+    enabled: debouncedQuery.trim().length > 0,
   })
 
   const Tags = useQuery({
-    queryKey: ['tags', query],
+    queryKey: ['tags', debouncedQuery],
     queryFn: ({ queryKey }) => fetchTags(queryKey[1] as string),
-    enabled: query.trim().length > 0,
+    enabled: debouncedQuery.trim().length > 0,
   })
 
   const getCurrentTab = () => {
@@ -64,14 +71,14 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
   const onToggleMore = () => {
     if (isTabActive('users')) {
       if (Users.data && Users.data.length > 0 && onSearchMore) {
-        onSearchMore(query, Users.data, Tags.data || [])
+        onSearchMore(debouncedQuery, Users.data, Tags.data || [])
         setShowSuggestions(false)
       } else {
         alert('شخصی با این نام یافت نشد.')
       }
     } else if (isTabActive('posts')) {
       if (Tags.data && Tags.data.length > 0 && onSearchMore) {
-        onSearchMore(query, Users.data || [], Tags.data)
+        onSearchMore(debouncedQuery, Users.data || [], Tags.data)
         setShowSuggestions(false)
       } else {
         alert('این کلمه تا به حال تگ نشده.')
@@ -117,8 +124,8 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
               <UserSuggestions
                 users={(Users.data ?? []).slice(0, 3)}
                 onSelect={(user) => {
-                  setQuery(user.firstName)
-                  window.location.href = `/profile/${user.firstName}`
+                  setQuery(user.username)
+                  window.location.href = `/profile/${user.username}`
                 }}
               />
               {/* Tag Suggestions ***************************************************************************/}
