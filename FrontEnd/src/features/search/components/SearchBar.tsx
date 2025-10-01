@@ -15,7 +15,7 @@ import { useDebounce } from '../hooks/useDebounce'
 
 const fetchUser = async (query: string) => {
   const res = await api.get<ISearchUserGetRes>(
-    `search/users?offset=0&limit=90&sort=ASC&search=${query}&isSummary=true`,
+    `search/users?offset=0&limit=90&sort=ASC&search=${query}&isSummary=false`,
   )
   return res.data.data
 }
@@ -37,16 +37,21 @@ interface SearchBarProps {
     // eslint-disable-next-line no-unused-vars
     tags?: ISearchTagsData[],
   ) => void
+  onSearchError?: (message: string) => void
 }
 
-export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
+export const SearchBar = ({
+  activeTab,
+  onSearchMore,
+  onSearchError,
+}: SearchBarProps) => {
   const [query, setQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [postModalOpen, setPostModalOpen] = useState(false)
   const [postId, setPostId] = useState('')
 
   // Debounce the query with 300ms delay after first character
-  const debouncedQuery = useDebounce(query, query.length > 0 ? 500 : 0)
+  const debouncedQuery = useDebounce(query, query.length > 0 ? 300 : 0)
 
   const Users = useQuery({
     queryKey: ['search', debouncedQuery],
@@ -74,14 +79,14 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
         onSearchMore(debouncedQuery, Users.data, Tags.data || [])
         setShowSuggestions(false)
       } else {
-        alert('شخصی با این نام یافت نشد.')
+        onSearchError?.('شخصی با این نام یافت نشد.')
       }
     } else if (isTabActive('posts')) {
       if (Tags.data && Tags.data.length > 0 && onSearchMore) {
         onSearchMore(debouncedQuery, Users.data || [], Tags.data)
         setShowSuggestions(false)
       } else {
-        alert('این کلمه تا به حال تگ نشده.')
+        onSearchError?.('این کلمه تا به حال تگ نشده.')
       }
     }
   }
@@ -120,17 +125,17 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
         {showSuggestions &&
           ((Users.data?.length ?? 0) > 0 || (Tags.data?.length ?? 0) > 0) && (
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
-              {/* User Suggestions ***************************************************************************/}
               <UserSuggestions
                 users={(Users.data ?? []).slice(0, 3)}
+                searchQuery={query}
                 onSelect={(user) => {
                   setQuery(user.username)
                   window.location.href = `/profile/${user.username}`
                 }}
               />
-              {/* Tag Suggestions ***************************************************************************/}
               <TagSuggestions
                 tags={(Tags.data ?? []).slice(0, 4)}
+                searchQuery={query}
                 onTagSelect={(tag) => {
                   setQuery(tag.caption)
                   setPostModalOpen(true)
@@ -144,32 +149,7 @@ export const SearchBar = ({ activeTab, onSearchMore }: SearchBarProps) => {
               >
                 بیشتر
               </button>
-              {/* Divider */}
               <div className="border-t border-gray-200 my-2 mx-6" />
-              {/* Search Suggestions */}
-              {/* {filteredSearchSuggestions.length > 0 && (
-                <div className="px-6 pb-4">
-                  {filteredSearchSuggestions.map((s, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
-                      onMouseDown={() => setQuery(s)}
-                    >
-                      <span className="text-right w-full">{s}</span>
-                      <svg
-                        className="w-5 h-5 text-gray-500 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                      </svg>
-                    </div>
-                  ))}
-                </div>
-              )} */}
             </div>
           )}
       </div>

@@ -4,7 +4,7 @@ export interface ISearchedUsersData {
   lastName: string
   imagePath: string
   mimeType: string
-  followerCount: number
+  followersCount: number
   isFollowing: boolean
 }
 

@@ -75,9 +75,7 @@ export const UsersGrid = ({ searchResults }: UsersGridProps) => {
                     />
                   ))}
               </div>
-            ) : (
-              <div>کاربری یافت نشد.</div>
-            )}
+            ) : null}
             {showLoadingMore && <div>در حال بارگذاری...</div>}
           </div>
         </div>
