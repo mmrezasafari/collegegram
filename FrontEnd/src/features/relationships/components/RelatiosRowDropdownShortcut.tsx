@@ -7,23 +7,28 @@ import {
 } from '@/features/common/components/ui/dropdown-menu'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import type { ICloseFriend, IFollower, IFollowing } from '@/types/relations'
-import { EllipsisVertical } from 'lucide-react'
+import { EllipsisVertical, User, UserRoundMinus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   useRemoveFollower,
+  useRemoveFromCloseFriends,
   useUnfollowAction,
 } from '../hooks/useRelationsActions'
 import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu'
+import type { IUser } from '@/types/user'
 
 interface IProps {
   mode: 'followers' | 'followings' | 'closeFriends' | 'blockList'
-  user: IFollower | IFollowing | ICloseFriend
+  user: IFollower | IFollowing | ICloseFriend | IUser
 }
 
 export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
   const { data: me } = useMe()
   const { mutate: unFollowAction } = useUnfollowAction(user.username)
   const { mutate: removeFollower } = useRemoveFollower(user.username)
+  const { mutate: removeFromCloseFriends } = useRemoveFromCloseFriends(
+    user as IUser,
+  )
 
   const handleUnfollow = () => {
     unFollowAction()
@@ -31,6 +36,10 @@ export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
 
   const handleRemove = () => {
     removeFollower()
+  }
+
+  const handleRemoveFromCloseFriends = () => {
+    removeFromCloseFriends()
   }
 
   return (
@@ -43,39 +52,68 @@ export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
         align="start"
       >
         <DropdownMenuLabel hidden></DropdownMenuLabel>
-        <DropdownMenuGroup className="flex flex-col gap-2 text-end">
-          <DropdownMenuItem className="rounded-4xl">
+        <DropdownMenuGroup className="flex flex-col gap-2">
+          <DropdownMenuItem className="rounded-4xl w-full">
             {user.username === me?.data?.username ? (
               <Link className="w-full h-full px-2" to={`/profile`}>
-                مشاهده پروفایل
+                <div className="flex gap-2 justify-end">
+                  <span>مشاهده پروفایل</span>
+                  <User />
+                </div>
               </Link>
             ) : (
               <Link
                 className="w-full h-full px-2"
                 to={`/profile/${user.username}`}
               >
-                مشاهده پروفایل
+                <div className="flex gap-2 justify-end">
+                  <span>مشاهده پروفایل</span>
+                  <User />
+                </div>
               </Link>
             )}
           </DropdownMenuItem>
           {user.username !== me?.data.username && (
-            <DropdownMenuItem className="rounded-4xl">
+            <>
               {mode === 'followings' && (
-                <button
-                  className="w-full h-full cursor-pointer px-2 rounded-4xl"
-                  onClick={handleUnfollow}
-                >
-                  حذف از دنبال‌شونده‌
-                </button>
+                <DropdownMenuItem className="rounded-4xl">
+                  <button
+                    className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                    onClick={handleUnfollow}
+                  >
+                    <div className="flex gap-2 justify-end">
+                      <span>حذف از دنبال‌شونده‌</span>
+                      <UserRoundMinus />
+                    </div>
+                  </button>
+                </DropdownMenuItem>
               )}
               {mode === 'followers' && (
-                <button
-                  className="w-full h-full cursor-pointer px-2 rounded-4xl"
-                  onClick={handleRemove}
-                >
-                  حذف از دنبال‌کننده‌ها
-                </button>
+                <DropdownMenuItem className="rounded-4xl">
+                  <button
+                    className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                    onClick={handleRemove}
+                  >
+                    <div className="flex gap-2 justify-end">
+                      <span>حذف از دنبال‌کننده‌ها</span>
+                      <UserRoundMinus />
+                    </div>
+                  </button>
+                </DropdownMenuItem>
               )}
+            </>
+          )}
+          {mode === 'closeFriends' && (
+            <DropdownMenuItem className="rounded-4xl">
+              <button
+                className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                onClick={handleRemoveFromCloseFriends}
+              >
+                <div className="flex gap-2 justify-end">
+                  <span>حذف از دوستان نزدیک</span>
+                  <UserRoundMinus />
+                </div>
+              </button>
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>

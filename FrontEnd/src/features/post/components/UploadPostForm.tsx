@@ -45,6 +45,9 @@ export const UploadPostForm = ({
       .map((userName) => `@${userName}`)
       ?.join('') ?? '',
   )
+  const [onlyCloseFrineds, setForCloseFriends] = useState(
+    initialData?.data.post.onlyCloseFriend || false,
+  )
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const goNext = () => setStep((s) => (s < 2 ? ((s + 1) as StepKey) : s))
@@ -58,6 +61,7 @@ export const UploadPostForm = ({
           caption: caption,
           images: images as File[],
           mention: mention,
+          onlyCloseFriends: onlyCloseFrineds,
         },
         { onSuccess: () => onSuccess?.() },
       )
@@ -68,6 +72,7 @@ export const UploadPostForm = ({
           mention: mention,
           images: images as File[],
           imagesName: imagesFileName,
+          onlyCloseFriends: onlyCloseFrineds,
         },
         { onSuccess: () => onSuccess?.() },
       )
@@ -161,7 +166,12 @@ export const UploadPostForm = ({
           </div>
         )}
         {step === 2 && (
-          <StepSettings mention={mention} setMention={setMention} />
+          <StepSettings
+            mention={mention}
+            setMention={setMention}
+            onlyCloseFriends={onlyCloseFrineds}
+            setForCloseFriends={setForCloseFriends}
+          />
         )}
       </div>
       {/* Footer actions */}

@@ -8,7 +8,7 @@ export const CloseFriendsPage = () => {
   return (
     <div className="h-full flex flex-col max-md:items-center py-2">
       <FriendsAndBlockedTab />
-      <div className="flex flex-col gap-8 max-w-lg ml-auto">
+      <div className="w-full flex flex-col gap-4 max-w-lg ml-auto py-8 overflow-y-auto">
         {closeFriends?.data &&
           closeFriends.data.map((closefriend) => (
             <RelationsRow

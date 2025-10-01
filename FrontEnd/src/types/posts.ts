@@ -2,12 +2,14 @@ export interface IUploadPosts {
   caption: string
   images: File[]
   mention: string
+  onlyCloseFriends: boolean
 }
 
 export interface IUpdatedPosts {
   caption: string
   images: File[]
   mention: string
+  onlyCloseFriends: boolean
 }
 
 export interface IUploadedImage {
@@ -53,6 +55,7 @@ export interface IPosts {
   caption: string
   createdAt: string
   updatedAt: string
+  onlyCloseFriends: boolean
   images: Array<IUploadedImage>
 }
 
@@ -72,6 +75,7 @@ export interface IGetPostRes {
       createdAt: string
       firstName: string
       lastName: string
+      onlyCloseFriend: boolean
     }
     commentCount: number
     mentionedUsernames: Array<string>
