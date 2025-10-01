@@ -5,6 +5,7 @@ import { Session } from "./model/session";
 export interface ISessionRepository {
   getByToken(token: string): Promise<Session | null>,
   create(session: createSession): Promise<Session>
+  deleteSession(userId: string): Promise<void>;
 }
 
 export interface createSession {
@@ -33,5 +34,10 @@ export class SessionRepository implements ISessionRepository {
       user: { id: session.userId },
       ...session
     });
+  }
+  async deleteSession(userId: string) {
+    await this.sessionRepository.delete({
+      user: { id: userId }
+    })
   }
 }
