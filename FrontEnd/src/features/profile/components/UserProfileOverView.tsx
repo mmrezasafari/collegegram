@@ -92,7 +92,7 @@ export const UserProfileOverView = () => {
                   </div>
                   <div className="max-md:hidden">
                     {user?.isFollowing &&
-                      followStatus?.status === 'ACCEPTED' ? (
+                    followStatus?.status === 'ACCEPTED' ? (
                       <Button
                         className="flex w-[150px]"
                         variant="outline"
