@@ -27,7 +27,7 @@ export function UserCard({ cardData }: UserCardProps) {
   return (
     <div className="bg-white rounded-2xl shadow-md flex flex-col items-center p-6 w-[340px] h-[180px] justify-between">
       <FriendBar
-        firstName={cardData?.firstName}
+        firstName={cardData?.username}
         lastName={cardData?.lastName}
         followCount={cardData?.followerCount}
         avatarUrl={cardData?.imagePath}
