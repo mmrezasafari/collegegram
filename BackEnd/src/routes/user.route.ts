@@ -5,8 +5,9 @@ import zod from "zod";
 import { errorResponse } from "../../utility/response";
 import { FollowService } from "../modules/follow/follow.service";
 import { PostService } from "../modules/post/post.service";
+import { BlockService } from "../modules/block/block.service";
 
-export const userRouter = (userService: UserService, followService: FollowService, postService: PostService) => {
+export const userRouter = (userService: UserService, followService: FollowService, postService: PostService, blockService:BlockService) => {
   const app = Router();
 
   app.get("/:username", async (req, res) => {
@@ -14,6 +15,12 @@ export const userRouter = (userService: UserService, followService: FollowServic
     const me = req.user;
     if (!me) {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    const user = await userService.getUserByUsername(username);
+    const isBlocked = await blockService.isBlocked(user.id, me.userId)
+    if(isBlocked){
+      res.status(401).json(errorResponse( "این کاربر شمارو بلاک کرده"))
       return;
     }
     handleExpress(res, async () => {

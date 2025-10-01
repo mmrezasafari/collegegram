@@ -1,6 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { CommentEntity } from "./comment.entity";
 import { Comment } from "./model/comment";
+import { DeleteResult } from "typeorm";
 
 
 export interface ICommentRepository {
@@ -10,6 +11,7 @@ export interface ICommentRepository {
   getComments(postId: string): Promise<Comment[] | null>;
   getReplies(commentId: string): Promise<Comment[] | null>;
   countComment(postId: string): Promise<number | null>;
+  deleteUserCommentsFromUserPosts(pageOwnerId: string, commenterId: string):Promise<DeleteResult | null>;
 }
 
 export class CommentRepository implements ICommentRepository {
@@ -78,7 +80,34 @@ export class CommentRepository implements ICommentRepository {
     return await this.commentRepository.countBy({
       postId
     });
-
   }
+
+  async deleteUserCommentsFromUserPosts(pageOwnerId: string, commenterId: string) {
+    const comments = await this.commentRepository.find({
+      where: {
+        userId : commenterId,
+        post: {
+          user: {
+            id: pageOwnerId,
+          }
+        }
+      }
+    })
+    if (comments.length > 0) {
+    const ids = comments.map(c => c.id);  // get primary keys
+    return await this.commentRepository.delete(ids);
+  }
+
+  return null;
+    }
+  //   return await this.commentRepository.createQueryBuilder()
+  // .delete()
+  // .from(CommentEntity, "comment")
+  // .where("userId = :userId", { commenterId })
+  // .andWhere(`postId IN (
+  //   SELECT id FROM posts WHERE "userId" = :pageOwnerId
+  // )`, { pageOwnerId })
+  // .execute();
+  
 
 }

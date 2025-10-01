@@ -46,6 +46,10 @@ import { NotificationRepository } from "./modules/notification/notification.repo
 import { NotificationService } from "./modules/notification/notification.service";
 import { MailService } from "./modules/auth/mail.service";
 import { notificationRouter } from "./routes/notification.route";
+import { BlockRepository } from "./modules/block/block.repository";
+import { BlockService } from "./modules/block/block.service";
+import { blockRouter } from "./routes/block.route";
+
 
 declare global {
   namespace Express {
@@ -77,6 +81,7 @@ export const makeApp = (dataSource: DataSource) => {
   const likeCommentRepo = new LikeCommentRepository(dataSource);
   const closeFriendRepo = new CloseFriendRepository(dataSource);
   const notificationRepo = new NotificationRepository(dataSource);
+  const blockRepo = new BlockRepository(dataSource);
 
   const mailService = new MailService();
   const authService = new AuthService(userRepo, sessionRepo, mailService);
@@ -98,11 +103,17 @@ export const makeApp = (dataSource: DataSource) => {
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
   notificationService.setFollowService(followService);
+  const blockService = new BlockService(blockRepo, userService, followService, commentService);
+
+  commentService.setLikeComment(likeCommentService);
+  userService.setFollowService(followService);
+  userService.setBlockService(blockService);
+  followService.setBlockService(blockService);
 
   setupSwagger(app);
 
   app.use(authRouter(authService));
-  app.use("/users", authMiddleware, userRouter(userService, followService, postService));
+  app.use("/users", authMiddleware, userRouter(userService, followService, postService, blockService));
 
   app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService, saveService));
 
@@ -125,6 +136,9 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService));
 
   app.use("/notifications", authMiddleware, notificationRouter(notificationService));
+  app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
+  
+  app.use("/users", authMiddleware, blockRouter(blockService))
 
   app.use((req, res) => {
     res.status(404).json(errorResponse("مسیر یافت نشد"));

@@ -6,13 +6,19 @@ import { IUserRepository } from "./user.repository";
 import { minioClient } from "../../config/minio.config";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 import { IFollowService } from "../follow/follow.service";
+import { IBlockservice } from "../block/block.service";
+
 export class UserService {
     private followService!: IFollowService;
+    private blockService!: IBlockservice;
     constructor(
-        private userRepo: IUserRepository,
+        private userRepo: IUserRepository
     ) { }
     async setFollowService(followService: IFollowService) {
         this.followService = followService;
+    }
+    async setBlockService(blockService: IBlockservice) {
+        this.blockService = blockService;
     }
     async getUser(id: string): Promise<User> {
         const user = await this.userRepo.getById(id);
@@ -91,6 +97,10 @@ export class UserService {
         const resourceOwner = await this.userRepo.getById(resourceOwnerId);
         if (!resourceOwner) {
             throw new HttpError(404, "کاربر یافت نشد");
+        }
+        const userBlocked = await this.blockService.isBlocked(resourceOwnerId, userId)
+        if(userBlocked){
+            return false;
         }
         if (!resourceOwner.isPrivate) {
             return true; // اگر حساب کاربری خصوصی نیست، همه می‌توانند دسترسی داشته باشند
