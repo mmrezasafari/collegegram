@@ -84,6 +84,7 @@ export const makeApp = (dataSource: DataSource) => {
   const notificationRepo = new NotificationRepository(dataSource);
   const passwordTokenRepo = new PasswordTokenRepository(dataSource);
   const blockRepo = new BlockRepository(dataSource);
+
   const mailService = new MailService();
   const authService = new AuthService(userRepo, sessionRepo, mailService, passwordTokenRepo);
   const userService = new UserService(userRepo);
@@ -139,7 +140,7 @@ export const makeApp = (dataSource: DataSource) => {
   app.use("/notifications", authMiddleware, notificationRouter(notificationService, getNotificationService));
 
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
-  
+
   app.use("/users", authMiddleware, blockRouter(blockService))
 
   app.use((req, res) => {
