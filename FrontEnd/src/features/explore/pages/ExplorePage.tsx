@@ -2,7 +2,7 @@ import FriendCard from '../components/FriendCard'
 import { useInfiniteExplore } from '../hooks/useExplore'
 import { ExploreEmpty } from '../components/EmptyTag'
 import { useEffect, useRef } from 'react'
-import { Loader } from 'lucide-react'
+import { Loading } from '@/features/common/components/ui/loading'
 
 export const ExplorePage = () => {
   const { allPosts, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -42,7 +42,7 @@ export const ExplorePage = () => {
               ))}
               {isFetchingNextPage && (
                 <div className="absolute col-span-full bottom-10 flex justify-center">
-                  <Loader size={30} color="#f6881f" className="animate-spin" />
+                  <Loading />
                 </div>
               )}
             </div>
