@@ -70,7 +70,8 @@ async function fetchSearchTagsData({
 }: QueryFunctionContext & { query?: string }): Promise<ISearchTagsPage> {
   const limit = 10
   const { data } = await api.get<ISearchTagsGetRes>(
-    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
+    // `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
+    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&isSummary=true`,
   )
   return {
     data: data.data as any,

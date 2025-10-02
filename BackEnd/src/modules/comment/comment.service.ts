@@ -32,6 +32,7 @@ export class CommentService {
 
     async getCommentById(commentId: string, userId: string) {
         const comment = await this.commentRepo.getById(commentId)
+
         if (!comment) {
             throw new HttpError(404, "کامنت یافت نشد");
         }
@@ -133,10 +134,10 @@ export class CommentService {
                             }
                         }
                     }
+                if(commentOutput){
+                commentOutputs.push(commentOutput);}
                 }
-                return commentOutputs;
             }
-            return commentOutputs;
         }
         return commentOutputs;
     }
@@ -160,4 +161,7 @@ export class CommentService {
         return await this.commentRepo.countComment(postId);
     }
 
+    async deleteUserCommentsFromUserPosts(commenterId: string, pageOwnerId: string){
+        return await this.commentRepo.deleteUserCommentsFromUserPosts(pageOwnerId, commenterId)
+    }
 }

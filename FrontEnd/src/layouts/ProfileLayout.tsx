@@ -1,3 +1,4 @@
+import logo from '@/assets/images/rahnema-college-logo.png'
 import {
   Avatar,
   AvatarFallback,
@@ -38,11 +39,7 @@ export const ProfileLayout = () => {
           </Button>
         </div>
         <div className="hidden md:block col-start-2 row-start-1 col-end-3 row-end-2 justify-items-end">
-          <img
-            src="src/assets/images/rahnema-college-logo.png"
-            width="80px"
-            height="50px"
-          />
+          <img src={logo} width="80px" height="50px" />
         </div>
         <div className="md:hidden col-start-1 row-start-1 col-end-2 row-end-2 flex justify-between border-b border-geryLight pb-4 mb-4">
           <Avatar className="w-[48px] h-[48px] border border-geryLight">

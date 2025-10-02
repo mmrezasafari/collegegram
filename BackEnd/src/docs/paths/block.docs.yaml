@@ -1,0 +1,119 @@
+paths:
+  /users/{username}/block:
+    post:
+      summary: block the user
+      tags:
+        - block
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      
+      responses: 
+        "200": 
+          description: Like success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "کاربر با موفقیت بلاک شد"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کاربر را قبلا بلاک کرده اید"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+  
+  /users/{username}/unblock:
+    delete:
+      summary: unblock the user
+      tags:
+        - block
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      
+      responses: 
+        "200": 
+          description: Like success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "کاربر با موفقیت از بلاک دراومد"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کاربر را بلاک نکرده اید"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        

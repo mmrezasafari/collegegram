@@ -8,6 +8,7 @@ export interface IPostRepository {
   getPosts(userId: string): Promise<Post[] | null>;
   getById(postId: string): Promise<Post | null>;
   countPost(userId: string): Promise<number>;
+  countPostUser(userId: string, isCloseFriend: boolean): Promise<number>
   updatePost(postId: string, userId: string, imageUrls?: Partial<PostImage>[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null>
   getFollowingPosts(usersId: string[], offset: number, limit: number, sort: string): Promise<Post[] | null>;
   removeImage(url: string): Promise<DeleteResult | null>;
@@ -62,6 +63,17 @@ export class PostRepository implements IPostRepository {
         }
       }
     })
+  }
+
+  async countPostUser(userId: string, isCloseFriend: boolean): Promise<number> {
+    const qb = this.postRepository.createQueryBuilder("post")
+      .where("post.userId = :userId", { userId });
+
+    if (!isCloseFriend) {
+      qb.andWhere("post.onlyCloseFriends = false");
+    }
+
+    return await qb.getCount();
   }
 
   async updatePost(postId: string, userId: string, imageUrls?: PostImage[], caption?: string, onlyCloseFriends?: boolean): Promise<Post | null> {

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import FriendBar from '@/features/explore/components/FriendBar'
 import {
@@ -13,15 +14,37 @@ interface UserCardProps {
 }
 
 export function UserCard({ cardData }: UserCardProps) {
+  // Local state to track follow status (following Collegegram's "prefer local state" convention)
+  const [isFollowing, setIsFollowing] = useState(cardData.isFollowing)
+  const [isLoading, setIsLoading] = useState(false)
+
   const { mutate: unFollowMutation } = useUnfollowAction(cardData.username)
   const { mutate: followMutation } = useFollowAction(cardData.username)
 
   const handleFollow = () => {
-    followMutation()
+    setIsLoading(true)
+    followMutation(undefined, {
+      onSuccess: () => {
+        setIsFollowing(true) // ✅ Update local state on success
+        setIsLoading(false)
+      },
+      onError: () => {
+        setIsLoading(false)
+      },
+    })
   }
 
   const handleUnFollow = () => {
-    unFollowMutation()
+    setIsLoading(true)
+    unFollowMutation(undefined, {
+      onSuccess: () => {
+        setIsFollowing(false) // ✅ Update local state on success
+        setIsLoading(false)
+      },
+      onError: () => {
+        setIsLoading(false)
+      },
+    })
   }
 
   return (
@@ -29,26 +52,28 @@ export function UserCard({ cardData }: UserCardProps) {
       <FriendBar
         firstName={cardData?.username}
         lastName={cardData?.lastName}
-        followCount={cardData?.followerCount}
+        followCount={cardData?.followersCount}
         avatarUrl={cardData?.imagePath}
       />
 
-      {cardData?.isFollowing ? (
+      {isFollowing ? (
         <Button
           className="flex w-full"
           variant="outline"
           onClick={handleUnFollow}
+          disabled={isLoading}
         >
-          <span>دنبال نکردن</span>
+          <span>{isLoading ? 'در حال پردازش...' : 'دنبال نکردن'}</span>
         </Button>
       ) : (
         <Button
           className="flex w-full"
           variant="default"
           onClick={handleFollow}
+          disabled={isLoading}
         >
           <Plus />
-          <span>دنبال کردن</span>
+          <span>{isLoading ? 'در حال پردازش...' : 'دنبال کردن'}</span>
         </Button>
       )}
     </div>

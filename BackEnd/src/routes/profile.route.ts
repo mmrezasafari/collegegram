@@ -31,7 +31,7 @@ export const profileRouter = (
       const user = await userService.getUser(me.userId);
       const followerCount = await followService.countFollow(me.userId, "followers") ?? 0;
       const followingCount = await followService.countFollow(me.userId, "followings") ?? 0;
-      const postCount = await postService.countPost(me.userId);
+      const postCount = await postService.countPostMe(me.userId);
       return {
         followerCount,
         followingCount,

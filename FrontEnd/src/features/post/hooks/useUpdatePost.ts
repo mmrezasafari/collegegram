@@ -9,6 +9,7 @@ import { AxiosError } from 'axios'
 interface INewDataForUpdate {
   mention: string
   caption: string
+  onlyCloseFriends: boolean
   images: Array<File>
   imagesName: Array<string>
 }
@@ -21,7 +22,6 @@ export async function updatePost(
   // caption
   formData.append('caption', data.caption)
   // set iamgesFileName
-  console.log(data.imagesName)
   data.imagesName.forEach((name) => {
     formData.append('imageUrls', name)
   })
@@ -33,6 +33,10 @@ export async function updatePost(
   })
   // mentions
   formData.append('mention', data.mention)
+  formData.append(
+    'onlyCloseFriends',
+    data.onlyCloseFriends === true ? 'true' : 'false',
+  )
 
   const res = await api.patch(`posts/${postId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

@@ -6,7 +6,7 @@ import { GetFollowsResponseDto } from "./dto/get-follows-response.dto";
 import { FollowStatusEnum } from "./follow-status.enum";
 import { FollowRepository } from "./follow.repository";
 import { Follow } from "./models/follow";
-
+import { IBlockservice } from "../block/block.service";
 export interface IFollowService {
   followUserAndCreateNotification(followerId: string, username: string): Promise<Follow>;
   unfollowUser(followerId: string, username: string): Promise<null>;
@@ -17,14 +17,22 @@ export interface IFollowService {
   getFollows(userId: string, type: "followers" | "followings"): Promise<Follow[]>;
 }
 export class FollowService implements IFollowService {
+  private blockService!: IBlockservice;
   constructor(
     private followRepository: FollowRepository,
     private userService: UserService,
     private notificationService: NotificationService
   ) { }
+  async setBlockService(blockService: IBlockservice) {
+        this.blockService = blockService;
+    }
   async followUserAndCreateNotification(followerId: string, username: string) {
     const following = await this.userService.getUserByUsername(username);
     const userExists = await this.followRepository.isFollowing(followerId, following.id);
+    const isBlocked = await this.blockService.isBlocked(following.id, followerId)
+    if(isBlocked){
+      throw new HttpError(400, "این کاربر شمارو بلاک کرده")
+    }
     if (userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال می‌کردید")
     }

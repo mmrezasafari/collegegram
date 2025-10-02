@@ -10,29 +10,6 @@ interface PostsGridProps {
   searchQuery?: string
 }
 
-const chunkPosts = (posts: ISearchTagsData[]) => {
-  const chunks: ISearchTagsData[][] = []
-  let idx = 0
-
-  // First row: 1 item (mobile) / 3 items (desktop)
-  if (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 3))
-    idx += 3
-  }
-  // Second row: 2 items (mobile) / 4 items (desktop)
-  if (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 4))
-    idx += 4
-  }
-  // Subsequent rows: 3 items (mobile) / 6 items (desktop)
-  while (posts.length > idx) {
-    chunks.push(posts.slice(idx, idx + 6))
-    idx += 6
-  }
-
-  return chunks
-}
-
 export const PostsGrid = ({ searchResults }: PostsGridProps) => {
   const { allTags, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteTagSearch()
@@ -71,62 +48,86 @@ export const PostsGrid = ({ searchResults }: PostsGridProps) => {
   const [postModalOpen, setPostModalOpen] = useState(false)
   const [postId, setPostId] = useState('')
 
+  // Helper function to organize posts into rows with different sizes
+  const organizePostsIntoRows = (posts: ISearchTagsData[]) => {
+    const rows: ISearchTagsData[][] = []
+    let currentIndex = 0
+
+    while (currentIndex < posts.length) {
+      const rowIndex = rows.length
+      let itemsInThisRow: number
+
+      // Define items per row based on row index
+      if (rowIndex === 0) {
+        itemsInThisRow = 3 // First row: 1 item on mobile, 3 on desktop
+      } else if (rowIndex === 1) {
+        itemsInThisRow = 4 // Second row: 2 items on mobile, 4 on desktop
+      } else {
+        itemsInThisRow = 6 // Subsequent rows: 3 items on mobile, 6 on desktop
+      }
+
+      const row = posts.slice(currentIndex, currentIndex + itemsInThisRow)
+      if (row.length > 0) {
+        rows.push(row)
+        currentIndex += itemsInThisRow
+      } else {
+        break
+      }
+    }
+
+    return rows
+  }
+
+  const filteredPosts = tagsToDisplay.filter(
+    (item): item is ISearchTagsData =>
+      item != null && Array.isArray(item.images) && item.images.length > 0,
+  )
+
+  const postRows = organizePostsIntoRows(filteredPosts)
+
   return (
     <div className="flex flex-col gap-6 h-[700px]">
       <div ref={containerRef} className="overflow-y-auto">
-        <div
-          className="h-[560px] flex flex-wrap justify-center gap-4 overflow-y-auto"
-          dir="rtl"
-          ref={containerRef}
-        >
+        <div className="h-[560px] overflow-y-auto" dir="rtl" ref={containerRef}>
           {showLoadingState ? (
             <div className="flex items-center justify-center h-full">
               در حال بارگذاری...
             </div>
-          ) : tagsToDisplay && tagsToDisplay.length > 0 ? (
-            chunkPosts(
-              tagsToDisplay.filter(
-                (item): item is ISearchTagsData =>
-                  item != null &&
-                  typeof item === 'object' &&
-                  'id' in item &&
-                  item.id != null &&
-                  'images' in item &&
-                  Array.isArray(item.images) &&
-                  item.images.length > 0,
-              ),
-            ).map((row, rowIdx) => (
-              <div
-                key={rowIdx}
-                className={`flex gap-2 mb-2 ${
-                  rowIdx === 0
-                    ? 'grid-cols-1 md:grid-cols-3'
-                    : rowIdx === 1
-                      ? 'grid-cols-2 md:grid-cols-4'
-                      : 'grid-cols-3 md:grid-cols-6'
-                }`}
-                style={{
-                  display: 'grid',
-                }}
-              >
-                {row.map((post, idx) => (
-                  <div
-                    key={`${post.id}-${idx}`}
-                    className="rounded-2xl overflow-hidden flex items-center justify-center"
-                  >
-                    <div className="overflow-hidden rounded-2xl w-full h-[150px] md:h-[305px] hover:drop-shadow-xl/50 hover:scale-101 transition-all">
-                      <PostCard
-                        image={post?.images[0]?.url ?? ''}
-                        onSelectItem={() => {
-                          setPostModalOpen(true)
-                          setPostId(post.id)
-                        }}
-                      />
+          ) : postRows.length > 0 ? (
+            <div className="flex flex-col gap-2 p-2">
+              {postRows.map((row, rowIdx) => (
+                <div
+                  key={rowIdx}
+                  className={`flex gap-2 mb-2 ${
+                    rowIdx === 0
+                      ? 'grid-cols-1 md:grid-cols-3'
+                      : rowIdx === 1
+                        ? 'grid-cols-2 md:grid-cols-4'
+                        : 'grid-cols-3 md:grid-cols-6'
+                  }`}
+                  style={{
+                    display: 'grid',
+                  }}
+                >
+                  {row.map((post, idx) => (
+                    <div
+                      key={`${post.id}-${rowIdx}-${idx}`}
+                      className="rounded-2xl overflow-hidden flex items-center justify-center"
+                    >
+                      <div className="overflow-hidden rounded-2xl w-full h-[150px] md:h-[250px] lg:h-[250px] hover:drop-shadow-xl/50 hover:scale-101 transition-all">
+                        <PostCard
+                          image={post?.images[0]?.url ?? ''}
+                          onSelectItem={() => {
+                            setPostModalOpen(true)
+                            setPostId(post.id)
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ))
+                  ))}
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full"></div>
           )}

@@ -20,10 +20,10 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
           className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
           onMouseDown={() => onSelect(user)}
         >
-          <span className="text-right">{user.firstName}</span>
+          <span className="text-right">{user.username}</span>
           <img
             src={user.imagePath}
-            alt={user.firstName}
+            alt={user.username}
             className="w-8 h-8 rounded-full object-cover ml-2"
           />
         </div>
