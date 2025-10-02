@@ -26,6 +26,11 @@ export async function getCloseFriends(): Promise<ICloseFriendsListRes> {
   return res.data
 }
 
+// TODO handle getblcokList
+// export async function getBlockList(): Promise<IBlockUserRes> {
+//   const res = await api.get(`users/`)
+// }
+
 export async function relationStatus(userName: string): Promise<IStatusRes> {
   const res = await api.get(`users/${userName}/status`)
   return res.data

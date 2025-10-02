@@ -4,12 +4,14 @@ import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
 import type {
   IAddCloseFriendRes,
+  IBlockUserRes,
   ICloseFriend,
   ICloseFriendsListRes,
   IFollowersListRes,
   IFollowingsListRes,
   IFollowRes,
   IRemoveFollowerRes,
+  IUnblockUserRes,
   IUnfollowRes,
 } from '@/types/relations'
 import type { IRegisteredUser, IUser } from '@/types/user'
@@ -34,6 +36,18 @@ export async function removeFollower(
   return res.data
 }
 
+export async function addToBlockList(userName: string): Promise<IBlockUserRes> {
+  const res = await api.post(`users/${userName}/block`)
+  return res.data
+}
+
+export async function removeFromBlockList(
+  userName: string,
+): Promise<IUnblockUserRes> {
+  const res = await api.delete(`users/${userName}/unblock`)
+  return res.data
+}
+
 export async function addToCloseFriend(
   userName: string,
 ): Promise<IAddCloseFriendRes> {
@@ -46,6 +60,64 @@ export async function removeFromCloseFriends(
 ): Promise<IAddCloseFriendRes> {
   const res = await api.delete(`users/${userName}/close-friends`)
   return res.data
+}
+
+export function useAddToBlockList(user: IUser) {
+  // TODO hadnle obtimistic upteda block list
+  // const queryClient = useQueryClient
+
+  return useMutation({
+    mutationKey: ['add-blockList', user?.username],
+    mutationFn: () => addToBlockList(user?.username),
+    onSuccess: () => {
+      notify.success(
+        `${user?.firstName || user?.username} با موفقیت به لیست سیاه اضافه شد`,
+        {
+          position: 'top-right',
+          duration: 10000,
+        },
+      )
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        notify.error(error.response?.data.message, {
+          position: 'top-right',
+          duration: 10000,
+        })
+      } else {
+        console.error(error)
+      }
+    },
+  })
+}
+
+export function useRemoveFromBlockList(user: IUser) {
+  // TODO hadnle obtimistic upteda block list
+  // const queryClient = useQueryClient
+
+  return useMutation({
+    mutationKey: ['remove-blockList', user?.username],
+    mutationFn: () => removeFromBlockList(user?.username),
+    onSuccess: () => {
+      notify.success(
+        `${user?.firstName || user?.username} با موفقیت از لیست سیاه حذف شد`,
+        {
+          position: 'top-right',
+          duration: 10000,
+        },
+      )
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        notify.error(error.response?.data.message, {
+          position: 'top-right',
+          duration: 10000,
+        })
+      } else {
+        console.error(error)
+      }
+    },
+  })
 }
 
 export function useAddToCloseFriends(user: IUser) {

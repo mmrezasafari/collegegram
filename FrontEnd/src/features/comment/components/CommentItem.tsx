@@ -11,16 +11,19 @@ interface IProps {
   comment: IComment | IReplyComment
   postId: string
   onReply: (_id: string, _user: string) => void
+  parentId?: string
 }
 
-export const CommentItem = ({ comment, onReply, postId }: IProps) => {
+export const CommentItem = ({ comment, onReply, postId, parentId }: IProps) => {
   const { mutate: likeCommentMutate } = useToggleLikeComment(
     postId,
     comment && comment.commentId,
+    parentId,
   )
 
   const onToggleLike = () => {
-    likeCommentMutate('like')
+    if (!comment.isLiked) likeCommentMutate('like')
+    else likeCommentMutate('unlike')
   }
 
   return (
@@ -41,7 +44,14 @@ export const CommentItem = ({ comment, onReply, postId }: IProps) => {
           </p>
         </div>
         <div className="flex gap-2 md:gap-4 items-end text-primary font-bold text-xs md:text-sm">
-          <Heart size={16} className="cursor-pointer" onClick={onToggleLike} />
+          <div className="h-full flex gap-1" onClick={onToggleLike}>
+            <span className="text-sm">{comment.likeCount}</span>
+            <Heart
+              size={20}
+              color="#ea5a69"
+              fill={comment?.isLiked ? '#ea5a69' : 'transparent'}
+            />
+          </div>
           <div
             className="flex items-end gap-1 cursor-pointer"
             onClick={() =>

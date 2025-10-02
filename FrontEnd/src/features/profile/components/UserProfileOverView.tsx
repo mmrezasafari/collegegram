@@ -16,8 +16,11 @@ import { Separator } from '@/features/common/components/ui/separator'
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import { Button } from '@/features/common/components/ui/button'
 import {
+  useAddToBlockList,
   useAddToCloseFriends,
   useFollowAction,
+  useRemoveFromBlockList,
+  useRemoveFromCloseFriends,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
 import { useState } from 'react'
@@ -30,7 +33,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/features/common/components/ui/dropdown-menu'
-import { Link } from 'react-router-dom'
 import type { IUser } from '@/types/user'
 
 export const UserProfileOverView = () => {
@@ -43,6 +45,11 @@ export const UserProfileOverView = () => {
   const { mutate: unFollowMutation } = useUnfollowAction(user?.username)
   const { mutate: followMutation } = useFollowAction(user?.username)
   const { mutate: addToCloseFriendsMutation } = useAddToCloseFriends(user)
+  const { mutate: addToBlockList } = useAddToBlockList(user)
+  // TODO add toogle closeFrind and blcok list
+  const { mutate: removaFromCloseFriendsMutation } =
+    useRemoveFromCloseFriends(user)
+  const { mutate: removaFromBlockList } = useRemoveFromBlockList(user)
 
   const handleFollow = () => {
     followMutation()
@@ -53,8 +60,11 @@ export const UserProfileOverView = () => {
   }
 
   const onAddToCloseFriends = () => {
-    console.log(user)
     addToCloseFriendsMutation()
+  }
+
+  const onAddToBlockList = () => {
+    addToBlockList()
   }
 
   return (
@@ -128,25 +138,24 @@ export const UserProfileOverView = () => {
                     className="border bg-light border-geryLight rounded-4xl rounded-tl-none ml-4"
                     align="start"
                   >
-                    <DropdownMenuGroup className="flex flex-col gap-2 p-2">
-                      <DropdownMenuItem className="rounded-full py-4 px-6">
-                        <Link to={'/close-friends'}>
-                          <div className="flex  gap-4 text-base">
-                            <span>بلاک کردن</span>
-                            <UserLock />
-                          </div>
-                        </Link>
+                    <DropdownMenuGroup className="flex flex-col  p-2">
+                      <DropdownMenuItem
+                        className="rounded-full py-4 px-6"
+                        onClick={onAddToBlockList}
+                      >
+                        <div className="flex  gap-4 text-base">
+                          <span>بلاک کردن</span>
+                          <UserLock />
+                        </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="rounded-full py-4 px-6"
                         onClick={onAddToCloseFriends}
                       >
-                        <button className="w-full h-full cursor-pointer rounded-4xl">
-                          <div className="flex justify-end gap-4 text-base">
-                            <span>افزودن به دوستان نزدیک</span>
-                            <UserRoundPlus />
-                          </div>
-                        </button>
+                        <div className="flex justify-end gap-4 text-base">
+                          <span>افزودن به دوستان نزدیک</span>
+                          <UserRoundPlus />
+                        </div>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
