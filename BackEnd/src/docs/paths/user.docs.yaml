@@ -43,6 +43,9 @@ paths:
                           isCloseFriend:
                             type: boolean
                             example: true
+                          isBlockedByMe:
+                            type: boolean
+                            example: true
         401:
           description: unauthorized
           content:

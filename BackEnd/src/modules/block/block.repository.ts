@@ -1,12 +1,14 @@
 import { DataSource, Repository } from "typeorm";
 import { BlockEntity } from "./block.entity";
 import { Block } from "./models/block";
+import { User } from "../user/model/user";
 
 
 export interface IBlockRepository {
   block(userId: string, blockedUserId: string): Promise<Block | null>;
   blocked(userId: string, blockedUserId: string): Promise<Block | null>;
   unblock(userId: string, blockedUserId: string): Promise<null>;
+  getBlockedUsers(userId: string): Promise<User[]> 
 }
 
 export class BlockRepository implements IBlockRepository {
@@ -34,6 +36,13 @@ export class BlockRepository implements IBlockRepository {
     });
     return null;
   }
+  async getBlockedUsers(userId: string) {
+  const blocks = await this.blockRepository.find({
+    where: { userId },
+    relations: ["blockedUser"],
+  });
 
+  return blocks.map(block => block.blockedUser);
+}
 
 }
