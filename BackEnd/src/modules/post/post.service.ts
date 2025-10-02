@@ -10,13 +10,15 @@ import { createPostDto } from "./dto/create-post.dto";
 import { minioClient } from "../../config/minio.config";
 import { PostImage } from "./model/post-image";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
+import { CloseFriendService } from "../closeFriend/close-friend.service";
 
 export class PostService {
     constructor(
         private postRepo: IPostRepository,
         private userService: UserService,
         private mentionService: MentionService,
-        private hashtagService: HashtagService
+        private hashtagService: HashtagService,
+        private closeFriendService: CloseFriendService,
     ) { }
 
     async getPosts(userId: string) {
@@ -79,9 +81,15 @@ export class PostService {
         return post;
     }
 
-    async countPost(userId: string): Promise<number> {
-        return await this.postRepo.countPost(userId);
+    async countPostMe(myId: string): Promise<number> {
+        return await this.postRepo.countPost(myId);
     }
+
+    async countPostUser(myId: string, userId:string): Promise<number> {
+        const isCloseFriend = await this.closeFriendService.isCloseFriend(myId, userId);
+        return await this.postRepo.countPostUser(userId, isCloseFriend );
+    }
+
 
     async editPost(postId: string, userId: string, files: Express.Multer.File[], dto: updatePostDto, myId: string) {
         const uploads: Partial<PostImage>[] = [];

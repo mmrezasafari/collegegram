@@ -188,4 +188,64 @@ paths:
                   $ref: "#/components/schemas/Error"
               example:
                 success: false
-                message: "خطای سرور"         
+                message: "خطای سرور"   
+  /users/{username}/is-close-friends: 
+    get:
+      summary: "Close friend status"
+      tags:
+        - close friend
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses:
+        200:
+          description: close friend status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      isCloseFriend:
+                        type: boolean
+                example:
+                  success: true
+                  data:
+                    isCloseFriend: true
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"     

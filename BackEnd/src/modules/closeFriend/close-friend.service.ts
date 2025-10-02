@@ -68,4 +68,11 @@ export class CloseFriendService {
         return await this.closeFriendRepo.isCloseFriend(myId, resourceOwnerId)
     }
 
+    async isCloseFriendWithUsername (myId: string, resourceOwnerUsername: string) {
+        const resourceUser = await this.userService.getUserByUsername(resourceOwnerUsername);
+        const isCloseFriend = await this.closeFriendRepo.isCloseFriend(resourceUser.id, myId)
+        return { isCloseFriend };
+    }
+
+
 }

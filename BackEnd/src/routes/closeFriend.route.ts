@@ -40,5 +40,15 @@ export const closeFriendRouter = (closeFriendService:CloseFriendService) => {
 
   })
 
+  app.get("/:username/is-close-friends", (req, res) => {
+    const username = zod.string().nonempty().parse(req.params.username);
+    const user = req.user;
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => closeFriendService.isCloseFriendWithUsername(user.userId, username));
+  })
+
   return app;
 }

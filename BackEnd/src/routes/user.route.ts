@@ -27,7 +27,7 @@ export const userRouter = (userService: UserService, followService: FollowServic
       const user = await userService.getUserByUsername(username);
       const followerCount = await followService.countFollow(user.id, "followers") ?? 0;
       const followingCount = await followService.countFollow(user.id, "followings") ?? 0;
-      const postCount = await postService.countPost(user.id);
+      const postCount = await postService.countPostUser(me.userId, user.id);
       const isFollowing = await followService.isFollowing(me.userId, user.id) ? true : false;
       return {
         followerCount,
