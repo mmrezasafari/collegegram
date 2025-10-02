@@ -20,6 +20,7 @@ export const userRouter = (userService: UserService, followService: FollowServic
     }
     const user = await userService.getUserByUsername(username);
     const isBlocked = await blockService.isBlocked(user.id, me.userId)
+
     if(isBlocked){
       res.status(401).json(errorResponse( "این کاربر شمارو بلاک کرده"))
       return;
@@ -31,12 +32,14 @@ export const userRouter = (userService: UserService, followService: FollowServic
       const postCount = await postService.countPostUser(me.userId, user.id);
       const isFollowing = await followService.isFollowing(me.userId, user.id) ? true : false;
       const isCloseFriend = await closeFriendService.isCloseFriend( user.id, me.userId)
+      const isBlockedByMe = await blockService.isBlocked(me.userId, user.id) 
       return {
         followerCount,
         followingCount,
         postCount,
         isFollowing,
         isCloseFriend,
+        isBlockedByMe,
         ...user,
       }
     });

@@ -29,7 +29,15 @@ export const blockRouter = (blockService:BlockService) => {
     handleExpress(res, () => blockService.unblockUser(user.userId, username));
 
   })
+  app.get("/me/block", (req, res) => {
+    const user = req.user
+    if (!user) {
+      res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    handleExpress(res, () => blockService.getBlockList(user.userId));
 
+  })
 
   return app;
 }

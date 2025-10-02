@@ -3,11 +3,13 @@ import { FollowService } from "../follow/follow.service";
 import { UserService } from "../user/user.service";
 import { IBlockRepository } from "./block.repository";
 import { CommentService } from "../comment/comment.service";
+import { blockOutput } from "./models/block-output";
 
 export interface IBlockservice{
     blockUser(userId: string, username: string):Promise<{ message: string }>;
     unblockUser(userId: string, username: string):Promise<{ message: string }>;
     isBlocked(userId:string, blockedUserId:string):Promise<boolean>;
+    getBlockList(userId: string):Promise<blockOutput[]>;
 }
 export class BlockService implements IBlockservice {
     constructor(
@@ -52,6 +54,23 @@ export class BlockService implements IBlockservice {
     async isBlocked(userId:string, blockedUserId:string){
         const blocked = await this.blockRepo.blocked(userId, blockedUserId)
         return blocked ? true : false;
+    }
+    
+    async getBlockList(userId: string) {
+    const blockedUsers = await this.blockRepo.getBlockedUsers(userId);
+    const response:blockOutput[] = [];
+    for (const blockUser of blockedUsers) {
+        const followerCount = await this.followService.countFollow(blockUser.id, "followers");
+        response.push({
+            id: blockUser.id,
+            username: blockUser.username,
+            firstName: blockUser.firstName,
+            lastName: blockUser.lastName,
+            imageUrl: blockUser.imagePath,
+            followerCount: followerCount
+        })
+    }
+    return response;
     }
 
 }
