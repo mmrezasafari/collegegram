@@ -10,7 +10,7 @@ export const errorMiddleware: ErrorRequestHandler = (error, req, res, next) => {
       return;
     }
 
-    if (error.issues[0].path[0] === "password") {
+    if (error.issues[0].path[0] === "password" || error.issues[0].path[0] === "newPassword") {
       res.status(400).json(errorResponse("رمز عبور ایمن نیس"));
       return;
     }

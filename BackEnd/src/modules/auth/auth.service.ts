@@ -7,12 +7,15 @@ import { LoginResponseDto } from "./dto/login-response.dto";
 import { encryptJWT } from "../../../utility/jwt_utils";
 import { ISessionRepository } from "./session.repository";
 import { MailService } from "./mail.service";
+import { IPasswordTokenRepository } from "./password-token.repository";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
 
 export class AuthService {
   constructor(
     private userRepo: IUserRepository,
     private sessionRepo: ISessionRepository,
     private mailService: MailService,
+    private passwordTokenRepo: IPasswordTokenRepository,
 
   ) { }
 
@@ -78,5 +81,49 @@ export class AuthService {
   async logout(userId: string) {
     await this.sessionRepo.deleteSession(userId);
     return;
+  }
+  async forgetPassword(usernameOrEmail: string) {
+    const user = await this.userRepo.getForLogin(usernameOrEmail);
+    if (!user) {
+      throw new HttpError(400, "اطلاعات وارد شده اشتباه است");
+    }
+    const resetPassword = await this.passwordTokenRepo.create({
+      userId: user.id,
+      expireDate: new Date(new Date().getTime() + (1 * 30 * 60 * 1000))
+    })
+    await this.mailService.sendMail(user.email, "فراموشی رمز عبور",
+      `
+      عزیز ${user?.username}
+      درخواست تغییر رمز عبور دریافت شد.برای تغییر رمز عبور روی لینک زیر کلیک کنید
+      \n
+      ${process.env.FRONTEND_HOST}/forget-password/${resetPassword.token}
+      `
+    )
+  }
+  async checkToken(token: string, usernameOrEmail: string) {
+    const resetPassword = await this.passwordTokenRepo.getByToken(token);
+    if (!resetPassword ||
+      !resetPassword.user ||
+      (resetPassword.user.username !== usernameOrEmail && resetPassword.user.email !== usernameOrEmail)) {
+      throw new HttpError(400, "اطلاعات وارد شده نامعتبر است");
+    }
+    if (resetPassword.expireDate < new Date()) {
+      throw new HttpError(400, "توکن منقضی شده است");
+    }
+    return {
+      message: "توکن معتبر است"
+    };
+  }
+  async resetPassword(dto: ResetPasswordDto) {
+    await this.checkToken(dto.token, dto.usernameOrEmail);
+    const passwordToken = await this.passwordTokenRepo.getByToken(dto.token);
+    if (!passwordToken) {
+      throw new HttpError(400, "اطلاعات وارد شده نامعتبر است");
+    }
+    const user = await this.userRepo.update(passwordToken.user.id, {
+      password: hashingPassword(dto.newPassword)
+    });
+    await this.passwordTokenRepo.deleteToken(passwordToken.token);
+    return user;
   }
 }

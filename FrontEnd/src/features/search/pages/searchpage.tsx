@@ -26,18 +26,18 @@ export const SearchPage = () => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full h-full">
       {/* Search Bar */}
       <SearchBar onSearchMore={handleSearchMore} />
 
       {/* Tabs Section */}
-      <div className="w-full flex justify-center items-start bg-backgroundLight md:rounded-3xl">
+      <div className="w-full h-full flex justify-center items-start bg-backgroundLight md:rounded-3xl">
         <Tabs
           value={defaultTab}
           onValueChange={setDefaultTab}
-          className="w-full max-w-4xl"
+          className="w-full max-w-4xl display-flex"
         >
-          <TabsList className="flex justify-center items-center w-full gap-6 py-4 bg-transparent">
+          <TabsList className="flex justify-center items-center w-full h-full gap-6 py-4 bg-transparent">
             <TabsTrigger
               className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black cursor-pointer px-4 py-2"
               value="posts"

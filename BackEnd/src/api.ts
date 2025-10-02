@@ -46,10 +46,11 @@ import { NotificationRepository } from "./modules/notification/notification.repo
 import { NotificationService } from "./modules/notification/notification.service";
 import { MailService } from "./modules/auth/mail.service";
 import { notificationRouter } from "./routes/notification.route";
+import { PasswordTokenRepository } from "./modules/auth/password-token.repository";
 import { BlockRepository } from "./modules/block/block.repository";
 import { BlockService } from "./modules/block/block.service";
 import { blockRouter } from "./routes/block.route";
-
+import { GetNotificationService } from "./modules/notification/get-notification.service";
 
 declare global {
   namespace Express {
@@ -81,28 +82,29 @@ export const makeApp = (dataSource: DataSource) => {
   const likeCommentRepo = new LikeCommentRepository(dataSource);
   const closeFriendRepo = new CloseFriendRepository(dataSource);
   const notificationRepo = new NotificationRepository(dataSource);
+  const passwordTokenRepo = new PasswordTokenRepository(dataSource);
   const blockRepo = new BlockRepository(dataSource);
 
   const mailService = new MailService();
-  const authService = new AuthService(userRepo, sessionRepo, mailService);
+  const authService = new AuthService(userRepo, sessionRepo, mailService, passwordTokenRepo);
   const userService = new UserService(userRepo);
   const notificationService = new NotificationService(notificationRepo)
   const hashtagService = new HashtagService(hashtagRepo);
   const followService = new FollowService(followRepo, userService, notificationService);
   const closeFriendService = new CloseFriendService(closeFriendRepo, userService, followService);
   const mentionService = new MentionService(mentionRepo, closeFriendService, notificationService, userService);
-  const postService = new PostService(postRepo, userService, mentionService, hashtagService);
+  const postService = new PostService(postRepo, userService, mentionService, hashtagService, closeFriendService);
   const likeService = new LikeService(likeRepo, postService, notificationService);
   const saveService = new SaveService(saveRepo, postService, closeFriendService, userService);
   const commentService = new CommentService(commentRepo, postService, userService, notificationService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
   const searchService = new SearchService(userService, hashtagService, closeFriendService);
+  const getNotificationService = new GetNotificationService(userService, closeFriendService, followService, notificationService)
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService, closeFriendService, followService);
 
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
-  notificationService.setFollowService(followService);
   const blockService = new BlockService(blockRepo, userService, followService, commentService);
 
   commentService.setLikeComment(likeCommentService);
@@ -113,7 +115,7 @@ export const makeApp = (dataSource: DataSource) => {
   setupSwagger(app);
 
   app.use(authRouter(authService));
-  app.use("/users", authMiddleware, userRouter(userService, followService, postService, blockService));
+  app.use("/users", authMiddleware, userRouter(userService, followService, postService, blockService, closeFriendService));
 
   app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService, saveService));
 
@@ -135,9 +137,10 @@ export const makeApp = (dataSource: DataSource) => {
 
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService));
 
-  app.use("/notifications", authMiddleware, notificationRouter(notificationService));
+  app.use("/notifications", authMiddleware, notificationRouter(notificationService, getNotificationService));
+
   app.use("/users", authMiddleware, closeFriendRouter(closeFriendService))
-  
+
   app.use("/users", authMiddleware, blockRouter(blockService))
 
   app.use((req, res) => {
