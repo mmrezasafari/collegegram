@@ -6,6 +6,8 @@ import { loginRequestDto } from "../modules/auth/dto/login-request.dto";
 import { authMiddleware } from "../middleware/auth-middleware";
 import { errorResponse, successResponse } from "../../utility/response";
 import { HttpError } from "../../utility/http-error";
+import { resetPasswordDto } from "../modules/auth/dto/reset-password.dto";
+import zod from "zod";
 
 export const authRouter = (authService: AuthService) => {
   const app = Router();
@@ -31,6 +33,20 @@ export const authRouter = (authService: AuthService) => {
       res.clearCookie("refreshToken");
       return response;
     });
+  })
+  app.post("/forget-password", (req, res) => {
+    const usernameOrEmail = zod.string().nonempty().parse(req.body.usernameOrEmail);
+    handleExpress(res, () => authService.forgetPassword(usernameOrEmail));
+  })
+
+  app.get("/check-password-token", (req, res) => {
+    const token = zod.uuid().parse(req.query.token);
+    const usernameOrEmail = zod.string().nonempty().parse(req.query.usernameOrEmail);
+    handleExpress(res, () => authService.checkToken(token, usernameOrEmail));
+  })
+  app.patch("/reset-password", (req, res) => {
+    const dto = resetPasswordDto.parse(req.body);
+    handleExpress(res, () => authService.resetPassword(dto));
   })
   return app;
 }

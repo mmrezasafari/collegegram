@@ -1,4 +1,4 @@
-import { AfterLoad, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { AfterLoad, Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SessionEntity } from "../auth/session.entity";
 import { PostEntity } from "../post/post.entity";
 import { MentionEntity } from "../mention/mention.entity";
@@ -9,6 +9,7 @@ import { CommentEntity } from "../comment/comment.entity";
 import { ImageMimeType } from "../../../utility/image-mime-type.enum";
 import { CloseFriendEntity } from "../closeFriend/close-friend.entity";
 import { NotificationEntity } from "../notification/notification.entity";
+import { PasswordTokenEntity } from "../auth/password-token.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -42,17 +43,17 @@ export class UserEntity {
   @Column({ default: false })
   isPrivate!: boolean;
 
-  @OneToMany(() => SessionEntity, (session) => session.user)
-  sessions!: SessionEntity[]
-
-  @OneToMany(() => PostEntity, (post) => post.user)
-  posts!: PostEntity[];
-
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => SessionEntity, (session) => session.user)
+  sessions!: SessionEntity[]
+
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
 
   @OneToMany(() => MentionEntity, (mention) => mention.user)
   mentions!: MentionEntity[];
@@ -74,15 +75,18 @@ export class UserEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.user)
   comments!: CommentEntity[];
 
-  @AfterLoad()
-  async getUrlFromMinio() {
-    this.imagePath = `${process.env.MINIO_HOST}/profile-image/${this.imagePath}`;
-  }
+  @OneToOne(() => PasswordTokenEntity, (passwordToken) => passwordToken.user)
+  passwordToken!: PasswordTokenEntity;
 
   @OneToMany(() => CloseFriendEntity, cf => cf.user)
   closeFriends!: CloseFriendEntity[];
 
   @OneToMany(() => NotificationEntity, (notification) => notification.receiver)
   notifications!: NotificationEntity[];
+
+  @AfterLoad()
+  async getUrlFromMinio() {
+    this.imagePath = `${process.env.MINIO_HOST}/profile-image/${this.imagePath}`;
+  }
 
 }

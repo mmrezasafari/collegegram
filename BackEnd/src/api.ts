@@ -46,6 +46,7 @@ import { NotificationRepository } from "./modules/notification/notification.repo
 import { NotificationService } from "./modules/notification/notification.service";
 import { MailService } from "./modules/auth/mail.service";
 import { notificationRouter } from "./routes/notification.route";
+import { PasswordTokenRepository } from "./modules/auth/password-token.repository";
 
 declare global {
   namespace Express {
@@ -77,9 +78,9 @@ export const makeApp = (dataSource: DataSource) => {
   const likeCommentRepo = new LikeCommentRepository(dataSource);
   const closeFriendRepo = new CloseFriendRepository(dataSource);
   const notificationRepo = new NotificationRepository(dataSource);
-
+  const passwordTokenRepo = new PasswordTokenRepository(dataSource);
   const mailService = new MailService();
-  const authService = new AuthService(userRepo, sessionRepo, mailService);
+  const authService = new AuthService(userRepo, sessionRepo, mailService, passwordTokenRepo);
   const userService = new UserService(userRepo);
   const notificationService = new NotificationService(notificationRepo)
   const hashtagService = new HashtagService(hashtagRepo);
