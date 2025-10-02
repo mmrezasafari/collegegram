@@ -40,6 +40,9 @@ paths:
                           isFollowing:
                             type: boolean
                             example: true
+                          isCloseFriend:
+                            type: boolean
+                            example: true
         401:
           description: unauthorized
           content:

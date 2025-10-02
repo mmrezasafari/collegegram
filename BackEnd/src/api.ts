@@ -114,7 +114,7 @@ export const makeApp = (dataSource: DataSource) => {
   setupSwagger(app);
 
   app.use(authRouter(authService));
-  app.use("/users", authMiddleware, userRouter(userService, followService, postService, blockService));
+  app.use("/users", authMiddleware, userRouter(userService, followService, postService, blockService, closeFriendService));
 
   app.use("/profile", authMiddleware, profileRouter(userService, postService, followService, mentionService, saveService));
 

@@ -6,8 +6,9 @@ import { errorResponse } from "../../utility/response";
 import { FollowService } from "../modules/follow/follow.service";
 import { PostService } from "../modules/post/post.service";
 import { BlockService } from "../modules/block/block.service";
+import { CloseFriendService } from "../modules/closeFriend/close-friend.service";
 
-export const userRouter = (userService: UserService, followService: FollowService, postService: PostService, blockService:BlockService) => {
+export const userRouter = (userService: UserService, followService: FollowService, postService: PostService, blockService:BlockService, closeFriendService: CloseFriendService) => {
   const app = Router();
 
   app.get("/:username", async (req, res) => {
@@ -29,11 +30,13 @@ export const userRouter = (userService: UserService, followService: FollowServic
       const followingCount = await followService.countFollow(user.id, "followings") ?? 0;
       const postCount = await postService.countPostUser(me.userId, user.id);
       const isFollowing = await followService.isFollowing(me.userId, user.id) ? true : false;
+      const isCloseFriend = await closeFriendService.isCloseFriend( user.id, me.userId)
       return {
         followerCount,
         followingCount,
         postCount,
         isFollowing,
+        isCloseFriend,
         ...user,
       }
     });
