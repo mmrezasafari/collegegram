@@ -60,14 +60,13 @@ export function useGetComments(postId: string) {
   })
 }
 
-export function useGetRepliesComment(postId: string, commentId?: string) {
+export function useGetRepliesComment(postId: string, parentId?: string) {
   return useQuery<IReplyCommentRes, AxiosError<IErrorRes>>({
-    queryKey: ['replies', postId, commentId],
-    queryFn: () => getRepliesComment(postId, commentId),
-    enabled: !!postId && !!commentId,
-    staleTime: 0,
+    queryKey: ['replies', postId, parentId],
+    queryFn: () => getRepliesComment(postId, parentId!),
+    enabled: false,
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    placeholderData: keepPreviousData,
   })
 }
 
