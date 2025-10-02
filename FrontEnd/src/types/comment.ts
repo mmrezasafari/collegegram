@@ -6,6 +6,8 @@ export interface IComment {
   profile: string
   content: string
   date: string
+  likeCount: number
+  isLiked: boolean
   replies: Array<
     IComment & {
       hasReply: boolean
@@ -22,6 +24,8 @@ export interface IReplyComment {
   content: string
   date: string
   hasReply: boolean
+  likeCount: number
+  isLiked: boolean
 }
 
 export interface IReplyCommentRes {
