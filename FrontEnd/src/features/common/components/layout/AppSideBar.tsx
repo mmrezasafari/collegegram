@@ -14,6 +14,7 @@ import { Avatar, AvatarImage } from '@/features/common/components/ui/avatar'
 import {
   BellIcon,
   Bookmark,
+  DoorClosed,
   List,
   MessageCircleIcon,
   PanelsTopLeft,
@@ -205,7 +206,7 @@ export function AppSidebar() {
                 >
                   <div className="flex items-start gap-4 text-base">
                     <span>خروچ</span>
-                    <UserLock />
+                    <DoorClosed />
                   </div>
                 </button>
               </DropdownMenuItem>
