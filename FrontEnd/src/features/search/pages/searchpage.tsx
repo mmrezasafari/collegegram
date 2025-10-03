@@ -1,7 +1,7 @@
 // SearchPage
 import { useState } from 'react'
 import { SearchBar } from '../components/SearchBar'
-import type { ISearchedUsersData, ISearchTagsData } from '@/types/search'
+import type { ISearchedUserData, ISearchTagsData } from '@/types/search'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { Separator } from '@radix-ui/react-separator'
 import { UsersGrid } from '../components/UsersGrid'
@@ -9,7 +9,7 @@ import PostsGrid from '../components/PostsGrid'
 
 export const SearchPage = () => {
   const [defaultTab, setDefaultTab] = useState<'users' | 'posts'>('users')
-  const [searchResults, setSearchResults] = useState<ISearchedUsersData[]>([])
+  const [searchResults, setSearchResults] = useState<ISearchedUserData[]>([])
   const [tagsResults, setTagsResults] = useState<ISearchTagsData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [usersError, setUsersError] = useState('')
@@ -17,7 +17,7 @@ export const SearchPage = () => {
 
   const handleSearchMore = (
     query: string,
-    users: ISearchedUsersData[],
+    users: ISearchedUserData[],
     tags?: ISearchTagsData[],
   ) => {
     setSearchQuery(query)

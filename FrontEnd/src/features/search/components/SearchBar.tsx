@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import type {
   ISearchUserGetRes,
   ISearchTagsGetRes,
-  ISearchedUsersData,
+  ISearchedUserData,
   ISearchTagsData,
 } from 'src/types/search'
 import api from '@/lib/axios'
@@ -33,11 +34,11 @@ interface SearchBarProps {
     // eslint-disable-next-line no-unused-vars
     query: string,
     // eslint-disable-next-line no-unused-vars
-    users: ISearchedUsersData[],
+    users: ISearchedUserData[],
     // eslint-disable-next-line no-unused-vars
     tags?: ISearchTagsData[],
   ) => void
-  onSearchError?: (message: string) => void
+  onSearchError?: (_message: string) => void
 }
 
 export const SearchBar = ({
@@ -147,6 +148,8 @@ export const SearchBar = ({
     }
   }
 
+  const navigate = useNavigate()
+
   return (
     <>
       <div className="w-full flex flex-col items-center relative">
@@ -154,11 +157,15 @@ export const SearchBar = ({
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setShowSuggestions(true) // Show suggestions on every change
+            }}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             onFocus={() => setShowSuggestions(true)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
+                setShowSuggestions(true) // Show suggestions on Enter
                 onToggleMore()
               }
             }}
@@ -172,7 +179,10 @@ export const SearchBar = ({
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
-            onClick={onToggleMore}
+            onClick={() => {
+              setShowSuggestions(true) // Show suggestions on icon click
+              onToggleMore()
+            }}
           >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -183,10 +193,9 @@ export const SearchBar = ({
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
               <UserSuggestions
                 users={(Users.data ?? []).slice(0, 3)}
-                // searchQuery={query}
                 onSelect={(user) => {
-                  setQuery(user.username)
-                  window.location.href = `/profile/${user.username}`
+                  // setQuery(user.username)
+                  navigate(`/profile/${user.username}`)
                 }}
               />
               <TagSuggestions
