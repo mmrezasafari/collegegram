@@ -44,7 +44,10 @@ export const CommentItem = ({ comment, onReply, postId, parentId }: IProps) => {
           </p>
         </div>
         <div className="flex gap-2 md:gap-4 items-end text-primary font-bold text-xs md:text-sm">
-          <div className="h-full flex gap-1" onClick={onToggleLike}>
+          <div
+            className="h-full flex gap-1 cursor-pointer"
+            onClick={onToggleLike}
+          >
             <span className="text-sm">{comment.likeCount}</span>
             <Heart
               size={20}

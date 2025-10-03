@@ -1,6 +1,7 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import api from '@/lib/axios'
 import type { ILogin, ILoginRes, IRegister, IRegisterRes } from '@/types/auth'
+import type { IErrorRes } from '@/types/error'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
@@ -17,24 +18,22 @@ async function loginUser(user: ILogin): Promise<ILoginRes> {
 }
 
 export function useRegister() {
-  return useMutation({
+  return useMutation<IRegisterRes, AxiosError<IErrorRes>, IRegister>({
     mutationKey: ['registerUser'],
     mutationFn: registerUser,
+
     onSuccess: () => {
       notify.success('اطلاعات با موفقیت ثبت شد', {
         position: 'top-right',
         duration: 10000,
       })
     },
+
     onError: (error) => {
-      if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
-      } else {
-        console.error(error)
-      }
+      notify.error(error.response?.data?.message ?? 'خطا در ثبت اطلاعات', {
+        position: 'top-right',
+        duration: 10000,
+      })
     },
   })
 }
@@ -42,26 +41,24 @@ export function useRegister() {
 export function useLogin() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ILoginRes, AxiosError<IErrorRes>, ILogin>({
     mutationKey: ['loginUser'],
     mutationFn: loginUser,
+
     onSuccess: async () => {
       notify.success('خوش آمدید', {
         position: 'top-right',
         duration: 10000,
       })
 
-      await queryClient.invalidateQueries({ queryKey: ['me'] }) // immediately fetch me after login
+      await queryClient.invalidateQueries({ queryKey: ['me'] })
     },
+
     onError: (error) => {
-      if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
-      } else {
-        console.error(error)
-      }
+      notify.error(error.response?.data?.message ?? 'خطا در ورود به حساب', {
+        position: 'top-right',
+        duration: 10000,
+      })
     },
   })
 }

@@ -34,7 +34,7 @@ export const StepSettings = ({
             checked={onlyCloseFriends}
             onCheckedChange={(checked) => setForCloseFriends(checked)}
           />
-          <Label htmlFor="beAPrivate">پیچ خصوصی باشه</Label>
+          <Label htmlFor="beAPrivate">فقط نمایش به دوستان نزدیک</Label>
         </div>
       </div>
     </div>

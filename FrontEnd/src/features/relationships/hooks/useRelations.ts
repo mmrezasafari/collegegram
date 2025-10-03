@@ -8,58 +8,61 @@ import type {
 } from '@/types/relations'
 import { useQuery } from '@tanstack/react-query'
 
+// API functions
 export async function getFollowers(
   userName: string,
 ): Promise<IFollowersListRes> {
-  const res = await api.get<IFollowersListRes>(`users/${userName}/followers`)
+  const res = await api.get(`users/${userName}/followers`)
   return res.data
 }
 
 export async function getFollowings(
   userName: string,
 ): Promise<IFollowingsListRes> {
-  const res = await api.get<IFollowingsListRes>(`users/${userName}/followings`)
+  const res = await api.get(`users/${userName}/followings`)
   return res.data
 }
 
 export async function getCloseFriends(): Promise<ICloseFriendsListRes> {
-  const res = await api.get<ICloseFriendsListRes>('users/me/close-friends')
+  const res = await api.get('users/me/close-friends')
   return res.data
 }
 
 export async function getBlockList(): Promise<IBlockListRes> {
-  const res = await api.get<IBlockListRes>(`users/me/block`)
+  const res = await api.get('users/me/block')
   return res.data
 }
 
 export async function relationStatus(userName: string): Promise<IStatusRes> {
-  const res = await api.get<IStatusRes>(`users/${userName}/status`)
+  const res = await api.get(`users/${userName}/status`)
   return res.data
 }
 
 export function useGetFollowers(userName: string) {
-  return useQuery({
+  return useQuery<IFollowersListRes>({
     queryKey: ['followersList', userName],
-    queryFn: async () => getFollowers(userName),
-    staleTime: 1000 * 60 * 5,
+    queryFn: () => getFollowers(userName),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userName,
     refetchOnWindowFocus: false,
   })
 }
 
 export function useGetFollowings(userName: string) {
-  return useQuery({
+  return useQuery<IFollowingsListRes>({
     queryKey: ['followingsList', userName],
-    queryFn: async () => getFollowings(userName),
-    staleTime: 1000 * 60 * 5,
+    queryFn: () => getFollowings(userName),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userName,
     refetchOnWindowFocus: false,
   })
 }
 
 export function useGetCloseFriends() {
-  return useQuery({
+  return useQuery<ICloseFriendsListRes>({
     queryKey: ['closeFriendsList'],
     queryFn: getCloseFriends,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 }
@@ -68,20 +71,20 @@ export function useGetBlockList() {
   return useQuery<IBlockListRes>({
     queryKey: ['blockList'],
     queryFn: getBlockList,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 }
 
 export function useGetRelationStatus(
   userName: string,
-  options?: { enable?: boolean },
+  options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<IStatusRes>({
     queryKey: ['relation-status', userName],
     queryFn: () => relationStatus(userName),
-    staleTime: 1000 * 60 * 5,
-    enabled: !!userName && options && options.enable,
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userName && options?.enabled,
     refetchOnWindowFocus: false,
   })
 }

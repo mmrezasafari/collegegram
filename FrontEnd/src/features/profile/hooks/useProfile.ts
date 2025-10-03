@@ -36,9 +36,19 @@ export function useEditProfile() {
       values: IProfileEditForm
       avatar: File | null
     }) => {
-      if (Object.keys(values).length) await editProfileInfo(values)
-      if (avatar) await editProfileImg(avatar)
+      const promises: Promise<any>[] = []
+
+      if (Object.keys(values).length) {
+        promises.push(editProfileInfo(values))
+      }
+
+      if (avatar) {
+        promises.push(editProfileImg(avatar))
+      }
+
+      await Promise.all(promises)
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] })
       notify.success('اطلاعات با موفقیت ویرایش شد', {
@@ -46,12 +56,15 @@ export function useEditProfile() {
         duration: 10000,
       })
     },
+
     onError: (err) => {
       if (err instanceof AxiosError) {
-        notify.error(err.response?.data?.message, {
+        notify.error(err.response?.data?.message ?? 'خطا در ویرایش اطلاعات', {
           position: 'top-right',
           duration: 10000,
         })
+      } else {
+        console.error(err)
       }
     },
   })

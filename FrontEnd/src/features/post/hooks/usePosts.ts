@@ -20,16 +20,17 @@ export function useGetPosts() {
   const userName = useGetUserName()
   const { data: user } = useGetUser(userName!)
   const isMyProfile = user?.data.username === undefined
+
   const canFetch =
     isMyProfile ||
     user?.data.isPrivate === false ||
     (user?.data.isPrivate === true && user.data.isFollowing === true)
 
-  return useQuery<IPostsRes, Error>({
+  return useQuery<IPostsRes>({
     queryKey: ['posts', userName],
-    queryFn: async () => getPosts(userName!),
-    enabled: canFetch,
-    staleTime: 1000 * 60 * 5,
+    queryFn: () => getPosts(userName!),
+    enabled: !!userName && canFetch,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
     retry: false,
@@ -37,11 +38,11 @@ export function useGetPosts() {
 }
 
 export function useGetPost(postId: string) {
-  return useQuery<IGetPostRes, Error>({
+  return useQuery<IGetPostRes>({
     queryKey: ['post', postId],
-    queryFn: async () => getPost(postId),
+    queryFn: () => getPost(postId),
     enabled: !!postId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 }

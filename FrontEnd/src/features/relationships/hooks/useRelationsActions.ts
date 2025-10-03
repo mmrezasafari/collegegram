@@ -2,6 +2,7 @@ import { notify } from '@/features/common/components/ui/sonner'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
+import type { INotification } from '@/types/notification'
 import type {
   IAddCloseFriendRes,
   IBlockList,
@@ -13,7 +14,6 @@ import type {
   IFollowingsListRes,
   IFollowRes,
   IRemoveFollowerRes,
-  IStatusRes,
   IUnblockUserRes,
   IUnfollowRes,
 } from '@/types/relations'
@@ -76,32 +76,54 @@ export function useRespond(userName: string) {
   return useMutation({
     mutationKey: ['respond', userName],
     mutationFn: () => respond(userName),
+
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ['relation-status', userName],
+        queryKey: ['notifications', 'me', 'infinite'],
       })
 
-      const prevStatus = queryClient.getQueryData<IStatusRes>([
-        'relation-status',
-        userName,
-      ])
+      const previousData = queryClient.getQueryData<{
+        pages: INotification[][]
+      }>(['notifications', 'me', 'infinite'])
 
-      queryClient.setQueryData<IStatusRes>(
-        ['relation-status', userName],
-        (old) => {
-          if (!old) return old
+      // Optimistically update actor.isFollowing
+      if (previousData) {
+        const newPages = previousData.pages.map((page) =>
+          page.map((notif) =>
+            notif.actor.username === userName
+              ? {
+                ...notif,
+                actor: {
+                  ...notif.actor,
+                  isFollowing: true,
+                },
+              }
+              : notif,
+          ),
+        )
 
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              status: 'ACCEPTED',
-            },
-          }
-        },
-      )
+        queryClient.setQueryData(['notifications', 'me', 'infinite'], {
+          ...previousData,
+          pages: newPages,
+        })
+      }
 
-      return { prevStatus }
+      return { previousData }
+    },
+
+    onError: (_err, _variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ['notifications', 'me', 'infinite'],
+          context.previousData,
+        )
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['notifications', 'me', 'infinite'],
+      })
     },
   })
 }
@@ -112,67 +134,88 @@ export function useAddToBlockList(user: IUser) {
   return useMutation({
     mutationKey: ['add-blockList', user?.username],
     mutationFn: () => addToBlockList(user?.username),
+
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['blockList'] })
-      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['blockList'] }),
+        queryClient.cancelQueries({ queryKey: ['user', user?.username] }),
+      ])
 
       const previousList = queryClient.getQueryData<IBlockListRes>([
         'blockList',
       ])
-      const previousUser = queryClient.getQueryData<IUser>([
+      const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
         user?.username,
       ])
 
-      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) => {
-        if (!old || !user) return old
+      const optimisticBlock: IBlockList = {
+        id: user.id,
+        username: user.username,
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        imageUrl: user.imagePath ?? '',
+        followersCount: user.followerCount ?? 0,
+      }
 
-        const optimisticFriend: IBlockList = {
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName ?? '',
-          lastName: user.lastName ?? '',
-          imageUrl: user.imagePath ?? '',
-          followersCount: user.followerCount ?? 0,
-        }
+      // Optimistic update: block list
+      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) =>
+        old ? { ...old, data: [...old.data, optimisticBlock] } : old,
+      )
 
-        return {
-          ...old,
-          data: [...old.data, optimisticFriend],
-        }
-      })
-
+      // Optimistic update: user
       queryClient.setQueryData<IRegisteredUser>(
         ['user', user?.username],
-        (old) => {
-          if (!old || !user) return old
-
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isBlockedByMe: true,
-            },
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: {
+                ...old.data,
+                isBlockedByMe: true,
+                isCloseFriend: false,
+              },
+            }
+            : old,
       )
 
       return { previousList, previousUser }
     },
+
     onError: (error, _variables, context) => {
-      if (context?.previousUser) {
+      if (context?.previousList) {
         queryClient.setQueryData(['blockList'], context.previousList)
+      }
+      if (context?.previousUser) {
         queryClient.setQueryData(['user', user?.username], context.previousUser)
       }
 
       if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
+        notify.error(
+          error.response?.data.message ?? 'خطا در افزودن به لیست بلاک',
+          {
+            position: 'top-right',
+            duration: 10000,
+          },
+        )
       } else {
         console.error(error)
       }
+    },
+
+    onSuccess: () => {
+      notify.success(
+        `${user?.firstName || user?.username} با موفقیت به لیست بلاک اضافه شد`,
+        {
+          position: 'top-right',
+          duration: 10000,
+        },
+      )
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['blockList'] })
+      queryClient.invalidateQueries({ queryKey: ['user', user?.username] })
     },
   })
 }
@@ -183,43 +226,70 @@ export function useRemoveFromBlockList(user: IUser) {
   return useMutation({
     mutationKey: ['remove-blockList', user?.username],
     mutationFn: () => removeFromBlockList(user?.username),
+
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['blockList'] })
-      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['blockList'] }),
+        queryClient.cancelQueries({ queryKey: ['user', user?.username] }),
+      ])
 
       const previousList = queryClient.getQueryData<IBlockListRes>([
         'blockList',
       ])
-      const previousUser = queryClient.getQueryData<IUser>([
+      const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
         user?.username,
       ])
 
-      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) => {
-        if (!old || !user) return old
-
-        return {
-          ...old,
-          data: old.data.filter((item) => item.username !== user.username),
-        }
-      })
-      queryClient.setQueryData<IRegisteredUser>(
-        ['user', user?.username],
-        (old) => {
-          if (!old || !user) return old
-
-          return {
+      // Optimistic update: block list
+      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) =>
+        old
+          ? {
             ...old,
-            data: {
-              ...old.data,
-              isBlockedByMe: false,
-            },
+            data: old.data.filter((item) => item.username !== user.username),
           }
-        },
+          : old,
       )
 
-      return { previousUser, previousList }
+      // Optimistic update: user
+      queryClient.setQueryData<IRegisteredUser>(
+        ['user', user?.username],
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: {
+                ...old.data,
+                isBlockedByMe: false,
+              },
+            }
+            : old,
+      )
+
+      return { previousList, previousUser }
     },
+
+    onError: (error, _variables, context) => {
+      if (context?.previousList) {
+        queryClient.setQueryData(['blockList'], context.previousList)
+      }
+      if (context?.previousUser) {
+        queryClient.setQueryData(['user', user?.username], context.previousUser)
+      }
+
+      if (error instanceof AxiosError) {
+        notify.error(
+          error.response?.data.message ?? 'خطا در حذف از لیست بلاک',
+          {
+            position: 'top-right',
+            duration: 10000,
+          },
+        )
+      } else {
+        console.error(error)
+      }
+    },
+
     onSuccess: () => {
       notify.success(
         `${user?.firstName || user?.username} با موفقیت از لیست سیاه حذف شد`,
@@ -229,20 +299,10 @@ export function useRemoveFromBlockList(user: IUser) {
         },
       )
     },
-    onError: (error, _variables, context) => {
-      if (context?.previousUser) {
-        queryClient.setQueryData(['user', user?.username], context.previousUser)
-        queryClient.setQueryData(['blockList'], context.previousList)
-      }
 
-      if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
-      } else {
-        console.error(error)
-      }
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['blockList'] })
+      queryClient.invalidateQueries({ queryKey: ['user', user?.username] })
     },
   })
 }
@@ -255,51 +315,48 @@ export function useAddToCloseFriends(user: IUser) {
     mutationFn: () => addToCloseFriend(user?.username),
 
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
-      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['closeFriendsList'] }),
+        queryClient.cancelQueries({ queryKey: ['user', user?.username] }),
+      ])
 
       const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
         'closeFriendsList',
       ])
-      const previousUser = queryClient.getQueryData<IUser>([
+      const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
         user?.username,
       ])
 
+      const optimisticFriend: ICloseFriend = {
+        id: user.id,
+        username: user.username,
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        imageUrl: user.imagePath ?? '',
+        followersCount: user.followerCount ?? 0,
+      }
+
+      // Optimistic update: closeFriendsList
       queryClient.setQueryData<ICloseFriendsListRes>(
         ['closeFriendsList'],
-        (old) => {
-          if (!old || !user) return old
-
-          const optimisticFriend: ICloseFriend = {
-            id: user.id,
-            username: user.username,
-            firstName: user.firstName ?? '',
-            lastName: user.lastName ?? '',
-            imageUrl: user.imagePath ?? '',
-            followersCount: user.followerCount ?? 0,
-          }
-
-          return {
-            ...old,
-            data: [...old.data, optimisticFriend],
-          }
-        },
+        (old) =>
+          old ? { ...old, data: [...old.data, optimisticFriend] } : old,
       )
 
+      // Optimistic update: user
       queryClient.setQueryData<IRegisteredUser>(
         ['user', user?.username],
-        (old) => {
-          if (!old || !user) return old
-
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isCloseFriend: true,
-            },
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: {
+                ...old.data,
+                isCloseFriend: true,
+              },
+            }
+            : old,
       )
 
       return { previousList, previousUser }
@@ -310,14 +367,17 @@ export function useAddToCloseFriends(user: IUser) {
         queryClient.setQueryData(['closeFriendsList'], context.previousList)
       }
       if (context?.previousUser) {
-        queryClient.setQueryData(['user', user?.username], context.previousList)
+        queryClient.setQueryData(['user', user?.username], context.previousUser)
       }
 
       if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
+        notify.error(
+          error.response?.data.message ?? 'خطا در افزودن به دوستان نزدیک',
+          {
+            position: 'top-right',
+            duration: 10000,
+          },
+        )
       } else {
         console.error(error)
       }
@@ -332,54 +392,88 @@ export function useAddToCloseFriends(user: IUser) {
         },
       )
     },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['closeFriendsList'] })
+      queryClient.invalidateQueries({ queryKey: ['user', user?.username] })
+    },
   })
 }
 
 export function useRemoveFromCloseFriends(user: IUser) {
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationKey: ['remove-closeFriends', user?.username],
     mutationFn: () => removeFromCloseFriends(user?.username),
+
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
-      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['closeFriendsList'] }),
+        queryClient.cancelQueries({ queryKey: ['user', user?.username] }),
+      ])
 
       const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
         'closeFriendsList',
       ])
-      const previousUser = queryClient.getQueryData<IUser>([
+      const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
         user?.username,
       ])
 
+      // Optimistic update: closeFriendsList
       queryClient.setQueryData<ICloseFriendsListRes>(
         ['closeFriendsList'],
-        (old) => {
-          if (!old || !user) return old
-
-          return {
-            ...old,
-            data: old.data.filter((item) => item.username !== user.username),
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: old.data.filter(
+                (item) => item.username !== user.username,
+              ),
+            }
+            : old,
       )
+
+      // Optimistic update: user
       queryClient.setQueryData<IRegisteredUser>(
         ['user', user?.username],
-        (old) => {
-          if (!old || !user) return old
-
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              isCloseFriend: false,
-            },
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: {
+                ...old.data,
+                isCloseFriend: false,
+              },
+            }
+            : old,
       )
 
       return { previousList, previousUser }
     },
+
+    onError: (error, _variables, context) => {
+      if (context?.previousList) {
+        queryClient.setQueryData(['closeFriendsList'], context.previousList)
+      }
+      if (context?.previousUser) {
+        queryClient.setQueryData(['user', user?.username], context.previousUser)
+      }
+
+      if (error instanceof AxiosError) {
+        notify.error(
+          error.response?.data.message ?? 'خطا در حذف از دوستان نزدیک',
+          {
+            position: 'top-right',
+            duration: 10000,
+          },
+        )
+      } else {
+        console.error(error)
+      }
+    },
+
     onSuccess: () => {
       notify.success(
         `${user?.firstName || user?.username} با موفقیت از لیست دوستان نزدیک حذف شد`,
@@ -389,22 +483,10 @@ export function useRemoveFromCloseFriends(user: IUser) {
         },
       )
     },
-    onError: (error, _variables, context) => {
-      if (context?.previousList) {
-        queryClient.setQueryData(['closeFriendsList'], context.previousList)
-      }
-      if (context?.previousUser) {
-        queryClient.setQueryData(['user', user?.username], context.previousList)
-      }
 
-      if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
-          position: 'top-right',
-          duration: 10000,
-        })
-      } else {
-        console.error(error)
-      }
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['closeFriendsList'] })
+      queryClient.invalidateQueries({ queryKey: ['user', user?.username] })
     },
   })
 }
@@ -416,9 +498,14 @@ export function useRemoveFollower(userName: string) {
   return useMutation({
     mutationKey: ['remove-follower', userName],
     mutationFn: () => removeFollower(userName),
+
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['me'] })
-      await queryClient.cancelQueries({ queryKey: ['followersList', userName] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['me'] }),
+        queryClient.cancelQueries({
+          queryKey: ['followersList', me?.data.username],
+        }),
+      ])
 
       const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
       const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
@@ -426,35 +513,38 @@ export function useRemoveFollower(userName: string) {
         me?.data.username,
       ])
 
-      queryClient.setQueryData<IFollowersListRes | undefined>(
+      // Optimistic update: followers list
+      queryClient.setQueryData<IFollowersListRes>(
         ['followersList', me?.data.username],
-        (old) => {
-          if (!old || !me?.data) return old
-
-          return {
-            ...old,
-            data: old.data.filter((u) => u.username !== userName),
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: old.data.filter((u) => u.username !== userName),
+            }
+            : old,
       )
 
-      queryClient.setQueryData<IRegisteredUser>(['me'], (old) => {
-        if (!old) return old
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            followerCount: (old.data.followerCount ?? 0) - 1,
-          },
-        }
-      })
+      // Optimistic update: me
+      queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
+        old
+          ? {
+            ...old,
+            data: {
+              ...old.data,
+              followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
+            },
+          }
+          : old,
+      )
 
-      return { previousFollowers, previousMe }
+      return { previousMe, previousFollowers }
     },
+
     onError: (error, _variables, context) => {
       if (context?.previousFollowers) {
         queryClient.setQueryData(
-          ['followeList', me?.data.username],
+          ['followersList', me?.data.username],
           context.previousFollowers,
         )
       }
@@ -463,13 +553,20 @@ export function useRemoveFollower(userName: string) {
       }
 
       if (error instanceof AxiosError) {
-        notify.error(error.response?.data.message, {
+        notify.error(error.response?.data.message ?? 'خطا در حذف دنبال‌کننده', {
           position: 'top-right',
           duration: 10000,
         })
       } else {
         console.error(error)
       }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+      queryClient.invalidateQueries({
+        queryKey: ['followersList', me?.data.username],
+      })
     },
   })
 }
@@ -479,21 +576,24 @@ export function useFollowAction(userName: string) {
   const { data: me } = useMe()
   const { data: user } = useGetUser(userName)
 
-  const mutation = useMutation({
+  const mutation = useMutation<IFollowRes, Error, void, any>({
     mutationKey: ['follow', userName],
     mutationFn: async () => {
-      if (!userName) throw new Error('Username is not available yet!')
+      if (!userName || (user?.data.isPrivate && !user.data.isFollowing)) {
+        throw new Error('Cannot follow private user without permission')
+      }
       return followAction(userName)
     },
-    onMutate: async () => {
-      if (user?.data.isPrivate && !user.data.isFollowing) return
 
-      await queryClient.cancelQueries({ queryKey: ['user', userName] })
-      await queryClient.cancelQueries({ queryKey: ['me'] })
-      await queryClient.cancelQueries({ queryKey: ['followersList', userName] })
-      await queryClient.cancelQueries({
-        queryKey: ['followingsList', me?.data.username],
-      })
+    onMutate: async () => {
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['user', userName] }),
+        queryClient.cancelQueries({ queryKey: ['me'] }),
+        queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
+        queryClient.cancelQueries({
+          queryKey: ['followingsList', me?.data.username],
+        }),
+      ])
 
       const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
@@ -509,92 +609,64 @@ export function useFollowAction(userName: string) {
         me?.data.username,
       ])
 
-      // Optimistic update for user
-      queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) => {
-        if (!old) return old
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            isFollowing: !old.data.isFollowing,
-            followerCount: (old.data.followerCount ?? 0) + 1,
-          },
-        }
-      })
+      const meUser = me?.data && {
+        id: me.data.id,
+        username: me.data.username,
+        firstName: me.data.firstName,
+        lastName: me.data.lastName,
+        imageUrl: me.data.imagePath,
+        followerCount: me.data.followerCount,
+        followingCount: me.data.followingCount,
+        isFollowing: me.data.isFollowing,
+        email: me.data.email,
+      }
 
-      // Optimistic update for me -> just followings count
-      queryClient.setQueryData<IRegisteredUser>(['me'], (old) => {
-        if (!old) return old
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            followingCount: (old.data.followingCount ?? 0) + 1,
-          },
-        }
-      })
-
-      // Optimistic update for user followers list
-      queryClient.setQueryData<IFollowersListRes | undefined>(
-        ['followersList', userName],
-        (old) => {
-          // check old exist
-          if (!old || !me?.data) return old
-
-          if (old.data.find((u) => u.username === me.data.username)) return old
-          return {
+      // Optimistic update: user
+      queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
+        old
+          ? {
             ...old,
-            data: [
+            data: {
               ...old.data,
-              {
-                id: me.data.id,
-                username: me.data.username,
-                firstName: me.data.firstName,
-                lastName: me.data.lastName,
-                imageUrl: me.data.imagePath,
-                followerCount: me.data.followerCount,
-                followingCount: me.data.followingCount,
-                isFollowing: me.data.isFollowing,
-                email: me.data.email,
-              },
-            ],
+              isFollowing: !old.data.isFollowing,
+              followerCount: (old.data.followerCount ?? 0) + 1,
+            },
           }
-        },
+          : old,
       )
 
-      // Optimistic update for me followings list
-      queryClient.setQueryData<IFollowingsListRes | undefined>(
-        ['followingsList', me?.data.username],
-        (old) => {
-          if (!old || !me?.data) return old
-
-          return {
+      // Optimistic update: me
+      queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
+        old
+          ? {
             ...old,
-            data: [
+            data: {
               ...old.data,
-              {
-                id: me.data.id,
-                username: me.data.username,
-                firstName: me.data.firstName,
-                lastName: me.data.lastName,
-                imageUrl: me.data.imagePath,
-                followerCount: me.data.followerCount,
-                followingCount: me.data.followingCount,
-                isFollowing: me.data.isFollowing,
-                email: me.data.email,
-              },
-            ],
+              followingCount: (old.data.followingCount ?? 0) + 1,
+            },
           }
-        },
+          : old,
+      )
+
+      // Optimistic update: followers list
+      queryClient.setQueryData<IFollowersListRes>(
+        ['followersList', userName],
+        (old) =>
+          old && meUser && !old.data.find((u) => u.username === meUser.username)
+            ? { ...old, data: [...old.data, meUser] }
+            : old,
+      )
+
+      // Optimistic update: followings list
+      queryClient.setQueryData<IFollowingsListRes>(
+        ['followingsList', me?.data.username],
+        (old) =>
+          old && meUser ? { ...old, data: [...old.data, meUser] } : old,
       )
 
       return { previousUser, previousMe, previousFollowers, previousFollowings }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['relation-status', userName],
-      })
-    },
+
     onError: (_err, _variables, context) => {
       if (context?.previousUser)
         queryClient.setQueryData(['user', userName], context.previousUser)
@@ -611,26 +683,26 @@ export function useFollowAction(userName: string) {
           context.previousFollowings,
         )
     },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })
+    },
+
     onSettled: () => {
       if (!userName || !me?.data) return
-      queryClient.cancelQueries({
-        queryKey: ['user', userName],
-      })
-      queryClient.cancelQueries({ queryKey: ['me'] })
-      queryClient.cancelQueries({
-        queryKey: ['followersList', userName],
-      })
-      queryClient.cancelQueries({
-        queryKey: ['followingsList', me?.data.username],
+      queryClient.invalidateQueries({ queryKey: ['user', userName] })
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+      queryClient.invalidateQueries({ queryKey: ['followersList', userName] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingsList', me.data.username],
       })
     },
   })
 
   useEffect(() => {
-    if (userName)
-      queryClient.prefetchQuery({
-        queryKey: ['user', userName],
-      })
+    if (userName) {
+      queryClient.prefetchQuery({ queryKey: ['user', userName] })
+    }
   }, [userName, queryClient])
 
   return mutation
@@ -646,13 +718,16 @@ export function useUnfollowAction(userName: string) {
       if (!userName) throw new Error('Username is not available yet!')
       return unfollowAction(userName)
     },
+
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['user', userName] })
-      await queryClient.cancelQueries({ queryKey: ['me'] })
-      await queryClient.cancelQueries({ queryKey: ['followersList', userName] })
-      await queryClient.cancelQueries({
-        queryKey: ['followingsList', me?.data.username],
-      })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['user', userName] }),
+        queryClient.cancelQueries({ queryKey: ['me'] }),
+        queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
+        queryClient.cancelQueries({
+          queryKey: ['followingsList', me?.data.username],
+        }),
+      ])
 
       const previousUser = queryClient.getQueryData<IRegisteredUser>([
         'user',
@@ -668,12 +743,10 @@ export function useUnfollowAction(userName: string) {
         me?.data.username,
       ])
 
-      // Optimistic update for user
-      queryClient.setQueryData<IRegisteredUser | undefined>(
-        ['user', userName],
-        (old) => {
-          if (!old) return old
-          return {
+      // Optimistic update: user
+      queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
+        old
+          ? {
             ...old,
             data: {
               ...old.data,
@@ -681,54 +754,49 @@ export function useUnfollowAction(userName: string) {
               followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
             },
           }
-        },
+          : old,
       )
 
-      // Optimistic update for me
-      queryClient.setQueryData<IRegisteredUser | undefined>(['me'], (old) => {
-        if (!old) return old
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
-          },
-        }
-      })
+      // Optimistic update: me
+      queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
+        old
+          ? {
+            ...old,
+            data: {
+              ...old.data,
+              followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
+            },
+          }
+          : old,
+      )
 
-      // Optimistic update for followers list
-      queryClient.setQueryData<IFollowersListRes | undefined>(
+      // Optimistic update: followers list
+      queryClient.setQueryData<IFollowersListRes>(
         ['followersList', userName],
-        (old) => {
-          if (!old || !me?.data) return old
-
-          return {
-            ...old,
-            data: old.data.filter((u) => u.username !== me.data.username),
-          }
-        },
+        (old) =>
+          old && me?.data
+            ? {
+              ...old,
+              data: old.data.filter((u) => u.username !== me.data.username),
+            }
+            : old,
       )
 
-      // Optimistic update for followings list
-      queryClient.setQueryData<IFollowingsListRes | undefined>(
+      // Optimistic update: followings list
+      queryClient.setQueryData<IFollowingsListRes>(
         ['followingsList', me?.data.username],
-        (old) => {
-          if (!old || !me?.data) return old
-
-          return {
-            ...old,
-            data: old.data.filter((u) => u.username !== userName),
-          }
-        },
+        (old) =>
+          old
+            ? {
+              ...old,
+              data: old.data.filter((u) => u.username !== userName),
+            }
+            : old,
       )
 
       return { previousUser, previousMe, previousFollowers, previousFollowings }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['relation-status', userName],
-      })
-    },
+
     onError: (_err, _variables, context) => {
       if (context?.previousUser)
         queryClient.setQueryData(['user', userName], context.previousUser)
@@ -745,19 +813,26 @@ export function useUnfollowAction(userName: string) {
           context.previousFollowings,
         )
     },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })
+    },
+
     onSettled: () => {
       if (!userName || !me?.data) return
-      queryClient.cancelQueries({ queryKey: ['user', userName] })
-      queryClient.cancelQueries({ queryKey: ['me'] })
-      queryClient.cancelQueries({ queryKey: ['followersList', userName] })
-      queryClient.cancelQueries({
-        queryKey: ['followingsList', me?.data.username],
+      queryClient.invalidateQueries({ queryKey: ['user', userName] })
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+      queryClient.invalidateQueries({ queryKey: ['followersList', userName] })
+      queryClient.invalidateQueries({
+        queryKey: ['followingsList', me.data.username],
       })
     },
   })
 
   useEffect(() => {
-    if (userName) queryClient.prefetchQuery({ queryKey: ['user', userName] })
+    if (userName) {
+      queryClient.prefetchQuery({ queryKey: ['user', userName] })
+    }
   }, [userName, queryClient])
 
   return mutation

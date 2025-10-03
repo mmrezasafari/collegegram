@@ -15,7 +15,6 @@ import {
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
 import clsx from 'clsx'
-import { UserRoundMinus } from 'lucide-react'
 
 dayjs.extend(relativeTime)
 dayjs.locale('fa')
@@ -27,7 +26,7 @@ interface IProps {
 export const NotificationItem = ({ notification }: IProps) => {
   const { actor, type, createdAt, post } = notification
   const { data: status } = useGetRelationStatus(actor.username, {
-    enable: type === 'FOLLOW' || type === 'FOLLOW_REQUEST',
+    enabled: type === 'FOLLOW' || type === 'FOLLOW_REQUEST',
   })
 
   const { mutate: unFollowMutation } = useUnfollowAction(actor?.username)
@@ -191,7 +190,7 @@ export const NotificationItem = ({ notification }: IProps) => {
                   {actor?.firstName
                     ? `${actor?.firstName} ${actor?.lastName} `
                     : `@${actor?.username} `}{' '}
-                  <span>دنبالت کرد</span>
+                  <span>متین دهقان درخواست دوستی داده </span>
                 </p>
                 <p className="text-xs text-gray-600" dir="rtl">
                   {dayjs(createdAt).fromNow()}
@@ -199,7 +198,7 @@ export const NotificationItem = ({ notification }: IProps) => {
               </div>
             </div>
             <div className="flex gap-2">
-              {status?.data.status === 'PENDING' ? (
+              {!actor.isFollowing ? (
                 <>
                   <Button
                     className="flex"
@@ -217,11 +216,9 @@ export const NotificationItem = ({ notification }: IProps) => {
                   </Button>
                 </>
               ) : (
-                <Button className="cursor-pointer" onClick={handleRemove}>
-                  <div className="flex gap-2 justify-end">
-                    <span>حذف از دنبال‌کننده‌ها</span>
-                  </div>
-                </Button>
+                <span className="bg-backgroundSuccess rounded-4xl text-xs p-2">
+                  درخواست قبول شد
+                </span>
               )}
             </div>
           </div>

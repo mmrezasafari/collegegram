@@ -110,7 +110,11 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                 {/* fullName in mobile */}
                 <Link
                   className="font-bold text-secondary cursor-pointer"
-                  to={`/profile/${post?.post.username}`}
+                  to={
+                    post?.post.username !== me?.data.username
+                      ? `/profile/${post?.post.username}`
+                      : `/profile`
+                  }
                 >
                   {post?.post.firstName ? (
                     <span>
@@ -221,7 +225,11 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
                 {/* fullName in desktop */}
                 <Link
                   className="font-bold text-secondary"
-                  to={`/profile/${post?.post.username}`}
+                  to={
+                    post?.post.username !== me?.data.username
+                      ? `/profile/${post?.post.username}`
+                      : `/profile`
+                  }
                 >
                   {post?.post.firstName ? (
                     <span>

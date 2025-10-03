@@ -71,10 +71,16 @@ export const CommentInputeArea = ({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              onSetComment()
+            }
+          }}
         />
       </div>
       <SendHorizontal
-        className="rotate-180"
+        className="rotate-180 cursor-pointer"
         size={35}
         color="#ea5a69"
         onClick={onSetComment}
