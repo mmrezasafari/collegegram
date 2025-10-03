@@ -35,6 +35,8 @@ import { Link } from 'react-router-dom'
 import { CommentSection } from '@/features/comment/components/CommentsSection'
 import { cn } from '@/lib/utils'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
+import { Skeleton } from '@/features/common/components/ui/skeleton'
 
 interface IProp {
   postId: string
@@ -45,7 +47,7 @@ dayjs.extend(relativeTime)
 dayjs.locale('fa')
 
 export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
-  const { data } = useGetPost(postId)
+  const { data, isPending: postPending } = useGetPost(postId)
   const { data: me } = useMe()
   const post = data?.data
   const [api, setApi] = useState<CarouselApi>()
@@ -94,65 +96,87 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
         )}
         <div className="flex flex-col md:flex-row md:gap-8">
           <div className="flex-[50%] flex flex-col h-full w-full gap-4">
-            <div className="md:hidden flex justify-between px-4">
-              {/* avatar in mobile */}
-              <div className="md:hidden flex items-center gap-4 ">
-                <Avatar className="w-[48px] h-[48px]">
-                  <AvatarImage
-                    className="object-cover"
-                    src={post?.post.profileImage}
-                    alt="user"
-                  />
-                  <AvatarFallback className="bg-geryLight">
-                    <UserRound color="#A5A5A5" strokeWidth={1.5} />
-                  </AvatarFallback>
-                </Avatar>
-                {/* fullName in mobile */}
-                <Link
-                  className="font-bold text-secondary cursor-pointer"
-                  to={
-                    post?.post.username !== me?.data.username
-                      ? `/profile/${post?.post.username}`
-                      : `/profile`
-                  }
-                >
-                  {post?.post.firstName ? (
-                    <span>
-                      {post.post.firstName} {post.post.lastName}
-                    </span>
-                  ) : (
-                    <span className="rtl">{post?.post.username}@</span>
-                  )}
-                </Link>
+            {postPending ? (
+              <div className="md:hidden flex items-center space-x-4 px-4">
+                <Skeleton className="h-12 w-12 rounded-full bg-geryLight" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px] bg-geryLight" />
+                  <Skeleton className="h-4 w-[200px] bg-geryLight" />
+                </div>
               </div>
-              {/* eidt btn in mobile */}
-              {me?.data.username === post?.post.username && (
-                <Button
-                  className="md:hidden min-w-min p-0"
-                  variant="link"
-                  onClick={() => setEditPostModalOpen(true)}
-                >
-                  <Pencil />
-                </Button>
-              )}
-            </div>
+            ) : (
+              <div className="md:hidden flex justify-between px-4">
+                {/* avatar in mobile */}
+                <div className="md:hidden flex items-center gap-4 ">
+                  <Avatar className="w-[48px] h-[48px]">
+                    <AvatarImage
+                      className="object-cover"
+                      src={post?.post.profileImage}
+                      alt="user"
+                    />
+                    <AvatarFallback className="bg-geryLight">
+                      <UserRound color="#A5A5A5" strokeWidth={1.5} />
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* fullName in mobile */}
+                  <Link
+                    className="font-bold text-secondary cursor-pointer"
+                    to={
+                      post?.post.username !== me?.data.username
+                        ? `/profile/${post?.post.username}`
+                        : `/profile`
+                    }
+                  >
+                    {post?.post.firstName ? (
+                      <span>
+                        {post.post.firstName} {post.post.lastName}
+                      </span>
+                    ) : (
+                      <span className="rtl">{post?.post.username}@</span>
+                    )}
+                  </Link>
+                </div>
+                {/* eidt btn in mobile */}
+                {me?.data.username === post?.post.username && (
+                  <Button
+                    className="md:hidden min-w-min p-0"
+                    variant="link"
+                    onClick={() => setEditPostModalOpen(true)}
+                  >
+                    <Pencil />
+                  </Button>
+                )}
+              </div>
+            )}
             <Carousel
               setApi={setApi}
               className="w-full h-full static flex justify-center flex-col !pl-0"
               style={{ direction: 'ltr' }}
             >
-              <CarouselContent className="w-full">
-                {post?.post.images.map((image, index) => (
-                  <CarouselItem
-                    className="w-full flex justify-center items-center"
-                    key={index}
-                  >
-                    <img
-                      className="h-[375px] md:rounded-3xl w-full md:h-[550px] object-contain"
-                      src={image.url}
-                    />
-                  </CarouselItem>
-                ))}
+              <CarouselContent className="w-full !rounded-none">
+                {postPending ? (
+                  <div className="w-full px-4 rounded-none pt-1">
+                    <CarouselItem className="w-full  justify-center items-center">
+                      <Skeleton className="w-full h-96 bg-geryLight rounded-none" />
+                    </CarouselItem>
+                  </div>
+                ) : post?.post.images.length ? (
+                  post.post.images.map((image, index) => (
+                    <CarouselItem
+                      className="w-full flex justify-center items-center"
+                      key={index}
+                    >
+                      <ImageWithFallback
+                        className="h-[375px] md:rounded-3xl w-full md:h-[550px] object-contain"
+                        src={image.url}
+                      />
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <div className="text-center text-muted-foreground py-4">
+                    تصویری برای این پست وجود ندارد
+                  </div>
+                )}
               </CarouselContent>
               <div className="flex flex-col justify-center items-center">
                 <div>
@@ -211,35 +235,44 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
           >
             <div className="max-md:hidden flex justify-between items-center">
               {/* Avatar in desktop */}
-              <div className="flex items-center gap-4">
-                <Avatar className="w-[48px] h-[48px]">
-                  <AvatarImage
-                    className="object-cover"
-                    src={post?.post.profileImage}
-                    alt="user"
-                  />
-                  <AvatarFallback className="bg-geryLight">
-                    <UserRound color="#A5A5A5" strokeWidth={1.5} />
-                  </AvatarFallback>
-                </Avatar>
-                {/* fullName in desktop */}
-                <Link
-                  className="font-bold text-secondary"
-                  to={
-                    post?.post.username !== me?.data.username
-                      ? `/profile/${post?.post.username}`
-                      : `/profile`
-                  }
-                >
-                  {post?.post.firstName ? (
-                    <span>
-                      {post.post.firstName} {post.post.lastName}
-                    </span>
-                  ) : (
-                    <span>{post?.post.username}@</span>
-                  )}
-                </Link>
-              </div>
+              {postPending ? (
+                <div className="flex items-center gap-4">
+                  <Skeleton className="w-[48px] h-[48px] rounded-full bg-geryLight" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[120px] bg-geryLight" />
+                    <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Avatar className="w-[48px] h-[48px]">
+                    <AvatarImage
+                      className="object-cover"
+                      src={post?.post.profileImage}
+                      alt="user"
+                    />
+                    <AvatarFallback className="bg-geryLight">
+                      <UserRound color="#A5A5A5" strokeWidth={1.5} />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Link
+                    className="font-bold text-secondary"
+                    to={
+                      post?.post.username !== me?.data.username
+                        ? `/profile/${post?.post.username}`
+                        : `/profile`
+                    }
+                  >
+                    {post?.post.firstName ? (
+                      <span>
+                        {post.post.firstName} {post.post.lastName}
+                      </span>
+                    ) : (
+                      <span>{post?.post.username}@</span>
+                    )}
+                  </Link>
+                </div>
+              )}
               {/* Eidt btn in desktop ratio */}
               {me?.data.username === post?.post.username && (
                 <Button onClick={() => setEditPostModalOpen(true)}>
@@ -254,38 +287,44 @@ export const PostDetails = ({ postId, mode = 'modal' }: IProp) => {
             </div>
             {/* caption of post */}
             <div className="max-h-[100px] md:h-[190px] overflow-y-auto md:px-2">
-              {post?.post.caption ? (
+              {postPending ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full bg-geryLight" />
+                  <Skeleton className="h-4 w-full bg-geryLight" />
+                  <Skeleton className="h-4 w-full bg-geryLight" />
+                </div>
+              ) : post?.post.caption ? (
                 <div
                   className="text-justify text-wrap text-sm/6"
                   dangerouslySetInnerHTML={{
-                    __html: parseCaption(post?.post.caption),
+                    __html: parseCaption(post.post.caption),
                   }}
                 ></div>
               ) : (
-                <p>کپشن ندارد</p>
+                <p className="text-muted-foreground">کپشن ندارد</p>
               )}
             </div>
             {/* mentions */}
             <div className="flex gap-2 flex-wrap">
               {post?.mentionedUsernames?.length
                 ? post.mentionedUsernames.map((user, i) => (
-                  <div key={i} className="text-light">
-                    <Link
-                      to={
-                        user !== me?.data.username
-                          ? `/profile/${user}`
-                          : '/profile'
-                      }
-                    >
-                      <Badge
-                        className="text-sm hover:scale-103 transition-all"
-                        variant="secondary"
+                    <div key={i} className="text-light">
+                      <Link
+                        to={
+                          user !== me?.data.username
+                            ? `/profile/${user}`
+                            : '/profile'
+                        }
                       >
-                        {user}
-                      </Badge>
-                    </Link>
-                  </div>
-                ))
+                        <Badge
+                          className="text-sm hover:scale-103 transition-all"
+                          variant="secondary"
+                        >
+                          {user}
+                        </Badge>
+                      </Link>
+                    </div>
+                  ))
                 : ''}
             </div>
             <div className="max-md:hidden flex justify-end gap-4">

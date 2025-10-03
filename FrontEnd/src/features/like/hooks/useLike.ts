@@ -59,13 +59,13 @@ export function useToggleLike(postId: string) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                liked: action === 'like',
-                likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  liked: action === 'like',
+                  likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
+                },
+              }
             : old,
         )
       }
@@ -77,24 +77,21 @@ export function useToggleLike(postId: string) {
           (old) =>
             old
               ? {
-                ...old,
-                pages: old.pages.map((page) => ({
-                  ...page,
-                  data: {
-                    ...page.data,
-                    data: page.data.data.map((item) =>
+                  ...old,
+                  pages: old.pages.map((page) => ({
+                    ...page,
+                    data: page.data.map((item) =>
                       item.post.id === postId
                         ? {
-                          ...item,
-                          isLiked: action === 'like',
-                          likeCount:
-                            item.likeCount + (action === 'like' ? 1 : -1),
-                        }
+                            ...item,
+                            isLiked: action === 'like',
+                            likeCount:
+                              item.likeCount + (action === 'like' ? 1 : -1),
+                          }
                         : item,
                     ),
-                  },
-                })),
-              }
+                  })),
+                }
               : old,
         )
       }

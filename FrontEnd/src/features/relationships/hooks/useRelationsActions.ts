@@ -92,12 +92,12 @@ export function useRespond(userName: string) {
           page.map((notif) =>
             notif.actor.username === userName
               ? {
-                ...notif,
-                actor: {
-                  ...notif.actor,
-                  isFollowing: true,
-                },
-              }
+                  ...notif,
+                  actor: {
+                    ...notif.actor,
+                    isFollowing: true,
+                  },
+                }
               : notif,
           ),
         )
@@ -169,13 +169,13 @@ export function useAddToBlockList(user: IUser) {
         (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                isBlockedByMe: true,
-                isCloseFriend: false,
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  isBlockedByMe: true,
+                  isCloseFriend: false,
+                },
+              }
             : old,
       )
 
@@ -245,9 +245,9 @@ export function useRemoveFromBlockList(user: IUser) {
       queryClient.setQueryData<IBlockListRes>(['blockList'], (old) =>
         old
           ? {
-            ...old,
-            data: old.data.filter((item) => item.username !== user.username),
-          }
+              ...old,
+              data: old.data.filter((item) => item.username !== user.username),
+            }
           : old,
       )
 
@@ -257,12 +257,12 @@ export function useRemoveFromBlockList(user: IUser) {
         (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                isBlockedByMe: false,
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  isBlockedByMe: false,
+                },
+              }
             : old,
       )
 
@@ -350,12 +350,12 @@ export function useAddToCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                isCloseFriend: true,
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  isCloseFriend: true,
+                },
+              }
             : old,
       )
 
@@ -427,11 +427,11 @@ export function useRemoveFromCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-              ...old,
-              data: old.data.filter(
-                (item) => item.username !== user.username,
-              ),
-            }
+                ...old,
+                data: old.data.filter(
+                  (item) => item.username !== user.username,
+                ),
+              }
             : old,
       )
 
@@ -441,12 +441,12 @@ export function useRemoveFromCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                isCloseFriend: false,
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  isCloseFriend: false,
+                },
+              }
             : old,
       )
 
@@ -519,9 +519,9 @@ export function useRemoveFollower(userName: string) {
         (old) =>
           old
             ? {
-              ...old,
-              data: old.data.filter((u) => u.username !== userName),
-            }
+                ...old,
+                data: old.data.filter((u) => u.username !== userName),
+              }
             : old,
       )
 
@@ -529,12 +529,12 @@ export function useRemoveFollower(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
+              },
+            }
           : old,
       )
 
@@ -625,13 +625,13 @@ export function useFollowAction(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              isFollowing: !old.data.isFollowing,
-              followerCount: (old.data.followerCount ?? 0) + 1,
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                isFollowing: !old.data.isFollowing,
+                followerCount: (old.data.followerCount ?? 0) + 1,
+              },
+            }
           : old,
       )
 
@@ -639,12 +639,12 @@ export function useFollowAction(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              followingCount: (old.data.followingCount ?? 0) + 1,
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                followingCount: (old.data.followingCount ?? 0) + 1,
+              },
+            }
           : old,
       )
 
@@ -747,13 +747,13 @@ export function useUnfollowAction(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              isFollowing: false,
-              followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                isFollowing: false,
+                followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
+              },
+            }
           : old,
       )
 
@@ -761,12 +761,12 @@ export function useUnfollowAction(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
+              },
+            }
           : old,
       )
 
@@ -776,9 +776,9 @@ export function useUnfollowAction(userName: string) {
         (old) =>
           old && me?.data
             ? {
-              ...old,
-              data: old.data.filter((u) => u.username !== me.data.username),
-            }
+                ...old,
+                data: old.data.filter((u) => u.username !== me.data.username),
+              }
             : old,
       )
 
@@ -788,9 +788,9 @@ export function useUnfollowAction(userName: string) {
         (old) =>
           old
             ? {
-              ...old,
-              data: old.data.filter((u) => u.username !== userName),
-            }
+                ...old,
+                data: old.data.filter((u) => u.username !== userName),
+              }
             : old,
       )
 

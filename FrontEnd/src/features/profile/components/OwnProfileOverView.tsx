@@ -9,46 +9,103 @@ import { useState } from 'react'
 import { Button } from '@/features/common/components/ui/button'
 import { EditProfileForm } from './EditProfileForm'
 import type { IUser } from '@/types/user'
+import { Skeleton } from '@/features/common/components/ui/skeleton'
 
 export const OwnProfileOverView = () => {
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
   const [editProfileOpen, setEditProfileOpen] = useState(false)
-  const { data: me } = useMe()
+  const { data: me, isPending } = useMe()
   const user = me?.data as IUser
 
   return (
     <>
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex flex-col md:flex-col w-full md:gap-8 gap-4">
-          <div className="flex w-full items-center md:gap-8 gap-4">
-            <Avatar className="md:w-[147px] md:h-[147px] w-[65px] h-[65px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
-              <AvatarImage
-                src={user?.imagePath}
-                className="w-full h-full object-cover rounded-full"
-                alt="avatar"
-              />
-              <AvatarFallback className="w-[45px] md:w-[100px] h-auto">
-                <UserRound
-                  className="w-full h-full object-cover"
-                  color="#A5A5A5A5"
-                  fill="#A5A5A5A5"
-                  strokeWidth={0}
+      {isPending ? (
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col w-full md:gap-8 gap-4">
+            <div className="flex w-full items-center md:gap-8 gap-4">
+              <Skeleton className="md:w-[147px] md:h-[147px] w-[65px] h-[65px] rounded-full bg-geryLight" />
+              <div className="flex flex-col gap-4 w-full">
+                <Skeleton className="h-6 w-[200px] bg-geryLight" />
+                <Skeleton className="h-4 w-[120px] bg-geryLight" />
+                <div className="hidden md:flex space-x-4 items-center h-4">
+                  <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                  <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                  <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                </div>
+                <Skeleton className="hidden md:block h-4 w-full bg-geryLight" />
+              </div>
+            </div>
+            <div className="md:hidden flex flex-col gap-4">
+              <div className="flex space-x-4 justify-center h-4">
+                <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                <Skeleton className="h-4 w-[80px] bg-geryLight" />
+                <Skeleton className="h-4 w-[80px] bg-geryLight" />
+              </div>
+              <Skeleton className="h-4 w-full bg-geryLight" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-[150px] max-md:w-full bg-geryLight" />
+        </div>
+      ) : (
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-col w-full md:gap-8 gap-4">
+            <div className="flex w-full items-center md:gap-8 gap-4">
+              <Avatar className="md:w-[147px] md:h-[147px] w-[65px] h-[65px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
+                <AvatarImage
+                  src={user?.imagePath}
+                  className="w-full h-full object-cover rounded-full"
+                  alt="avatar"
                 />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <p className="md:text-2xl font-bold text-wrap text-justify">
-                  <span>{user?.firstName} </span>
-                  <span>{user?.lastName}</span>
-                </p>
-                <p className="md:text-base text-sm font-light">
-                  <span>{user?.username}</span>
-                  <span>@</span>
+                <AvatarFallback className="w-[45px] md:w-[100px] h-auto">
+                  <UserRound
+                    className="w-full h-full object-cover"
+                    color="#A5A5A5A5"
+                    fill="#A5A5A5A5"
+                    strokeWidth={0}
+                  />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <p className="md:text-2xl font-bold text-wrap text-justify">
+                    <span>{user?.firstName} </span>
+                    <span>{user?.lastName}</span>
+                  </p>
+                  <p className="md:text-base text-sm font-light">
+                    <span>{user?.username}</span>
+                    <span>@</span>
+                  </p>
+                </div>
+                <div className="hidden md:flex space-x-4 items-center h-4">
+                  <div
+                    className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                    onClick={() => setFollowingsListOpen(true)}
+                  >
+                    <span>{user?.followingCount}</span>
+                    <span>دنبال‌شونده</span>
+                  </div>
+                  <Separator orientation="vertical" className="bg-black " />
+                  <div
+                    className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
+                    onClick={() => setFollowersListOpen(true)}
+                  >
+                    <span>{user?.followerCount}</span>
+                    <span>دنبال‌کننده‌</span>
+                  </div>
+                  <Separator orientation="vertical" className="bg-black " />
+                  <div className="flex gap-2">
+                    <span>{user?.postCount}</span>
+                    <span>پست</span>
+                  </div>
+                </div>
+                <p className="hidden md:block text-base text-gray-400 text-justify">
+                  {user?.bio}
                 </p>
               </div>
-              <div className="hidden md:flex space-x-4 items-center h-4">
+            </div>
+            <div className="md:hidden flex flex-col gap-4">
+              <div className="flex space-x-4 justify-center h-4">
                 <div
                   className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
                   onClick={() => setFollowingsListOpen(true)}
@@ -65,49 +122,22 @@ export const OwnProfileOverView = () => {
                   <span>دنبال‌کننده‌</span>
                 </div>
                 <Separator orientation="vertical" className="bg-black " />
-                <div className="flex gap-2">
-                  <span>{user?.postCount}</span>
-                  <span>پست</span>
-                </div>
+                <div>{user?.postCount}</div>
+                <span>پست</span>
               </div>
-              <p className="hidden md:block text-base text-gray-400 text-justify">
+              <p className="md:hidden w-full text-sm text-gray-400 text-justify">
                 {user?.bio}
               </p>
             </div>
           </div>
-          <div className="md:hidden flex flex-col gap-4">
-            <div className="flex space-x-4 justify-center h-4">
-              <div
-                className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
-                onClick={() => setFollowingsListOpen(true)}
-              >
-                <span>{user?.followingCount}</span>
-                <span>دنبال‌شونده</span>
-              </div>
-              <Separator orientation="vertical" className="bg-black " />
-              <div
-                className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
-                onClick={() => setFollowersListOpen(true)}
-              >
-                <span>{user?.followerCount}</span>
-                <span>دنبال‌کننده‌</span>
-              </div>
-              <Separator orientation="vertical" className="bg-black " />
-              <div>{user?.postCount}</div>
-              <span>پست</span>
-            </div>
-            <p className="md:hidden w-full text-sm text-gray-400 text-justify">
-              {user?.bio}
-            </p>
-          </div>
+          <Button
+            className="max-md:w-full"
+            onClick={() => setEditProfileOpen(true)}
+          >
+            ویرایش پروفایل
+          </Button>
         </div>
-        <Button
-          className="max-md:w-full"
-          onClick={() => setEditProfileOpen(true)}
-        >
-          ویرایش پروفایل
-        </Button>
-      </div>
+      )}
       {followingsListOpen && (
         <DialogAndDrawerWizard
           open={followingsListOpen}
