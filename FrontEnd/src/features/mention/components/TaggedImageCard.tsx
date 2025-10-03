@@ -1,4 +1,5 @@
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
 import { PostDetails } from '@/features/post/components/PostDetails'
 import type { ITagged } from '@/types/tagged'
 import { useState } from 'react'
@@ -21,7 +22,7 @@ export const TaggedImageCard = ({ taggedPosts }: IProps) => {
           setPostId(taggedPosts.id)
         }}
       >
-        <img
+        <ImageWithFallback
           src={taggedPosts?.images[0]?.url}
           alt="Tagged Image"
           className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"

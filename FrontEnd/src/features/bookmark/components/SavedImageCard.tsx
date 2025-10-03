@@ -1,4 +1,5 @@
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
 import { PostDetails } from '@/features/post/components/PostDetails'
 import type { ISaved } from '@/types/seved'
 import { useState } from 'react'
@@ -21,7 +22,7 @@ export const SavesImageCard = ({ savesPosts }: IProps) => {
           setPostId(savesPosts?.id)
         }}
       >
-        <img
+        <ImageWithFallback
           src={savesPosts?.images?.[savesPosts.images.length - 1]?.url}
           alt="saved Image"
           className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"

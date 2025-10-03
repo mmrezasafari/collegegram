@@ -1,6 +1,7 @@
 import FriendBar from './FriendBar'
 import ActionBar from './ActionBar'
 import type { IExplore } from '@/types/explore'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
 
 interface FriendCardProps {
   friendData: IExplore
@@ -9,9 +10,9 @@ interface FriendCardProps {
 const FriendCard = ({ friendData }: FriendCardProps) => {
   return (
     <div className="w-[315px] h-[440px] aspect-square bg-white rounded-3xl shadow flex flex-col">
-      <img
+      <ImageWithFallback
         src={friendData?.post?.images[0]?.url}
-        alt="pin"
+        alt="explore"
         className="w-full h-[305px] object-cover group-hover:scale-105 rounded-tr-3xl rounded-tl-3xl"
       />
       <div className="px-6 flex flex-col gap-2">
