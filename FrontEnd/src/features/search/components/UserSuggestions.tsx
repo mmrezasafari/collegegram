@@ -1,9 +1,12 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { UserRound } from 'lucide-react'
 import React from 'react'
 import type { ISearchedUsersData } from 'src/types/search'
 
 interface UserSuggestionsProps {
   users: ISearchedUsersData[]
-  onSelect: (_user: ISearchedUsersData) => void
+  onSelect: (user: ISearchedUsersData) => void
+  // onSelect: () => void
 }
 
 export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
@@ -17,15 +20,25 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
       {users.map((user, idx) => (
         <div
           key={idx}
-          className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
+          className="flex items-center py-2 cursor-pointer hover:bg-gray-100"
           onMouseDown={() => onSelect(user)}
         >
-          <span className="text-right">{user.username}</span>
-          <img
-            src={user.imagePath}
-            alt={user.username}
-            className="w-8 h-8 rounded-full object-cover ml-2"
-          />
+          <Avatar className="w-[32px] h-[32px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
+            <AvatarImage
+              src={user?.imagePath}
+              className="w-full h-full object-cover rounded-full"
+              alt="avatar"
+            />
+            <AvatarFallback className="w-[32px] h-[32px]">
+              <UserRound
+                className="w-[32px] h-auto object-cover"
+                color="#A5A5A5A5"
+                fill="#A5A5A5A5"
+                strokeWidth={0}
+              />
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-right px-2">{user.username}</span>
         </div>
       ))}
     </div>

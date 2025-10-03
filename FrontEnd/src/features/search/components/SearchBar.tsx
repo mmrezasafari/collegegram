@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type {
   ISearchUserGetRes,
@@ -65,13 +65,61 @@ export const SearchBar = ({
     enabled: debouncedQuery.trim().length > 0,
   })
 
-  const getCurrentTab = () => {
+  const getCurrentTab = useCallback(() => {
     return activeTab || 'users'
-  }
+  }, [activeTab])
 
-  const isTabActive = (tabName: 'users' | 'posts') => {
-    return getCurrentTab() === tabName
-  }
+  const isTabActive = useCallback(
+    (tabName: 'users' | 'posts') => {
+      return getCurrentTab() === tabName
+    },
+    [getCurrentTab],
+  )
+
+  // Track last error to avoid repeated/conflicting error messages
+  const [lastError, setLastError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      if (lastError) {
+        setLastError(null)
+        onSearchError?.('') // Clear error when query is empty
+      }
+      return
+    }
+    let errorMsg = null
+    if (isTabActive('users')) {
+      if (Users.data && Users.data.length === 0) {
+        errorMsg = 'شخصی با این نام یافت نشد.'
+      }
+    } else if (isTabActive('posts')) {
+      if (Tags.data && Tags.data.length === 0) {
+        errorMsg = 'این کلمه تا به حال تگ نشده.'
+      }
+    }
+    if (errorMsg !== lastError) {
+      setLastError(errorMsg)
+      onSearchError?.(errorMsg || '')
+    }
+    // Clear error if results are found
+    if (
+      (isTabActive('users') && Users.data && Users.data.length > 0) ||
+      (isTabActive('posts') && Tags.data && Tags.data.length > 0)
+    ) {
+      if (lastError) {
+        setLastError(null)
+        onSearchError?.('')
+      }
+    }
+  }, [
+    debouncedQuery,
+    Users.data,
+    Tags.data,
+    activeTab,
+    isTabActive,
+    onSearchError,
+    lastError,
+  ])
 
   const onToggleMore = () => {
     if (isTabActive('users')) {
@@ -79,14 +127,22 @@ export const SearchBar = ({
         onSearchMore(debouncedQuery, Users.data, Tags.data || [])
         setShowSuggestions(false)
       } else {
-        onSearchError?.('شخصی با این نام یافت نشد.')
+        onSearchError?.('شخصی با این نام یافت نشد')
+        if (Tags.data && Tags.data.length > 0 && onSearchMore) {
+          onSearchMore(debouncedQuery, [], Tags.data)
+          setShowSuggestions(false)
+        }
       }
     } else if (isTabActive('posts')) {
       if (Tags.data && Tags.data.length > 0 && onSearchMore) {
         onSearchMore(debouncedQuery, Users.data || [], Tags.data)
         setShowSuggestions(false)
       } else {
-        onSearchError?.('این کلمه تا به حال تگ نشده.')
+        onSearchError?.('این کلمه تا به حال تگ نشده')
+        if (Users.data && Users.data.length > 0 && onSearchMore) {
+          onSearchMore(debouncedQuery, Users.data, Tags.data || [])
+          setShowSuggestions(false)
+        }
       }
     }
   }
@@ -127,7 +183,7 @@ export const SearchBar = ({
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
               <UserSuggestions
                 users={(Users.data ?? []).slice(0, 3)}
-                searchQuery={query}
+                // searchQuery={query}
                 onSelect={(user) => {
                   setQuery(user.username)
                   window.location.href = `/profile/${user.username}`
@@ -135,7 +191,7 @@ export const SearchBar = ({
               />
               <TagSuggestions
                 tags={(Tags.data ?? []).slice(0, 4)}
-                searchQuery={query}
+                // searchQuery={query}
                 onTagSelect={(tag) => {
                   setQuery(tag.caption)
                   setPostModalOpen(true)
