@@ -14,17 +14,6 @@ function getHashtaggedWords(text: string): string {
   return matches.join(' ')
 }
 
-function getHashtaggedWords(text: string): string {
-  // Match words starting with #, followed by letters, numbers, or underscores
-  const matches = text.match(/#[\w\u0600-\u06FF]+/g) || []
-  return matches.join(' ')
-}
-
-function extractHashtagsAsString(text: string): string {
-  const matches = text.match(/#[\w\u0600-\u06FF]+/g)
-  return matches ? matches.join(' ') : ''
-}
-
 export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
   tags,
   onTagSelect,
