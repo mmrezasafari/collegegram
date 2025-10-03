@@ -11,6 +11,7 @@ import { EllipsisVertical, User, UserRoundMinus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   useRemoveFollower,
+  useRemoveFromBlockList,
   useRemoveFromCloseFriends,
   useUnfollowAction,
 } from '../hooks/useRelationsActions'
@@ -24,11 +25,12 @@ interface IProps {
 
 export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
   const { data: me } = useMe()
-  const { mutate: unFollowAction } = useUnfollowAction(user.username)
-  const { mutate: removeFollower } = useRemoveFollower(user.username)
+  const { mutate: unFollowAction } = useUnfollowAction(user?.username)
+  const { mutate: removeFollower } = useRemoveFollower(user?.username)
   const { mutate: removeFromCloseFriends } = useRemoveFromCloseFriends(
     user as IUser,
   )
+  const { mutate: removeFromBlockList } = useRemoveFromBlockList(user as IUser)
 
   const handleUnfollow = () => {
     unFollowAction()
@@ -42,13 +44,17 @@ export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
     removeFromCloseFriends()
   }
 
+  const handleRemoveFromBlockList = () => {
+    removeFromBlockList()
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer" asChild>
         <EllipsisVertical color="#ea5a69" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="ml-4 rounded-4xl rounded-tl-none border border-geryLight p-4"
+        className="ml-4 min-w-48 rounded-4xl rounded-tl-none border border-geryLight p-4"
         align="start"
       >
         <DropdownMenuLabel hidden></DropdownMenuLabel>
@@ -111,6 +117,19 @@ export const RelationsRowDropdownShortcut = ({ user, mode }: IProps) => {
               >
                 <div className="flex gap-2 justify-end">
                   <span>حذف از دوستان نزدیک</span>
+                  <UserRoundMinus />
+                </div>
+              </button>
+            </DropdownMenuItem>
+          )}
+          {mode === 'blockList' && (
+            <DropdownMenuItem className="rounded-4xl">
+              <button
+                className="w-full h-full cursor-pointer px-2 rounded-4xl"
+                onClick={handleRemoveFromBlockList}
+              >
+                <div className="flex gap-2 justify-end">
+                  <span>حذف از بلاک‌ها</span>
                   <UserRoundMinus />
                 </div>
               </button>

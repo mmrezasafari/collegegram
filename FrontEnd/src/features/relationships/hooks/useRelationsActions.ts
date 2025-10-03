@@ -4,6 +4,8 @@ import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
 import type {
   IAddCloseFriendRes,
+  IBlockList,
+  IBlockListRes,
   IBlockUserRes,
   ICloseFriend,
   ICloseFriendsListRes,
@@ -63,22 +65,64 @@ export async function removeFromCloseFriends(
 }
 
 export function useAddToBlockList(user: IUser) {
-  // TODO hadnle obtimistic upteda block list
-  // const queryClient = useQueryClient
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: ['add-blockList', user?.username],
     mutationFn: () => addToBlockList(user?.username),
-    onSuccess: () => {
-      notify.success(
-        `${user?.firstName || user?.username} با موفقیت به لیست سیاه اضافه شد`,
-        {
-          position: 'top-right',
-          duration: 10000,
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['blockList'] })
+      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+
+      const previousList = queryClient.getQueryData<IBlockListRes>([
+        'blockList',
+      ])
+      const previousUser = queryClient.getQueryData<IUser>([
+        'user',
+        user?.username,
+      ])
+
+      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) => {
+        if (!old || !user) return old
+
+        const optimisticFriend: IBlockList = {
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName ?? '',
+          lastName: user.lastName ?? '',
+          imageUrl: user.imagePath ?? '',
+          followersCount: user.followerCount ?? 0,
+        }
+
+        return {
+          ...old,
+          data: [...old.data, optimisticFriend],
+        }
+      })
+
+      queryClient.setQueryData<IRegisteredUser>(
+        ['user', user?.username],
+        (old) => {
+          if (!old || !user) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isBlockedByMe: true,
+            },
+          }
         },
       )
+
+      return { previousList, previousUser }
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData(['blockList'], context.previousList)
+        queryClient.setQueryData(['user', user?.username], context.previousUser)
+      }
+
       if (error instanceof AxiosError) {
         notify.error(error.response?.data.message, {
           position: 'top-right',
@@ -92,12 +136,48 @@ export function useAddToBlockList(user: IUser) {
 }
 
 export function useRemoveFromBlockList(user: IUser) {
-  // TODO hadnle obtimistic upteda block list
-  // const queryClient = useQueryClient
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationKey: ['remove-blockList', user?.username],
     mutationFn: () => removeFromBlockList(user?.username),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['blockList'] })
+      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
+
+      const previousList = queryClient.getQueryData<IBlockListRes>([
+        'blockList',
+      ])
+      const previousUser = queryClient.getQueryData<IUser>([
+        'user',
+        user?.username,
+      ])
+
+      queryClient.setQueryData<IBlockListRes>(['blockList'], (old) => {
+        if (!old || !user) return old
+
+        return {
+          ...old,
+          data: old.data.filter((item) => item.username !== user.username),
+        }
+      })
+      queryClient.setQueryData<IRegisteredUser>(
+        ['user', user?.username],
+        (old) => {
+          if (!old || !user) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isBlockedByMe: false,
+            },
+          }
+        },
+      )
+
+      return { previousUser, previousList }
+    },
     onSuccess: () => {
       notify.success(
         `${user?.firstName || user?.username} با موفقیت از لیست سیاه حذف شد`,
@@ -107,7 +187,12 @@ export function useRemoveFromBlockList(user: IUser) {
         },
       )
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData(['user', user?.username], context.previousUser)
+        queryClient.setQueryData(['blockList'], context.previousList)
+      }
+
       if (error instanceof AxiosError) {
         notify.error(error.response?.data.message, {
           position: 'top-right',
@@ -129,9 +214,14 @@ export function useAddToCloseFriends(user: IUser) {
 
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
+      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
 
       const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
         'closeFriendsList',
+      ])
+      const previousUser = queryClient.getQueryData<IUser>([
+        'user',
+        user?.username,
       ])
 
       queryClient.setQueryData<ICloseFriendsListRes>(
@@ -155,12 +245,30 @@ export function useAddToCloseFriends(user: IUser) {
         },
       )
 
-      return { previousList }
+      queryClient.setQueryData<IRegisteredUser>(
+        ['user', user?.username],
+        (old) => {
+          if (!old || !user) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isCloseFriend: true,
+            },
+          }
+        },
+      )
+
+      return { previousList, previousUser }
     },
 
     onError: (error, _variables, context) => {
       if (context?.previousList) {
         queryClient.setQueryData(['closeFriendsList'], context.previousList)
+      }
+      if (context?.previousUser) {
+        queryClient.setQueryData(['user', user?.username], context.previousList)
       }
 
       if (error instanceof AxiosError) {
@@ -171,10 +279,6 @@ export function useAddToCloseFriends(user: IUser) {
       } else {
         console.error(error)
       }
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['closeFriendsList'] })
     },
 
     onSuccess: () => {
@@ -196,9 +300,14 @@ export function useRemoveFromCloseFriends(user: IUser) {
     mutationFn: () => removeFromCloseFriends(user?.username),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['closeFriendsList'] })
+      await queryClient.cancelQueries({ queryKey: ['user', user?.username] })
 
       const previousList = queryClient.getQueryData<ICloseFriendsListRes>([
         'closeFriendsList',
+      ])
+      const previousUser = queryClient.getQueryData<IUser>([
+        'user',
+        user?.username,
       ])
 
       queryClient.setQueryData<ICloseFriendsListRes>(
@@ -212,8 +321,22 @@ export function useRemoveFromCloseFriends(user: IUser) {
           }
         },
       )
+      queryClient.setQueryData<IRegisteredUser>(
+        ['user', user?.username],
+        (old) => {
+          if (!old || !user) return old
 
-      return { previousList }
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isCloseFriend: false,
+            },
+          }
+        },
+      )
+
+      return { previousList, previousUser }
     },
     onSuccess: () => {
       notify.success(
@@ -224,7 +347,14 @@ export function useRemoveFromCloseFriends(user: IUser) {
         },
       )
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      if (context?.previousList) {
+        queryClient.setQueryData(['closeFriendsList'], context.previousList)
+      }
+      if (context?.previousUser) {
+        queryClient.setQueryData(['user', user?.username], context.previousList)
+      }
+
       if (error instanceof AxiosError) {
         notify.error(error.response?.data.message, {
           position: 'top-right',
@@ -278,6 +408,26 @@ export function useRemoveFollower(userName: string) {
       })
 
       return { previousFollowers, previousMe }
+    },
+    onError: (error, _variables, context) => {
+      if (context?.previousFollowers) {
+        queryClient.setQueryData(
+          ['followeList', me?.data.username],
+          context.previousFollowers,
+        )
+      }
+      if (context?.previousMe) {
+        queryClient.setQueryData(['me'], context.previousMe)
+      }
+
+      if (error instanceof AxiosError) {
+        notify.error(error.response?.data.message, {
+          position: 'top-right',
+          duration: 10000,
+        })
+      } else {
+        console.error(error)
+      }
     },
   })
 }

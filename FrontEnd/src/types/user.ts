@@ -18,4 +18,6 @@ export interface IUser {
   postCount: number
   isFollowing?: boolean
   isPrivate: boolean
+  isCloseFriend: boolean
+  isBlockedByMe: boolean
 }

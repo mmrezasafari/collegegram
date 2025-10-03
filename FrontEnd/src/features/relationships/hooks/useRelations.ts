@@ -1,5 +1,6 @@
 import api from '@/lib/axios'
 import type {
+  IBlockListRes,
   ICloseFriendsListRes,
   IFollowersListRes,
   IFollowingsListRes,
@@ -26,13 +27,13 @@ export async function getCloseFriends(): Promise<ICloseFriendsListRes> {
   return res.data
 }
 
-// TODO handle getblcokList
-// export async function getBlockList(): Promise<IBlockUserRes> {
-//   const res = await api.get(`users/`)
-// }
+export async function getBlockList(): Promise<IBlockListRes> {
+  const res = await api.get<IBlockListRes>(`users/me/block`)
+  return res.data
+}
 
 export async function relationStatus(userName: string): Promise<IStatusRes> {
-  const res = await api.get(`users/${userName}/status`)
+  const res = await api.get<IStatusRes>(`users/${userName}/status`)
   return res.data
 }
 
@@ -63,12 +64,24 @@ export function useGetCloseFriends() {
   })
 }
 
-export function useGetRelationStatus(userName: string) {
+export function useGetBlockList() {
+  return useQuery<IBlockListRes>({
+    queryKey: ['blockList'],
+    queryFn: getBlockList,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  })
+}
+
+export function useGetRelationStatus(
+  userName: string,
+  options?: { enable?: boolean },
+) {
   return useQuery({
     queryKey: ['relation-status', userName],
     queryFn: () => relationStatus(userName),
     staleTime: 1000 * 60 * 5,
-    enabled: !!userName,
+    enabled: !!userName && options && options.enable,
     refetchOnWindowFocus: false,
   })
 }
