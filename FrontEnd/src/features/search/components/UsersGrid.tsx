@@ -1,10 +1,10 @@
 import { useInfiniteSearch } from '../hooks/useSearch'
 import { UserCard } from './UserCard'
 import { useEffect, useRef } from 'react'
-import type { ISearchedUsersData } from '@/types/search'
+import type { ISearchedUserData } from '@/types/search'
 
 interface UsersGridProps {
-  searchResults?: ISearchedUsersData[]
+  searchResults?: ISearchedUserData[]
   searchQuery?: string
 }
 
@@ -58,21 +58,14 @@ export const UsersGrid = ({ searchResults }: UsersGridProps) => {
               <div className="flex flex-wrap gap-4 p-2 h-full justify-center items-center">
                 {usersToDisplay
                   .filter(
-                    (item): item is ISearchedUsersData =>
+                    (item): item is ISearchedUserData =>
                       item != null &&
                       typeof item === 'object' &&
                       'username' in item &&
                       item.username != null,
                   )
-                  .map((item: ISearchedUsersData, idx: number) => (
-                    <UserCard
-                      key={
-                        item.username
-                          ? `${item.username}-${idx}`
-                          : `user-${idx}`
-                      }
-                      cardData={item}
-                    />
+                  .map((item: ISearchedUserData) => (
+                    <UserCard key={item.username} user={item} />
                   ))}
               </div>
             ) : null}

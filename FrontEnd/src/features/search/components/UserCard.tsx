@@ -5,77 +5,97 @@ import {
   useFollowAction,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
-import type { ISearchedUsersData } from '@/types/search'
 import { Plus } from 'lucide-react'
+import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
+import type { ISearchedUserData } from '@/types/search'
+import { useNavigate } from 'react-router-dom'
 
-interface UserCardProps {
-  cardData: ISearchedUsersData
-  onButtonClick?: () => void
-}
+export const UserCard = ({ user }: { user: ISearchedUserData }) => {
+  const navigate = useNavigate()
+  // Local state for follow status and count, typecast count as number
+  const [isFollowing, setIsFollowing] = useState(user.isFollowing)
+  const [followCount, setFollowCount] = useState<number>(
+    Number(user.followersCount) || 0,
+  )
 
-export function UserCard({ cardData }: UserCardProps) {
-  // Local state to track follow status (following Collegegram's "prefer local state" convention)
-  const [isFollowing, setIsFollowing] = useState(cardData.isFollowing)
-  const [isLoading, setIsLoading] = useState(false)
+  const { data: relationStatus } = useGetRelationStatus(user.username, {})
+  const followStatus = relationStatus?.data
 
-  const { mutate: unFollowMutation } = useUnfollowAction(cardData.username)
-  const { mutate: followMutation } = useFollowAction(cardData.username)
+  const { mutate: unFollowMutation } = useUnfollowAction(user.username)
+  const { mutate: followMutation } = useFollowAction(user.username)
 
   const handleFollow = () => {
-    setIsLoading(true)
     followMutation(undefined, {
       onSuccess: () => {
-        setIsFollowing(true) // ✅ Update local state on success
-        setIsLoading(false)
-      },
-      onError: () => {
-        setIsLoading(false)
+        setIsFollowing(true)
+        setFollowCount((count) => Number(count) + 1)
       },
     })
   }
 
   const handleUnFollow = () => {
-    setIsLoading(true)
     unFollowMutation(undefined, {
       onSuccess: () => {
-        setIsFollowing(false) // ✅ Update local state on success
-        setIsLoading(false)
-      },
-      onError: () => {
-        setIsLoading(false)
+        setIsFollowing(false)
+        setFollowCount((count) => Number(count) - 1)
       },
     })
   }
 
-  return (
-    <div className="bg-white rounded-2xl shadow-md flex flex-col items-center p-6 w-[340px] h-[180px] justify-between">
-      <FriendBar
-        firstName={cardData?.username}
-        lastName={cardData?.lastName}
-        followCount={cardData?.followersCount}
-        avatarUrl={cardData?.imagePath}
-      />
+  const handleCardClick = () => {
+    navigate(`/profile/${user.username}`)
+  }
 
-      {isFollowing ? (
-        <Button
-          className="flex w-full"
-          variant="outline"
-          onClick={handleUnFollow}
-          disabled={isLoading}
-        >
-          <span>{isLoading ? 'در حال پردازش...' : 'دنبال نکردن'}</span>
-        </Button>
-      ) : (
-        <Button
-          className="flex w-full"
-          variant="default"
-          onClick={handleFollow}
-          disabled={isLoading}
-        >
-          <Plus />
-          <span>{isLoading ? 'در حال پردازش...' : 'دنبال کردن'}</span>
-        </Button>
-      )}
+  return (
+    <div
+      className="bg-white rounded-2xl shadow-md flex flex-col items-center p-8 w-[340px] h-[184px] justify-between cursor-pointer"
+      onClick={handleCardClick}
+    >
+      <div className="w-full">
+        <FriendBar
+          firstName={user?.firstName || user?.username || ''}
+          lastName={user?.lastName || ''}
+          followCount={followCount}
+          avatarUrl={user?.imagePath || ''}
+        />
+      </div>
+      <div className="flex w-full justify-center">
+        {isFollowing && followStatus?.status === 'ACCEPTED' ? (
+          <Button
+            className="flex w-[150px]"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleUnFollow()
+            }}
+          >
+            <span>دنبال نکردن</span>
+          </Button>
+        ) : followStatus && followStatus?.status === 'PENDING' ? (
+          <Button
+            className="flex w-[150px]"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleUnFollow()
+            }}
+          >
+            <span>لغو در‌خواست</span>
+          </Button>
+        ) : (
+          <Button
+            className="flex w-[150px]"
+            variant="default"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleFollow()
+            }}
+          >
+            <Plus />
+            <span>دنبال کردن</span>
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

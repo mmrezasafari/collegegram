@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { UserRound } from 'lucide-react'
 import React from 'react'
-import type { ISearchedUsersData } from 'src/types/search'
+import type { ISearchedUserData } from 'src/types/search'
 
 interface UserSuggestionsProps {
-  users: ISearchedUsersData[]
-  onSelect: (user: ISearchedUsersData) => void
+  users: ISearchedUserData[]
+  onSelect: (user: ISearchedUserData) => void
   // onSelect: () => void
 }
 
