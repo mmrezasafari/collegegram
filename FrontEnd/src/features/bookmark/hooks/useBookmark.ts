@@ -59,13 +59,13 @@ export function useToggleSavePost(postId: string) {
         queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
           old
             ? {
-              ...old,
-              data: {
-                ...old.data,
-                saved: action === 'save',
-                saveCount: old.data.saveCount + (action === 'save' ? 1 : -1),
-              },
-            }
+                ...old,
+                data: {
+                  ...old.data,
+                  saved: action === 'save',
+                  saveCount: old.data.saveCount + (action === 'save' ? 1 : -1),
+                },
+              }
             : old,
         )
       }
@@ -77,24 +77,21 @@ export function useToggleSavePost(postId: string) {
           (old) =>
             old
               ? {
-                ...old,
-                pages: old.pages.map((page) => ({
-                  ...page,
-                  data: {
-                    ...page.data,
-                    data: page.data.data.map((item) =>
+                  ...old,
+                  pages: old.pages.map((page) => ({
+                    ...page,
+                    data: page.data.map((item) =>
                       item.post.id === postId
                         ? {
-                          ...item,
-                          isSaved: action === 'save',
-                          savedCount:
-                            item.savedCount + (action === 'save' ? 1 : -1),
-                        }
+                            ...item,
+                            isSaved: action === 'save',
+                            savedCount:
+                              item.savedCount + (action === 'save' ? 1 : -1),
+                          }
                         : item,
                     ),
-                  },
-                })),
-              }
+                  })),
+                }
               : old,
         )
       }

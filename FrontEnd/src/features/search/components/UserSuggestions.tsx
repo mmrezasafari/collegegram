@@ -5,7 +5,7 @@ import type { ISearchedUserData } from 'src/types/search'
 
 interface UserSuggestionsProps {
   users: ISearchedUserData[]
-  onSelect: (user: ISearchedUserData) => void
+  onSelect: (_user: ISearchedUserData) => void
   // onSelect: () => void
 }
 
