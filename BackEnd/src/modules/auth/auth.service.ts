@@ -49,7 +49,7 @@ export class AuthService {
     const user = await this.userRepo.getForLogin(dto.usernameOrEmail);
     if (user && comparePassword(dto.password, user.password)) {
 
-      const accToken = encryptJWT(user.id, user.username, process.env.JWT_SECRET ?? "", "15m");
+      const accToken = encryptJWT(user.id, user.username, process.env.JWT_SECRET ?? "", "60m");
       const session = await this.createSession(user.id);
 
       return {

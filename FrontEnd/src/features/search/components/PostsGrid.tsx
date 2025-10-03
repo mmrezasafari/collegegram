@@ -112,9 +112,9 @@ export const PostsGrid = ({ searchResults }: PostsGridProps) => {
                   {row.map((post, idx) => (
                     <div
                       key={`${post.id}-${rowIdx}-${idx}`}
-                      className="rounded-2xl overflow-hidden flex items-center justify-center"
+                      className="rounded-2xl overflow-hidden flex items-center justify-center aspect-1/1"
                     >
-                      <div className="overflow-hidden rounded-2xl w-full h-[150px] md:h-[250px] lg:h-[250px] hover:drop-shadow-xl/50 hover:scale-101 transition-all">
+                      <div className="overflow-hidden rounded-2xl w-full  hover:drop-shadow-xl/50 hover:scale-101 transition-all aspect-1/1">
                         <PostCard
                           image={post?.images[0]?.url ?? ''}
                           onSelectItem={() => {

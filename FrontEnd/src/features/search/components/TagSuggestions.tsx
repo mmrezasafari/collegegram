@@ -6,6 +6,12 @@ interface TagSuggestionsProps {
   onTagSelect: (_tag: ISearchTagsData) => void
 }
 
+function getHashtaggedWords(text: string): string {
+  // Match words starting with #, followed by letters, numbers, or underscores
+  const matches = text.match(/#[\w\u0600-\u06FF]+/g) || []
+  return matches.join(' ')
+}
+
 export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
   tags,
   onTagSelect,
@@ -20,7 +26,9 @@ export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
           className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-100"
           onMouseDown={() => onTagSelect(tag)}
         >
-          <span className="text-right w-full">{tag.caption}</span>
+          <span className="text-right w-full">
+            {getHashtaggedWords(tag.caption)}
+          </span>
           <svg
             className="w-5 h-5 text-gray-500 ml-2"
             fill="none"
