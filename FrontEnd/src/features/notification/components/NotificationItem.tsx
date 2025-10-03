@@ -10,9 +10,12 @@ import { Button } from '@/features/common/components/ui/button'
 import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
 import {
   useFollowAction,
+  useRemoveFollower,
+  useRespond,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
 import clsx from 'clsx'
+import { UserRoundMinus } from 'lucide-react'
 
 dayjs.extend(relativeTime)
 dayjs.locale('fa')
@@ -29,6 +32,8 @@ export const NotificationItem = ({ notification }: IProps) => {
 
   const { mutate: unFollowMutation } = useUnfollowAction(actor?.username)
   const { mutate: followMutation } = useFollowAction(actor?.username)
+  const { mutate: respondMutattion } = useRespond(actor?.username)
+  const { mutate: removeFollower } = useRemoveFollower(actor?.username)
 
   const handleFollow = () => {
     followMutation()
@@ -36,6 +41,14 @@ export const NotificationItem = ({ notification }: IProps) => {
 
   const handleUnFollow = () => {
     unFollowMutation()
+  }
+
+  const handleRespond = () => {
+    respondMutattion()
+  }
+
+  const handleRemove = () => {
+    removeFollower()
   }
 
   const renderText = () => {
@@ -46,15 +59,15 @@ export const NotificationItem = ({ notification }: IProps) => {
             <Avatar className="w-16 h-16">
               <AvatarImage className="object-cover" src={post?.images[0].url} />
               <AvatarFallback className="border border-gray-400 bg-geryLight">
-                {actor.firstName[0]}
+                {actor?.firstName[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-end gap-1">
               <p className="text-base font-medium">
                 $
-                {actor.firstName
-                  ? `${actor.firstName} ${actor.lastName} `
-                  : `@${actor.username} `}
+                {actor?.firstName
+                  ? `${actor?.firstName} ${actor?.lastName} `
+                  : `@${actor?.username} `}
                 <span>این عکس و لایک کرده</span>
               </p>
               <p className="text-xs text-gray-600" dir="rtl">
@@ -69,14 +82,14 @@ export const NotificationItem = ({ notification }: IProps) => {
             <Avatar className="w-16 h-16">
               <AvatarImage className="object-cover" src={post?.images[0].url} />
               <AvatarFallback className="border border-gray-400 bg-geryLight">
-                {actor.firstName[0]}
+                {actor?.firstName[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-end gap-1">
               <p className="text-base font-medium">
-                {actor.firstName
-                  ? `${actor.firstName} ${actor.lastName} `
-                  : `@${actor.username} `}
+                {actor?.firstName
+                  ? `${actor?.firstName} ${actor?.lastName} `
+                  : `@${actor?.username} `}
                 <span>درباره عکس نظر داد</span>
               </p>
               <p className="text-xs text-gray-600" dir="rtl">
@@ -96,9 +109,9 @@ export const NotificationItem = ({ notification }: IProps) => {
             </Avatar>
             <div className="flex flex-col items-end gap-1">
               <p className="text-base font-medium">
-                {actor.firstName
-                  ? `${actor.firstName} ${actor.lastName} `
-                  : `@${actor.username} `}
+                {actor?.firstName
+                  ? `${actor?.firstName} ${actor?.lastName} `
+                  : `@${actor?.username} `}
                 <span>توی این عکس تگت کرده</span>
               </p>
               <p className="text-xs text-gray-600" dir="rtl">
@@ -114,14 +127,14 @@ export const NotificationItem = ({ notification }: IProps) => {
               <Avatar className="w-16 h-16">
                 <AvatarImage className="object-cover" src={actor?.imagePath} />
                 <AvatarFallback className="border border-gray-400 bg-geryLight">
-                  {actor.firstName[0]}
+                  {actor?.firstName[0]}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-end gap-1">
                 <p className="text-base font-medium">
-                  {actor.firstName
-                    ? `${actor.firstName} ${actor.lastName} `
-                    : `@${actor.username} `}{' '}
+                  {actor?.firstName
+                    ? `${actor?.firstName} ${actor?.lastName} `
+                    : `@${actor?.username} `}{' '}
                   <span>دنبالت کرد</span>
                 </p>
                 <p className="text-xs text-gray-600" dir="rtl">
@@ -158,52 +171,56 @@ export const NotificationItem = ({ notification }: IProps) => {
             </div>
           </div>
         )
-      case 'FOLLOW_ACCEPTED':
+      case 'FOLLOW_REQUEST':
         return (
           <div className="flex flex-row-reverse gap-20 items-center">
-            <div className="flex flex-row-reverse justify-center gap-4 items-center">
-              <Avatar className="w-16 h-16">
-                <AvatarImage className="object-cover" src={actor?.imagePath} />
-                <AvatarFallback className="border border-gray-400 bg-geryLight">
-                  {actor.firstName[0]}
-                </AvatarFallback>
-              </Avatar>
+            <div className="flex flex-row-reverse gap-4 items-center">
+              <div className="flex flex-row-reverse justify-center gap-4 items-center">
+                <Avatar className="w-16 h-16">
+                  <AvatarImage
+                    className="object-cover"
+                    src={actor?.imagePath}
+                  />
+                  <AvatarFallback className="border border-gray-400 bg-geryLight">
+                    {actor?.firstName[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <p className="text-base font-medium">
+                  {actor?.firstName
+                    ? `${actor?.firstName} ${actor?.lastName} `
+                    : `@${actor?.username} `}{' '}
+                  <span>دنبالت کرد</span>
+                </p>
+                <p className="text-xs text-gray-600" dir="rtl">
+                  {dayjs(createdAt).fromNow()}
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <p className="text-base font-medium">
-                {actor.firstName
-                  ? `${actor.firstName} ${actor.lastName} `
-                  : `@${actor.username} `}{' '}
-                <span>دنبالت کرد</span>
-              </p>
-              <p className="text-xs text-gray-600" dir="rtl">
-                {dayjs(createdAt).fromNow()}
-              </p>
-            </div>
-            <div className="flex">
-              {actor?.isFollowing && status?.data.status === 'ACCEPTED' ? (
-                <Button
-                  className="flex w-full"
-                  variant="outline"
-                  onClick={handleUnFollow}
-                >
-                  <span>دنبال نکردن</span>
-                </Button>
-              ) : (actor?.isFollowing && status?.data.status) === 'PENDING' ? (
-                <Button
-                  className="flex w-full"
-                  variant="default"
-                  onClick={handleUnFollow}
-                >
-                  <span>لغو در‌خواست</span>
-                </Button>
+            <div className="flex gap-2">
+              {status?.data.status === 'PENDING' ? (
+                <>
+                  <Button
+                    className="flex"
+                    variant="default"
+                    onClick={handleRespond}
+                  >
+                    <span>قبول درخواست</span>
+                  </Button>
+                  <Button
+                    className="flex"
+                    variant="outline"
+                    onClick={handleFollow}
+                  >
+                    <span>لغو</span>
+                  </Button>
+                </>
               ) : (
-                <Button
-                  className="flex w-full"
-                  variant="default"
-                  onClick={handleFollow}
-                >
-                  <span>دنبال کردن</span>
+                <Button className="cursor-pointer" onClick={handleRemove}>
+                  <div className="flex gap-2 justify-end">
+                    <span>حذف از دنبال‌کننده‌ها</span>
+                  </div>
                 </Button>
               )}
             </div>

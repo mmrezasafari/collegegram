@@ -13,6 +13,7 @@ import type {
   IFollowingsListRes,
   IFollowRes,
   IRemoveFollowerRes,
+  IStatusRes,
   IUnblockUserRes,
   IUnfollowRes,
 } from '@/types/relations'
@@ -28,6 +29,11 @@ export async function followAction(userName: string): Promise<IFollowRes> {
 
 export async function unfollowAction(userName: string): Promise<IUnfollowRes> {
   const res = await api.delete(`users/${userName}/unfollow`)
+  return res.data
+}
+
+export async function respond(userName: string): Promise<{ accept: boolean }> {
+  const res = await api.post(`users/${userName}/respond`)
   return res.data
 }
 
@@ -62,6 +68,42 @@ export async function removeFromCloseFriends(
 ): Promise<IAddCloseFriendRes> {
   const res = await api.delete(`users/${userName}/close-friends`)
   return res.data
+}
+
+export function useRespond(userName: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['respond', userName],
+    mutationFn: () => respond(userName),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ['relation-status', userName],
+      })
+
+      const prevStatus = queryClient.getQueryData<IStatusRes>([
+        'relation-status',
+        userName,
+      ])
+
+      queryClient.setQueryData<IStatusRes>(
+        ['relation-status', userName],
+        (old) => {
+          if (!old) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              status: 'ACCEPTED',
+            },
+          }
+        },
+      )
+
+      return { prevStatus }
+    },
+  })
 }
 
 export function useAddToBlockList(user: IUser) {
