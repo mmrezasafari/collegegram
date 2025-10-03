@@ -50,9 +50,23 @@ export interface ICloseFriend {
   followersCount: number
 }
 
+export interface IBlockList {
+  id: string
+  username: string
+  firstName: string
+  lastName: string
+  imageUrl: string
+  followersCount: number
+}
+
 export interface ICloseFriendsListRes {
   success: boolean
   data: Array<ICloseFriend>
+}
+
+export interface IBlockListRes {
+  success: boolean
+  data: Array<IBlockList>
 }
 
 export interface IAddCloseFriendRes {

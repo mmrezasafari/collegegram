@@ -101,7 +101,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
               value={userName.value}
               onChange={userName.onChange}
               onBlur={userName.onBlur}
-              autoComplete="username"
               aria-invalid={userName.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
@@ -125,7 +124,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
               value={email.value}
               onChange={email.onChange}
               onBlur={email.onBlur}
-              autoComplete="on"
               aria-invalid={email.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
@@ -149,7 +147,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
               value={password.value}
               onChange={password.onChange}
               onBlur={password.onBlur}
-              autoComplete="on"
               aria-invalid={password.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
@@ -173,7 +170,6 @@ export const RegisterForm = ({ onSuccess }: IProps) => {
               value={rePassword.value}
               onChange={rePassword.onChange}
               onBlur={rePassword.onBlur}
-              autoComplete="on"
               aria-invalid={rePassword.error ? true : false}
             />
             <div className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">

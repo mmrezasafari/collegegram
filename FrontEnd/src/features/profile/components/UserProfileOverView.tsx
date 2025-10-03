@@ -38,7 +38,7 @@ import type { IUser } from '@/types/user'
 export const UserProfileOverView = () => {
   const { data } = useGetUser()
   const user = data?.data as IUser
-  const { data: relationStatus } = useGetRelationStatus(user?.username)
+  const { data: relationStatus } = useGetRelationStatus(user?.username, {})
   const followStatus = relationStatus?.data
   const [followingsListOpen, setFollowingsListOpen] = useState(false)
   const [followersListOpen, setFollowersListOpen] = useState(false)
@@ -46,7 +46,6 @@ export const UserProfileOverView = () => {
   const { mutate: followMutation } = useFollowAction(user?.username)
   const { mutate: addToCloseFriendsMutation } = useAddToCloseFriends(user)
   const { mutate: addToBlockList } = useAddToBlockList(user)
-  // TODO add toogle closeFrind and blcok list
   const { mutate: removaFromCloseFriendsMutation } =
     useRemoveFromCloseFriends(user)
   const { mutate: removaFromBlockList } = useRemoveFromBlockList(user)
@@ -65,6 +64,14 @@ export const UserProfileOverView = () => {
 
   const onAddToBlockList = () => {
     addToBlockList()
+  }
+
+  const onRemoveFromBlockList = () => {
+    removaFromBlockList()
+  }
+
+  const onRemoveFromCloseFriends = () => {
+    removaFromCloseFriendsMutation()
   }
 
   return (
@@ -102,7 +109,7 @@ export const UserProfileOverView = () => {
                   </div>
                   <div className="max-md:hidden">
                     {user?.isFollowing &&
-                    followStatus?.status === 'ACCEPTED' ? (
+                      followStatus?.status === 'ACCEPTED' ? (
                       <Button
                         className="flex w-[150px]"
                         variant="outline"
@@ -139,24 +146,49 @@ export const UserProfileOverView = () => {
                     align="start"
                   >
                     <DropdownMenuGroup className="flex flex-col  p-2">
-                      <DropdownMenuItem
-                        className="rounded-full py-4 px-6"
-                        onClick={onAddToBlockList}
-                      >
-                        <div className="flex  gap-4 text-base">
-                          <span>بلاک کردن</span>
-                          <UserLock />
-                        </div>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="rounded-full py-4 px-6"
-                        onClick={onAddToCloseFriends}
-                      >
-                        <div className="flex justify-end gap-4 text-base">
-                          <span>افزودن به دوستان نزدیک</span>
-                          <UserRoundPlus />
-                        </div>
-                      </DropdownMenuItem>
+                      {user?.isBlockedByMe ? (
+                        <DropdownMenuItem
+                          className="rounded-full py-4 px-6"
+                          onClick={onRemoveFromBlockList}
+                        >
+                          <div className="flex gap-4 text-base">
+                            <span>رفع بلاک</span>
+                            <UserLock />
+                          </div>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          className="rounded-full py-4 px-6"
+                          onClick={onAddToBlockList}
+                        >
+                          <div className="flex gap-4 text-base">
+                            <span>بلاک کردن</span>
+                            <UserLock />
+                          </div>
+                        </DropdownMenuItem>
+                      )}
+
+                      {user?.isCloseFriend ? (
+                        <DropdownMenuItem
+                          className="rounded-full py-4 px-6"
+                          onClick={onRemoveFromCloseFriends}
+                        >
+                          <div className="flex justify-end gap-4 text-base">
+                            <span>حذف از دوستان نزدیک</span>
+                            <UserRoundPlus />
+                          </div>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          className="rounded-full py-4 px-6"
+                          onClick={onAddToCloseFriends}
+                        >
+                          <div className="flex justify-end gap-4 text-base">
+                            <span>افزودن به دوستان نزدیک</span>
+                            <UserRoundPlus />
+                          </div>
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -165,7 +197,7 @@ export const UserProfileOverView = () => {
                 <div
                   className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
                   onClick={() =>
-                    (user.isFollowing || !user.isPrivate) &&
+                    (user?.isFollowing || !user?.isPrivate) &&
                     setFollowingsListOpen(true)
                   }
                 >
@@ -176,7 +208,7 @@ export const UserProfileOverView = () => {
                 <div
                   className="text-base text-secondary cursor-pointer hover:text-secondary/80 space-x-1"
                   onClick={() =>
-                    (user.isFollowing || !user.isPrivate) &&
+                    (user?.isFollowing || !user?.isPrivate) &&
                     setFollowersListOpen(true)
                   }
                 >
@@ -259,7 +291,7 @@ export const UserProfileOverView = () => {
         >
           <FollowingsList
             onClose={() => setFollowingsListOpen(false)}
-            userName={user.username}
+            userName={user?.username}
           />
         </DialogAndDrawerWizard>
       )}
@@ -271,7 +303,7 @@ export const UserProfileOverView = () => {
         >
           <FollowersList
             onClose={() => setFollowersListOpen(false)}
-            userName={user.username}
+            userName={user?.username}
           />
         </DialogAndDrawerWizard>
       )}

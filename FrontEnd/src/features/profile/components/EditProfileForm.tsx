@@ -312,7 +312,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 placeholder="رمز عبور"
                 className="pr-9"
                 ref={password.ref}
-                value={password.value}
                 onChange={password.onChange}
                 onBlur={password.onBlur}
                 aria-invalid={!!password.error}
@@ -335,7 +334,6 @@ export const EditProfileForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 placeholder="تکرار رمز عبور"
                 className="pr-9"
                 ref={rePassword.ref}
-                value={rePassword.value}
                 onChange={rePassword.onChange}
                 onBlur={rePassword.onBlur}
                 aria-invalid={!!rePassword.error}

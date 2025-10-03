@@ -53,7 +53,7 @@ const links = [
   },
   {
     title: 'اطلاعات',
-    url: '/info',
+    url: '/notifications',
     icon: BellIcon,
   },
   {
