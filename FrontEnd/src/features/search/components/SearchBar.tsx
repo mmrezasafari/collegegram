@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import type {
   ISearchUserGetRes,
   ISearchTagsGetRes,
-  ISearchedUsersData,
+  ISearchedUserData,
   ISearchTagsData,
 } from 'src/types/search'
 import api from '@/lib/axios'
@@ -33,11 +34,11 @@ interface SearchBarProps {
     // eslint-disable-next-line no-unused-vars
     query: string,
     // eslint-disable-next-line no-unused-vars
-    users: ISearchedUsersData[],
+    users: ISearchedUserData[],
     // eslint-disable-next-line no-unused-vars
     tags?: ISearchTagsData[],
   ) => void
-  onSearchError?: (message: string) => void
+  onSearchError?: (_message: string) => void
 }
 
 export const SearchBar = ({
@@ -65,13 +66,61 @@ export const SearchBar = ({
     enabled: debouncedQuery.trim().length > 0,
   })
 
-  const getCurrentTab = () => {
+  const getCurrentTab = useCallback(() => {
     return activeTab || 'users'
-  }
+  }, [activeTab])
 
-  const isTabActive = (tabName: 'users' | 'posts') => {
-    return getCurrentTab() === tabName
-  }
+  const isTabActive = useCallback(
+    (tabName: 'users' | 'posts') => {
+      return getCurrentTab() === tabName
+    },
+    [getCurrentTab],
+  )
+
+  // Track last error to avoid repeated/conflicting error messages
+  const [lastError, setLastError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      if (lastError) {
+        setLastError(null)
+        onSearchError?.('') // Clear error when query is empty
+      }
+      return
+    }
+    let errorMsg = null
+    if (isTabActive('users')) {
+      if (Users.data && Users.data.length === 0) {
+        errorMsg = 'شخصی با این نام یافت نشد.'
+      }
+    } else if (isTabActive('posts')) {
+      if (Tags.data && Tags.data.length === 0) {
+        errorMsg = 'این کلمه تا به حال تگ نشده.'
+      }
+    }
+    if (errorMsg !== lastError) {
+      setLastError(errorMsg)
+      onSearchError?.(errorMsg || '')
+    }
+    // Clear error if results are found
+    if (
+      (isTabActive('users') && Users.data && Users.data.length > 0) ||
+      (isTabActive('posts') && Tags.data && Tags.data.length > 0)
+    ) {
+      if (lastError) {
+        setLastError(null)
+        onSearchError?.('')
+      }
+    }
+  }, [
+    debouncedQuery,
+    Users.data,
+    Tags.data,
+    activeTab,
+    isTabActive,
+    onSearchError,
+    lastError,
+  ])
 
   const onToggleMore = () => {
     if (isTabActive('users')) {
@@ -79,17 +128,27 @@ export const SearchBar = ({
         onSearchMore(debouncedQuery, Users.data, Tags.data || [])
         setShowSuggestions(false)
       } else {
-        onSearchError?.('شخصی با این نام یافت نشد.')
+        onSearchError?.('شخصی با این نام یافت نشد')
+        if (Tags.data && Tags.data.length > 0 && onSearchMore) {
+          onSearchMore(debouncedQuery, [], Tags.data)
+          setShowSuggestions(false)
+        }
       }
     } else if (isTabActive('posts')) {
       if (Tags.data && Tags.data.length > 0 && onSearchMore) {
         onSearchMore(debouncedQuery, Users.data || [], Tags.data)
         setShowSuggestions(false)
       } else {
-        onSearchError?.('این کلمه تا به حال تگ نشده.')
+        onSearchError?.('این کلمه تا به حال تگ نشده')
+        if (Users.data && Users.data.length > 0 && onSearchMore) {
+          onSearchMore(debouncedQuery, Users.data, Tags.data || [])
+          setShowSuggestions(false)
+        }
       }
     }
   }
+
+  const navigate = useNavigate()
 
   return (
     <>
@@ -98,11 +157,15 @@ export const SearchBar = ({
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setShowSuggestions(true) // Show suggestions on every change
+            }}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             onFocus={() => setShowSuggestions(true)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
+                setShowSuggestions(true) // Show suggestions on Enter
                 onToggleMore()
               }
             }}
@@ -116,7 +179,10 @@ export const SearchBar = ({
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
-            onClick={onToggleMore}
+            onClick={() => {
+              setShowSuggestions(true) // Show suggestions on icon click
+              onToggleMore()
+            }}
           >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -127,15 +193,14 @@ export const SearchBar = ({
             <div className="absolute top-full mt-2 w-[400px] md:w-[600px] bg-white rounded-2xl shadow-lg z-10">
               <UserSuggestions
                 users={(Users.data ?? []).slice(0, 3)}
-                searchQuery={query}
                 onSelect={(user) => {
-                  setQuery(user.username)
-                  window.location.href = `/profile/${user.username}`
+                  // setQuery(user.username)
+                  navigate(`/profile/${user.username}`)
                 }}
               />
               <TagSuggestions
                 tags={(Tags.data ?? []).slice(0, 4)}
-                searchQuery={query}
+                // searchQuery={query}
                 onTagSelect={(tag) => {
                   setQuery(tag.caption)
                   setPostModalOpen(true)

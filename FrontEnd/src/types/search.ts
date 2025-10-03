@@ -1,4 +1,4 @@
-export interface ISearchedUsersData {
+export interface ISearchedUserData {
   username: string
   firstName: string
   lastName: string
@@ -9,7 +9,7 @@ export interface ISearchedUsersData {
 }
 
 export interface ISearchUserGetRes {
-  data: Array<ISearchedUsersData>
+  data: Array<ISearchedUserData>
   success: boolean
 }
 

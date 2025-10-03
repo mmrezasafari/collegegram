@@ -3,7 +3,7 @@ import type { IErrorRes } from '@/types/error'
 import type {
   ISearchUserGetRes,
   ISearchTagsData,
-  ISearchedUsersData,
+  ISearchedUserData,
   ISearchTagsGetRes,
 } from '@/types/search'
 import {
@@ -14,7 +14,7 @@ import {
 import type { AxiosError } from 'axios'
 
 interface ISearchUsersPage {
-  data: ISearchedUsersData
+  data: ISearchedUserData
   nextOffset?: number
 }
 
@@ -57,7 +57,7 @@ export function useInfiniteSearch(enabled: boolean = false) {
     enabled: enabled, // Only run when explicitly enabled
   })
 
-  const allUsers: ISearchedUsersData[] =
+  const allUsers: ISearchedUserData[] =
     (query.data as any)?.pages.flatMap((page: any) => page.data) ?? []
 
   return { ...query, allUsers }
@@ -70,8 +70,7 @@ async function fetchSearchTagsData({
 }: QueryFunctionContext & { query?: string }): Promise<ISearchTagsPage> {
   const limit = 10
   const { data } = await api.get<ISearchTagsGetRes>(
-    // `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
-    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&isSummary=true`,
+    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=true`,
   )
   return {
     data: data.data as any,

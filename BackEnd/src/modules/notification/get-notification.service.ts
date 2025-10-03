@@ -17,22 +17,23 @@ export class GetNotificationService {
         const notifications = await this.notificationService.getMyNotifications(userId, offset, limit);
 
         const notificationDetails: NotificationDetails[] = await Promise.all(
-            notifications.map(async (notification) => {
+            notifications
+            .filter((n) => n.actor.id !== userId)
+            .map(async (notification) => {
                 let post = notification.post ?? null;
-                let comment = notification.comment ?? null;
 
                 if (notification.post) {
                     const canAccess = await this.userService.canAccessResource(userId, notification.actor.id);
                     if (!canAccess) {
                         post = null;
-                        comment = null;
                     }
                     const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, notification.actor.id );
                     if (notification.post.onlyCloseFriends && !isCloseFriend) {
                         post = null;
-                        comment = null;
                     }
                 }
+
+                const isFollowing = await this.followService.isFollowing(userId, notification.actor.id);
 
                 return {
                     id: notification.id,
@@ -45,9 +46,10 @@ export class GetNotificationService {
                         firstName: notification.actor.firstName,
                         lastName: notification.actor.lastName,
                         imagePath: notification.actor.imagePath,
+                        isFollowing: isFollowing,
                     },
                     post,
-                    comment,
+                    comment: notification.comment,
                     isRead: notification.isRead,
                     createdAt: notification.createdAt,
                 };
@@ -73,54 +75,52 @@ export class GetNotificationService {
         const notifications = await this.notificationService.getFriendsNotifications(userId, followingsId, offset, limit);
 
         const notificationDetails = await Promise.all(
-            notifications.map(async (notification) => {
-                let post = notification.post ?? null;
-                let comment = notification.comment ?? null;
+            notifications
+                .filter((n) => n.actor.id !== n.receiver!.id)
+                .map(async (notification) => {
 
-                if (notification.post) {
-                    const canAccess = await this.userService.canAccessResource(userId, notification.receiver!.id);
-                    if (!canAccess) {
-                        post = null;
-                        comment = null;
-                    }
-                    const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, notification.receiver!.id);
-                    if (notification.post.onlyCloseFriends && !isCloseFriend) {
-                        post = null;
-                        comment = null;
-                    }
-                }
+                    if (notification.post) {
+                        const canAccess = await this.userService.canAccessResource(userId, notification.receiver!.id);
+                        if (!canAccess) { return null; }
 
-                return {
-                    id: notification.id,
-                    type: notification.type,
-                    actor: {
-                        id: notification.actor.id,
-                        username: notification.actor.username,
-                        email: notification.actor.email,
-                        isPrivate: notification.actor.isPrivate,
-                        firstName: notification.actor.firstName,
-                        lastName: notification.actor.lastName,
-                        imagePath: notification.actor.imagePath,
-                    },
-                    reciver: notification.receiver
-                        ? {
-                            id: notification.receiver.id,
-                            username: notification.receiver.username,
-                            email: notification.receiver.email,
-                            isPrivate: notification.receiver.isPrivate,
-                            firstName: notification.receiver.firstName,
-                            lastName: notification.receiver.lastName,
-                            imagePath: notification.receiver.imagePath,
-                        }
-                        : null,
-                    post,
-                    comment,
-                    createdAt: notification.createdAt,
-                };
-            })
+                        const isCloseFriend = await this.closeFriendService.isCloseFriend(userId, notification.receiver!.id);
+                        if (notification.post.onlyCloseFriends && !isCloseFriend) { return null; }
+                    }
+
+                    const isFollowing = await this.followService.isFollowing(userId, notification.receiver!.id);
+
+                    return {
+                        id: notification.id,
+                        type: notification.type,
+                        actor: {
+                            id: notification.actor.id,
+                            username: notification.actor.username,
+                            email: notification.actor.email,
+                            isPrivate: notification.actor.isPrivate,
+                            firstName: notification.actor.firstName,
+                            lastName: notification.actor.lastName,
+                            imagePath: notification.actor.imagePath,
+                        },
+                        receiver: notification.receiver
+                            ? {
+                                id: notification.receiver.id,
+                                username: notification.receiver.username,
+                                email: notification.receiver.email,
+                                isPrivate: notification.receiver.isPrivate,
+                                firstName: notification.receiver.firstName,
+                                lastName: notification.receiver.lastName,
+                                imagePath: notification.receiver.imagePath,
+                                isFollowing: isFollowing,
+                            }
+                            : null,
+                        post: notification.post,
+                        comment: notification.comment,
+                        createdAt: notification.createdAt,
+                    };
+                })
         );
 
-        return notificationDetails;
+        return notificationDetails.filter((n) => n !== null);
     }
 
 }

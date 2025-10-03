@@ -129,7 +129,7 @@ export class FollowService implements IFollowService {
     if (accept) {
       followRequest.status = FollowStatusEnum.ACCEPTED;
       await this.followRepository.updateFollow(followRequest);
-      await this.notificationService.createNotification(userId, follower.id, NotificationType.FOLLOW_ACCEPTED);
+      await this.notificationService.createNotification(follower.id, userId, NotificationType.FOLLOW_ACCEPTED);
     } else {
       await this.followRepository.deleteFollow(follower.id, userId)
       const notification = await this.notificationService.getNotification(userId, follower.id, NotificationType.FOLLOW_REQUEST);
