@@ -13,6 +13,7 @@ import { BlockedListPage } from '@/features/relationships/pages/BlockListPage'
 import { CloseFriendsPage } from '@/features/relationships/pages/CloseFriendsPage'
 import { Error404 } from '@/features/common/pages/Error404'
 import { MentionPage } from '@/features/mention/pages/MentionPage'
+import { NotificationPage } from '@/features/notification/pages/notificationPage'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
           { path: '/search', element: <SearchPage /> },
           { path: '/block-list', element: <BlockedListPage /> },
           { path: '/close-friends', element: <CloseFriendsPage /> },
+          { path: '/notifications', element: <NotificationPage /> },
         ],
       },
       {
