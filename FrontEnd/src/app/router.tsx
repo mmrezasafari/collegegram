@@ -14,7 +14,6 @@ import { CloseFriendsPage } from '@/features/relationships/pages/CloseFriendsPag
 import { Error404 } from '@/features/common/pages/Error404'
 import { MentionPage } from '@/features/mention/pages/MentionPage'
 import { NotificationPage } from '@/features/notification/pages/notificationPage'
-import { LogIn } from 'lucide-react'
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -47,7 +46,7 @@ export const router = createBrowserRouter([
           { path: '/block-list', element: <BlockedListPage /> },
           { path: '/close-friends', element: <CloseFriendsPage /> },
           { path: '/notifications', element: <NotificationPage /> },
-          { path: '/logout', element: <LogIn /> },
+          { path: '/logout', element: <AuthLayout /> },
         ],
       },
       {
