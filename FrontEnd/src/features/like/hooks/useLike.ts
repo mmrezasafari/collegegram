@@ -12,7 +12,7 @@ import type { AxiosError } from 'axios'
 type TMutationVars = 'like' | 'unlike'
 interface IMutationContext {
   previousPostDetails?: IGetPostRes
-  previousExploreData?: IExploreGetRes
+  previousExploreData?: InfiniteData<IExploreGetRes>
 }
 
 export async function toggleLikePost(
@@ -39,70 +39,81 @@ export function useToggleLike(postId: string) {
   >({
     mutationKey: ['post', postId, 'toggleLike'],
     mutationFn: (action) => toggleLikePost(postId, action),
+
     onMutate: async (action) => {
-      await queryClient.cancelQueries({ queryKey: ['post', postId] })
-      await queryClient.cancelQueries({ queryKey: ['explore-posts'] })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['post', postId] }),
+        queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
+      ])
+
       const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
         'post',
         postId,
       ])
-      const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
-        'explore-posts',
-      ])
+      const previousExploreData = queryClient.getQueryData<
+        InfiniteData<IExploreGetRes>
+      >(['explore-posts'])
 
+      // Optimistic update: post detail
       if (previousPostDetails) {
-        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              liked: action === 'like' ? true : false,
-              likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
-            },
-          }
-        })
-      }
-
-      if (previousExploreData) {
-        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
-          ['explore-posts'],
-          (old: any) => {
-            if (!old) return old
-
-            return {
+        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
+          old
+            ? {
               ...old,
-              pages: old.pages.map((page: any) => ({
-                ...page,
-                data: {
-                  ...page.data,
-                  data: page.data.data.map((item: any) =>
-                    item.post.id === postId
-                      ? {
-                          ...item,
-                          isLiked: !item.isLiked,
-                          likeCount: item.isLiked
-                            ? item.likeCount - 1
-                            : item.likeCount + 1,
-                        }
-                      : item,
-                  ),
-                },
-              })),
+              data: {
+                ...old.data,
+                liked: action === 'like',
+                likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
+              },
             }
-          },
+            : old,
         )
       }
 
-      return { previousExploreData, previousPostDetails, acion: action }
+      // Optimistic update: explore feed
+      if (previousExploreData) {
+        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+          ['explore-posts'],
+          (old) =>
+            old
+              ? {
+                ...old,
+                pages: old.pages.map((page) => ({
+                  ...page,
+                  data: {
+                    ...page.data,
+                    data: page.data.data.map((item) =>
+                      item.post.id === postId
+                        ? {
+                          ...item,
+                          isLiked: action === 'like',
+                          likeCount:
+                            item.likeCount + (action === 'like' ? 1 : -1),
+                        }
+                        : item,
+                    ),
+                  },
+                })),
+              }
+              : old,
+        )
+      }
+
+      return { previousPostDetails, previousExploreData }
     },
-    onError(_err, _var, context) {
+
+    onError: (_err, _action, context) => {
       if (context?.previousPostDetails) {
         queryClient.setQueryData(['post', postId], context.previousPostDetails)
       }
       if (context?.previousExploreData) {
-        queryClient.setQueryData(['explore'], context.previousExploreData)
+        queryClient.setQueryData(['explore-posts'], context.previousExploreData)
       }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', postId] })
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] })
     },
   })
 }

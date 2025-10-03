@@ -8,7 +8,6 @@ import { useUnreadCount } from '../hooks/notification'
 
 export const NotificationPage = () => {
   const [defaultTab, setDefaultTab] = useState('me')
-  //TODO seperate unread me and closeFriend
   const { data: unreadNotif } = useUnreadCount()
 
   return (
@@ -24,12 +23,14 @@ export const NotificationPage = () => {
             className="cursor-pointer flex gap-4 items-center text-gray-400 font-semibold text-xl data-[state=active]:text-black"
             value="me"
           >
-            <Badge
-              variant="secondary"
-              className="h-8 min-w-8 rounded-full text-light font-semibold text-sm p-2"
-            >
-              {unreadNotif?.data.unreadCount}
-            </Badge>
+            {!!unreadNotif?.data.unreadCount && (
+              <Badge
+                variant="secondary"
+                className="h-8 min-w-8 rounded-full text-light font-semibold text-sm p-2"
+              >
+                {unreadNotif?.data.unreadCount}
+              </Badge>
+            )}
             <span>اعلانات من</span>
           </TabsTrigger>
           <Separator
@@ -40,12 +41,6 @@ export const NotificationPage = () => {
             className="cursor-pointer flex gap-4 items-center text-gray-400 font-semibold text-xl data-[state=active]:text-black"
             value="myFriends"
           >
-            <Badge
-              variant="secondary"
-              className="h-8 min-w-8 rounded-full font-semibold text-light text-sm p-2"
-            >
-              {unreadNotif?.data.unreadCount}
-            </Badge>
             <span>اعلانات دوستان من</span>
           </TabsTrigger>
         </TabsList>

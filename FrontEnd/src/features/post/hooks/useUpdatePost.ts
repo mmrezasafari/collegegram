@@ -19,26 +19,18 @@ export async function updatePost(
   data: INewDataForUpdate,
 ): Promise<IUpdatedPostRes> {
   const formData = new FormData()
-  // caption
+
   formData.append('caption', data.caption)
-  // set iamgesFileName
-  data.imagesName.forEach((name) => {
-    formData.append('imageUrls', name)
-  })
-  //seperate files from image url
+  data.imagesName.forEach((name) => formData.append('imageUrls', name))
   data.images.forEach((file) => {
-    if (typeof file === 'object') {
+    if (file instanceof File) {
       formData.append('images', file)
     }
   })
-  // mentions
   formData.append('mention', data.mention)
-  formData.append(
-    'onlyCloseFriends',
-    data.onlyCloseFriends === true ? 'true' : 'false',
-  )
+  formData.append('onlyCloseFriends', data.onlyCloseFriends ? 'true' : 'false')
 
-  const res = await api.patch(`posts/${postId}`, formData, {
+  const res = await api.patch<IUpdatedPostRes>(`posts/${postId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
 
@@ -49,54 +41,68 @@ export function useUpdatePost(postId: string) {
   const queryClient = useQueryClient()
   const userName = useGetUserName()
 
-  return useMutation<IUpdatedPostRes, AxiosError<IErrorRes>, INewDataForUpdate>(
-    {
-      mutationKey: ['updatePost', postId],
-      mutationFn: (data) => updatePost(postId, data),
-      onMutate: async (newData) => {
-        await queryClient.cancelQueries({ queryKey: ['post', postId] })
+  return useMutation<
+    IUpdatedPostRes,
+    AxiosError<IErrorRes>,
+    INewDataForUpdate,
+    { prevPost?: IGetPostRes }
+  >({
+    mutationKey: ['updatePost', postId],
+    mutationFn: (data) => updatePost(postId, data),
 
-        const prevPost = queryClient.getQueryData<IGetPostRes>(['post', postId])
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ['post', postId] })
 
-        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
-          old
-            ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  post: {
-                    ...old.data.post,
-                    caption: newData.caption,
-                    images: newData.images.map(
-                      (img) =>
-                        img instanceof File
-                          ? { url: URL.createObjectURL(img) }
-                          : { url: img }, // backend url
-                    ) as IGetPostRes['data']['post']['images'],
-                  },
-                  mentionedUsernames: newData.mention
-                    .split('@')
-                    .filter((item) => item.length !== 0),
-                },
-              }
-            : old,
-        )
+      const prevPost = queryClient.getQueryData<IGetPostRes>(['post', postId])
 
-        return { prevPost }
-      },
-      onError: (error) => {
-        notify.error(error.response?.data?.message || 'خطا در ویرایش پست', {
-          position: 'top-right',
-          duration: 10000,
-        })
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['posts', userName] })
-        notify.success('پست با موفقیت ویرایش شد', {
-          position: 'top-right',
-          duration: 10000,
-        })
-      },
+      queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
+        old
+          ? {
+            ...old,
+            data: {
+              ...old.data,
+              post: {
+                ...old.data.post,
+                caption: newData.caption,
+                images: newData.images.map(
+                  (img) =>
+                    img instanceof File
+                      ? { url: URL.createObjectURL(img) }
+                      : { url: img }, // backend url
+                ) as IGetPostRes['data']['post']['images'],
+              },
+              mentionedUsernames: newData.mention
+                .split('@')
+                .filter((item) => item.length !== 0),
+            },
+          }
+          : old,
+      )
+
+      return { prevPost }
     },
-  )
+
+    onError: (error, _variables, context) => {
+      if (context?.prevPost) {
+        queryClient.setQueryData(['post', postId], context.prevPost)
+      }
+
+      notify.error(error.response?.data?.message ?? 'خطا در ویرایش پست', {
+        position: 'top-right',
+        duration: 10000,
+      })
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts', userName] })
+      notify.success('پست با موفقیت ویرایش شد', {
+        position: 'top-right',
+        duration: 10000,
+      })
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', postId] })
+    },
+  })
 }

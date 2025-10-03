@@ -12,7 +12,7 @@ import type { AxiosError } from 'axios'
 type TMutationVars = 'save' | 'unsave'
 interface IMutationContext {
   previousPostDetails?: IGetPostRes
-  previousExploreData?: IExploreGetRes
+  previousExploreData?: InfiniteData<IExploreGetRes>
 }
 
 export const toggleSavePost = async (
@@ -40,72 +40,80 @@ export function useToggleSavePost(postId: string) {
     mutationKey: ['post', postId, 'bookmark'],
     mutationFn: (action) => toggleSavePost(postId, action),
 
-    onMutate: async (context) => {
-      await queryClient.cancelQueries({ queryKey: ['post', postId] })
-      await queryClient.cancelQueries({ queryKey: ['explore-posts'] })
+    onMutate: async (action) => {
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['post', postId] }),
+        queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
+      ])
 
       const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
         'post',
         postId,
       ])
-      const previousExploreData = queryClient.getQueryData<IExploreGetRes>([
-        'explore-posts',
-      ])
+      const previousExploreData = queryClient.getQueryData<
+        InfiniteData<IExploreGetRes>
+      >(['explore-posts'])
 
+      // Optimistic update: post detail
       if (previousPostDetails) {
-        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) => {
-          if (!old) return old
-
-          return {
-            ...old,
-            data: {
-              ...old.data,
-              saved: context === 'save' ? true : false,
-              saveCount: old.data.saveCount + (context === 'save' ? 1 : -1),
-            },
-          }
-        })
-      }
-
-      if (previousExploreData) {
-        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
-          ['explore-posts'],
-          (old: any) => {
-            if (!old) return old
-
-            return {
+        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
+          old
+            ? {
               ...old,
-              pages: old.pages.map((page: any) => ({
-                ...page,
-                data: {
-                  ...page.data,
-                  data: page.data.data.map((item: any) =>
-                    item.post.id === postId
-                      ? {
-                          ...item,
-                          isSaved: !item.isSaved,
-                          savedCount: item.isSaved
-                            ? item.savedCount - 1
-                            : item.savedCount + 1,
-                        }
-                      : item,
-                  ),
-                },
-              })),
+              data: {
+                ...old.data,
+                saved: action === 'save',
+                saveCount: old.data.saveCount + (action === 'save' ? 1 : -1),
+              },
             }
-          },
+            : old,
         )
       }
 
-      return { previousPostDetails, previousExploreData, action: context }
+      // Optimistic update: explore feed
+      if (previousExploreData) {
+        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+          ['explore-posts'],
+          (old) =>
+            old
+              ? {
+                ...old,
+                pages: old.pages.map((page) => ({
+                  ...page,
+                  data: {
+                    ...page.data,
+                    data: page.data.data.map((item) =>
+                      item.post.id === postId
+                        ? {
+                          ...item,
+                          isSaved: action === 'save',
+                          savedCount:
+                            item.savedCount + (action === 'save' ? 1 : -1),
+                        }
+                        : item,
+                    ),
+                  },
+                })),
+              }
+              : old,
+        )
+      }
+
+      return { previousPostDetails, previousExploreData }
     },
-    onError(_err, _var, context) {
+
+    onError: (_err, _action, context) => {
       if (context?.previousPostDetails) {
         queryClient.setQueryData(['post', postId], context.previousPostDetails)
       }
       if (context?.previousExploreData) {
-        queryClient.setQueryData(['explore'], context.previousExploreData)
+        queryClient.setQueryData(['explore-posts'], context.previousExploreData)
       }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', postId] })
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] })
     },
   })
 }

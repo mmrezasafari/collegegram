@@ -14,9 +14,10 @@ export function useGetUser(userName?: string) {
   const { data: me } = useMe()
   const paramUserName = useGetUserName()
   const mainUserName = userName || paramUserName
-  const canFetch = me?.data.username !== mainUserName
 
-  return useQuery({
+  const canFetch = !!mainUserName && me?.data.username !== mainUserName
+
+  return useQuery<IRegisteredUser>({
     queryKey: ['user', mainUserName],
     queryFn: () => getUser(mainUserName as string),
     staleTime: 5 * 60 * 1000,

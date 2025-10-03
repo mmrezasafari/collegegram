@@ -31,7 +31,7 @@ export async function toggleLikeComment(
 export function useToggleLikeComment(
   postId: string,
   commentId: string,
-  parentId?: string, // optional, only needed for replies
+  parentId?: string,
 ) {
   const queryClient = useQueryClient()
 
@@ -44,7 +44,7 @@ export function useToggleLikeComment(
     mutationKey: ['comment', commentId, 'like'],
     mutationFn: (action) => toggleLikeComment(commentId, action),
 
-    onMutate: async () => {
+    onMutate: async (action) => {
       await queryClient.cancelQueries({ queryKey: ['comments', postId] })
       if (parentId) {
         await queryClient.cancelQueries({
@@ -58,35 +58,30 @@ export function useToggleLikeComment(
       ])
       const prevReplies = parentId
         ? queryClient.getQueryData<IReplyCommentRes>([
-            'replies',
-            postId,
-            parentId,
-          ])
+          'replies',
+          postId,
+          parentId,
+        ])
         : undefined
 
-      // Optimistically update top-level comments
+      // Optimistic update: top-level comments
       if (prevComments) {
         const updatedComments: IComment[] = prevComments.data.map((comment) => {
           if (comment.commentId === commentId) {
             return {
               ...comment,
-              isLiked: !comment.isLiked,
-              likeCount: comment.isLiked
-                ? comment.likeCount - 1
-                : comment.likeCount + 1,
+              isLiked: action === 'like',
+              likeCount: comment.likeCount + (action === 'like' ? 1 : -1),
             }
           }
 
-          // Update nested replies if needed
           const updatedReplies = comment.replies.map((reply) =>
             reply.commentId === commentId
               ? {
-                  ...reply,
-                  isLiked: !reply.isLiked,
-                  likeCount: reply.isLiked
-                    ? reply.likeCount - 1
-                    : reply.likeCount + 1,
-                }
+                ...reply,
+                isLiked: action === 'like',
+                likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
+              }
               : reply,
           )
 
@@ -99,17 +94,15 @@ export function useToggleLikeComment(
         })
       }
 
-      // Optimistically update reply cache
+      // Optimistic update: reply cache
       if (prevReplies) {
         const updatedReplies: IReplyComment[] = prevReplies.data.map((reply) =>
           reply.commentId === commentId
             ? {
-                ...reply,
-                isLiked: !reply.isLiked,
-                likeCount: reply.isLiked
-                  ? reply.likeCount - 1
-                  : reply.likeCount + 1,
-              }
+              ...reply,
+              isLiked: action === 'like',
+              likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
+            }
             : reply,
         )
 
@@ -125,7 +118,7 @@ export function useToggleLikeComment(
       return { prevComments, prevReplies }
     },
 
-    onError: (_err, _vars, context) => {
+    onError: (_err, _action, context) => {
       if (context?.prevComments) {
         queryClient.setQueryData(['comments', postId], context.prevComments)
       }
@@ -134,6 +127,15 @@ export function useToggleLikeComment(
           ['replies', postId, parentId],
           context.prevReplies,
         )
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', postId] })
+      if (parentId) {
+        queryClient.invalidateQueries({
+          queryKey: ['replies', postId, parentId],
+        })
       }
     },
   })

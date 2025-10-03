@@ -45,8 +45,10 @@ export function useUploadPost() {
   >({
     mutationKey: ['posts', userName, 'upload'],
     mutationFn: (data) => uploadPosts(data),
+
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['me'] })
+
       const previousMeDetails = queryClient.getQueryData<IRegisteredUser>([
         'me',
       ])
@@ -54,27 +56,29 @@ export function useUploadPost() {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-              ...old,
-              data: {
-                ...old.data,
-                postCount: old.data.postCount + 1,
-              },
-            }
+            ...old,
+            data: {
+              ...old.data,
+              postCount: (old.data.postCount ?? 0) + 1,
+            },
+          }
           : old,
       )
 
       return { previousMeDetails }
     },
+
     onError: (error, _vars, context) => {
       if (context?.previousMeDetails) {
         queryClient.setQueryData(['me'], context.previousMeDetails)
       }
 
-      notify.error(error.response?.data?.message || 'خطا در بارگذاری پست', {
+      notify.error(error.response?.data?.message ?? 'خطا در بارگذاری پست', {
         position: 'top-right',
         duration: 10000,
       })
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts', userName] })
 
@@ -82,6 +86,10 @@ export function useUploadPost() {
         position: 'top-right',
         duration: 10000,
       })
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
 }
