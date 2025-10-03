@@ -6,6 +6,11 @@ interface TagSuggestionsProps {
   onTagSelect: (_tag: ISearchTagsData) => void
 }
 
+function extractHashtagsAsString(text: string): string {
+  const matches = text.match(/#[\w\u0600-\u06FF]+/g)
+  return matches ? matches.join(' ') : ''
+}
+
 export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
   tags,
   onTagSelect,

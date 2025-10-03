@@ -8,7 +8,7 @@ import { UsersGrid } from '../components/UsersGrid'
 import PostsGrid from '../components/PostsGrid'
 
 export const SearchPage = () => {
-  const [defaultTab, setDefaultTab] = useState('useres')
+  const [defaultTab, setDefaultTab] = useState('users')
   const [searchResults, setSearchResults] = useState<ISearchedUsersData[]>([])
   const [tagsResults, setTagsResults] = useState<ISearchTagsData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
