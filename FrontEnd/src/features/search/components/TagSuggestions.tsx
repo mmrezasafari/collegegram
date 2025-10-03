@@ -5,7 +5,7 @@ import type { ISearchTagsData } from 'src/types/search'
 
 interface TagSuggestionsProps {
   tags: ISearchTagsData[]
-  onTagSelect: (_tag: ISearchTagData) => void
+  onTagSelect: (_tag: ISearchTagsData) => void
 }
 
 function getHashtaggedWords(text: string): string {

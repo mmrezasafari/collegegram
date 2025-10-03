@@ -4,6 +4,7 @@ import { PostDetails } from './PostDetails'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
 
 export const UserPostArea = () => {
   const { data: user } = useGetUser()
@@ -46,10 +47,8 @@ export const UserPostArea = () => {
                 setPostId(data.id)
               }}
             >
-              <img
+              <ImageWithFallback
                 src={data.images.length ? data.images[0].url : ''}
-                alt="Image 1"
-                className="w-full h-full object-cover"
               />
             </div>
           ))}

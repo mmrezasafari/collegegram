@@ -58,10 +58,10 @@ export function useToggleLikeComment(
       ])
       const prevReplies = parentId
         ? queryClient.getQueryData<IReplyCommentRes>([
-          'replies',
-          postId,
-          parentId,
-        ])
+            'replies',
+            postId,
+            parentId,
+          ])
         : undefined
 
       // Optimistic update: top-level comments
@@ -78,10 +78,10 @@ export function useToggleLikeComment(
           const updatedReplies = comment.replies.map((reply) =>
             reply.commentId === commentId
               ? {
-                ...reply,
-                isLiked: action === 'like',
-                likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
-              }
+                  ...reply,
+                  isLiked: action === 'like',
+                  likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
+                }
               : reply,
           )
 
@@ -99,10 +99,10 @@ export function useToggleLikeComment(
         const updatedReplies: IReplyComment[] = prevReplies.data.map((reply) =>
           reply.commentId === commentId
             ? {
-              ...reply,
-              isLiked: action === 'like',
-              likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
-            }
+                ...reply,
+                isLiked: action === 'like',
+                likeCount: reply.likeCount + (action === 'like' ? 1 : -1),
+              }
             : reply,
         )
 

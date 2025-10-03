@@ -14,7 +14,8 @@ import {
 } from '@/features/common/components/ui/drawer'
 import { useMediaQuery } from '@/features/common/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 
 interface Iprops {
   open: boolean
@@ -32,7 +33,15 @@ export const DialogAndDrawerWizard = ({
   children,
 }: Iprops) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const location = useLocation()
+  const prevPath = useRef(location.pathname)
 
+  useEffect(() => {
+    if (prevPath.current !== location.pathname) {
+      setOpen(false)
+    }
+    prevPath.current = location.pathname
+  }, [location.pathname])
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -44,7 +53,7 @@ export const DialogAndDrawerWizard = ({
           <DialogHeader>
             <DialogTitle className="flex flex-col text-2xl font-bold items-center justify-center">
               {title}
-              <DialogDescription hidden></DialogDescription>
+              <DialogDescription hidden />
             </DialogTitle>
           </DialogHeader>
           {children}
@@ -62,7 +71,7 @@ export const DialogAndDrawerWizard = ({
           <DrawerHeader className="text-left">
             <DrawerTitle className="flex flex-col text-xl font-bold items-center justify-center">
               {title}
-              <DrawerDescription hidden></DrawerDescription>
+              <DrawerDescription hidden />
             </DrawerTitle>
           </DrawerHeader>
           {children}

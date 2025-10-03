@@ -10,7 +10,6 @@ import { Button } from '@/features/common/components/ui/button'
 import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
 import {
   useFollowAction,
-  useRemoveFollower,
   useRespond,
   useUnfollowAction,
 } from '@/features/relationships/hooks/useRelationsActions'
@@ -32,7 +31,7 @@ export const NotificationItem = ({ notification }: IProps) => {
   const { mutate: unFollowMutation } = useUnfollowAction(actor?.username)
   const { mutate: followMutation } = useFollowAction(actor?.username)
   const { mutate: respondMutattion } = useRespond(actor?.username)
-  const { mutate: removeFollower } = useRemoveFollower(actor?.username)
+  // const { mutate: removeFollower } = useRemoveFollower(actor?.username)
 
   const handleFollow = () => {
     followMutation()
@@ -46,9 +45,9 @@ export const NotificationItem = ({ notification }: IProps) => {
     respondMutattion()
   }
 
-  const handleRemove = () => {
-    removeFollower()
-  }
+  // const handleRemove = () => {
+  //   removeFollower()
+  // }
 
   const renderText = () => {
     switch (type) {

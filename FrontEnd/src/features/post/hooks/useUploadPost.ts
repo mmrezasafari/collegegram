@@ -56,12 +56,12 @@ export function useUploadPost() {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-            ...old,
-            data: {
-              ...old.data,
-              postCount: (old.data.postCount ?? 0) + 1,
-            },
-          }
+              ...old,
+              data: {
+                ...old.data,
+                postCount: (old.data.postCount ?? 0) + 1,
+              },
+            }
           : old,
       )
 

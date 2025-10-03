@@ -5,6 +5,7 @@ import { Button } from '@/features/common/components/ui/button'
 import { Plus } from 'lucide-react'
 import { DialogAndDrawerWizard } from '@/features/common/components/layout/DialogAndDrawerWizard'
 import { UploadPostForm } from './UploadPostForm'
+import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
 
 export const OwnPostArea = () => {
   const { data } = useGetPosts()
@@ -26,10 +27,8 @@ export const OwnPostArea = () => {
                 setPostId(data.id)
               }}
             >
-              <img
+              <ImageWithFallback
                 src={data.images.length ? data.images[0].url : ''}
-                alt="Image 1"
-                className="w-full h-full object-cover hover:justify-items-center-safe cursor-pointer"
               />
             </div>
           ))}
