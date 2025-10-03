@@ -13,7 +13,9 @@ export class CloseFriendService {
 
     async addCloseFriend(userId: string, username: string) {
         const friendUser = await this.userService.getUserByUsername(username);
-        
+        if ( userId === friendUser.id){
+            throw new HttpError(403, "شما نمی‌توانید خودتان را به لیست دوستان نزدیک اضافه کنید.");
+        }
         const followers = await this.followService.getFollows(userId, "followers");
         const followings = await this.followService.getFollows(userId,  "followings");
         const followerUsers = followers.map(f => f.follower).filter(Boolean);
