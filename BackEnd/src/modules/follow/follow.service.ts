@@ -33,6 +33,10 @@ export class FollowService implements IFollowService {
     if(isBlocked){
       throw new HttpError(400, "این کاربر شمارو بلاک کرده")
     }
+    const isBlockedByMe = await this.blockService.isBlocked(followerId, following.id)
+    if(isBlockedByMe){
+      throw new HttpError(400, "ابتدا این کاربر را از بلاک خارج کنید")
+    }
     if (userExists) {
       throw new HttpError(400, "شما این کاربر را دنبال می‌کردید")
     }

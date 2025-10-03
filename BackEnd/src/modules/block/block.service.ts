@@ -4,6 +4,7 @@ import { UserService } from "../user/user.service";
 import { IBlockRepository } from "./block.repository";
 import { CommentService } from "../comment/comment.service";
 import { blockOutput } from "./models/block-output";
+import { CloseFriendService } from "../closeFriend/close-friend.service";
 
 export interface IBlockservice{
     blockUser(userId: string, username: string):Promise<{ message: string }>;
@@ -16,7 +17,8 @@ export class BlockService implements IBlockservice {
         private blockRepo: IBlockRepository,
         private userService: UserService,
         private followService: FollowService,
-        private commentService:CommentService
+        private commentService:CommentService,
+        private closeFriendService: CloseFriendService
     ) { }
 
     async blockUser(userId: string, username: string) {
@@ -35,6 +37,10 @@ export class BlockService implements IBlockservice {
         const user = await this.userService.getUser(userId)
         if(isFollower){
             await this.followService.unfollowUser(blockUser.id, user.username)
+        }
+        const isCloseFriend = await this.closeFriendService.isCloseFriend(blockUser.id, userId)
+        if(isCloseFriend){
+            await this.closeFriendService.removeCloseFriend(userId, username)
         }
         await this.commentService.deleteUserCommentsFromUserPosts(blockUser.id, userId)
         return { message: "کاربر با موفقیت بلاک شد" };
