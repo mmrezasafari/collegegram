@@ -14,6 +14,7 @@ import { Avatar, AvatarImage } from '@/features/common/components/ui/avatar'
 import {
   BellIcon,
   Bookmark,
+  DoorClosed,
   List,
   MessageCircleIcon,
   PanelsTopLeft,
@@ -73,6 +74,24 @@ export function AppSidebar() {
   const user = me?.data
   const { toggleSidebar, isMobile } = useSidebar()
   const navigate = useNavigate()
+
+  // Utility to clear all cookies
+  const clearCookies = () => {
+    document.cookie.split(';').forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, '')
+        .replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/')
+    })
+  }
+
+  // Logout handler
+  const handleLogout = () => {
+    clearCookies()
+    localStorage.clear()
+    sessionStorage.clear()
+    if (isMobile) toggleSidebar()
+    navigate('/logout')
+  }
 
   const onNavigate = (url: string) => {
     navigate(url)
@@ -177,6 +196,19 @@ export function AppSidebar() {
                     <UserLock />
                   </div>
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-full px-8 py-4">
+                <button
+                  onClick={() => {
+                    handleLogout()
+                    window.location.href = `/login`
+                  }}
+                >
+                  <div className="flex items-start gap-4 text-base">
+                    <span>خروچ</span>
+                    <DoorClosed />
+                  </div>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
