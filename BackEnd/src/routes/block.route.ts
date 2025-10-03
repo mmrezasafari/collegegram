@@ -15,6 +15,10 @@ export const blockRouter = (blockService:BlockService) => {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
       return;
     }
+    if (user.username === username) {
+      res.status(400).json(errorResponse("شما نمیتوانید خود را بلاک کنید"))
+      return;
+    }
     handleExpress(res, () => blockService.blockUser(user.userId, username))
 
   })
@@ -24,6 +28,10 @@ export const blockRouter = (blockService:BlockService) => {
     const user = req.user
     if (!user) {
       res.status(401).json(errorResponse("احراز هویت انجام نشده است"))
+      return;
+    }
+    if (user.username === username) {
+      res.status(400).json(errorResponse("شما نمیتوانید خود را آنبلاک کنید"))
       return;
     }
     handleExpress(res, () => blockService.unblockUser(user.userId, username));
