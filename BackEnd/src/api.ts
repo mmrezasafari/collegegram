@@ -105,7 +105,7 @@ export const makeApp = (dataSource: DataSource) => {
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
-  const blockService = new BlockService(blockRepo, userService, followService, commentService);
+  const blockService = new BlockService(blockRepo, userService, followService, commentService, closeFriendService);
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
