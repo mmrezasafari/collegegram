@@ -46,7 +46,7 @@ export const AuthPage = () => {
               <span className="text-xs">&#10095;</span>
               <a
                 className="text-primary/80 hover:text-primary text-sm"
-                href="url"
+                href="/forgetpassword"
               >
                 فراموشی رمز عبور
               </a>

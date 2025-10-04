@@ -14,6 +14,10 @@ import { CloseFriendsPage } from '@/features/relationships/pages/CloseFriendsPag
 import { Error404 } from '@/features/common/pages/Error404'
 import { MentionPage } from '@/features/mention/pages/MentionPage'
 import { NotificationPage } from '@/features/notification/pages/notificationPage'
+<<<<<<< HEAD
+import { ForgetPassword } from '@/features/auth/components/ForgetPassword'
+import { RenewPassword } from '@/features/auth/components/RenewPassword'
+=======
 import { LogIn } from 'lucide-react'
 
 export const LoadingPage = () => {
@@ -23,6 +27,7 @@ export const LoadingPage = () => {
     </div>
   )
 }
+>>>>>>> 9c5116f0ee0e5cc2132270538d7d0dd8532ea003
 
 function ProtectedRoute() {
   const { data: me, isLoading } = useMe()
@@ -40,6 +45,8 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AuthLayout />,
   },
+  { path: '/forgetpassword', element: <ForgetPassword /> },
+  { path: '/renewpassword', element: <RenewPassword /> },
   {
     element: <ProtectedRoute />,
     children: [
@@ -55,7 +62,7 @@ export const router = createBrowserRouter([
           { path: '/block-list', element: <BlockedListPage /> },
           { path: '/close-friends', element: <CloseFriendsPage /> },
           { path: '/notifications', element: <NotificationPage /> },
-          { path: '/logout', element: <LogIn /> },
+          { path: '/logout', element: <AuthLayout /> },
         ],
       },
       {
