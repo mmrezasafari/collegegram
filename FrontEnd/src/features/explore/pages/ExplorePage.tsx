@@ -36,16 +36,16 @@ export const ExplorePage = () => {
       <div ref={containerRef} className="overflow-y-auto">
         {allPosts?.length > 0 ? (
           <>
-            <div className="flex flex-wrap gap-4 p-2 h-full justify-center items-center">
-              {allPosts?.map((item, idx) => (
+            <div className="flex flex-wrap gap-4 p-2">
+              {allPosts.map((item, idx) => (
                 <FriendCard key={idx} friendData={item} />
               ))}
-              {isFetchingNextPage && (
-                <div className="absolute col-span-full bottom-10 flex justify-center">
-                  <Loading />
-                </div>
-              )}
             </div>
+            {isFetchingNextPage && (
+              <div className="flex justify-center mt-4">
+                <Loading />
+              </div>
+            )}
           </>
         ) : (
           <ExploreEmpty />

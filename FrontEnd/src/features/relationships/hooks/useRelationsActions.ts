@@ -1,7 +1,7 @@
 import { notify } from '@/features/common/components/ui/sonner'
 import { useMe } from '@/features/common/hooks/users/useGetMe'
-import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import api from '@/lib/axios'
+import type { ISuccessRes } from '@/types/error'
 import type { INotification } from '@/types/notification'
 import type {
   IAddCloseFriendRes,
@@ -32,8 +32,11 @@ export async function unfollowAction(userName: string): Promise<IUnfollowRes> {
   return res.data
 }
 
-export async function respond(userName: string): Promise<{ accept: boolean }> {
-  const res = await api.post(`users/${userName}/respond`)
+export async function respond(
+  userName: string,
+  payload: { accept: boolean },
+): Promise<ISuccessRes> {
+  const res = await api.post(`users/${userName}/respond`, payload)
   return res.data
 }
 
@@ -75,7 +78,7 @@ export function useRespond(userName: string) {
 
   return useMutation({
     mutationKey: ['respond', userName],
-    mutationFn: () => respond(userName),
+    mutationFn: (payload: { accept: boolean }) => respond(userName, payload),
 
     onMutate: async () => {
       await queryClient.cancelQueries({
@@ -86,7 +89,6 @@ export function useRespond(userName: string) {
         pages: INotification[][]
       }>(['notifications', 'me', 'infinite'])
 
-      // Optimistically update actor.isFollowing
       if (previousData) {
         const newPages = previousData.pages.map((page) =>
           page.map((notif) =>
@@ -574,12 +576,11 @@ export function useRemoveFollower(userName: string) {
 export function useFollowAction(userName: string) {
   const queryClient = useQueryClient()
   const { data: me } = useMe()
-  const { data: user } = useGetUser(userName)
 
   const mutation = useMutation<IFollowRes, Error, void, any>({
     mutationKey: ['follow', userName],
     mutationFn: async () => {
-      if (!userName || (user?.data.isPrivate && !user.data.isFollowing)) {
+      if (!userName) {
         throw new Error('Cannot follow private user without permission')
       }
       return followAction(userName)
@@ -696,6 +697,7 @@ export function useFollowAction(userName: string) {
       queryClient.invalidateQueries({
         queryKey: ['followingsList', me.data.username],
       })
+      queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })
     },
   })
 
@@ -826,6 +828,7 @@ export function useUnfollowAction(userName: string) {
       queryClient.invalidateQueries({
         queryKey: ['followingsList', me.data.username],
       })
+      queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })
     },
   })
 

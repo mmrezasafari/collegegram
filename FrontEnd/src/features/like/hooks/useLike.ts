@@ -40,73 +40,73 @@ export function useToggleLike(postId: string) {
     mutationKey: ['post', postId, 'toggleLike'],
     mutationFn: (action) => toggleLikePost(postId, action),
 
-    onMutate: async (action) => {
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ['post', postId] }),
-        queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
-      ])
-
-      const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
-        'post',
-        postId,
-      ])
-      const previousExploreData = queryClient.getQueryData<
-        InfiniteData<IExploreGetRes>
-      >(['explore-posts'])
-
-      // Optimistic update: post detail
-      if (previousPostDetails) {
-        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
-          old
-            ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  liked: action === 'like',
-                  likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
-                },
-              }
-            : old,
-        )
-      }
-
-      // Optimistic update: explore feed
-      if (previousExploreData) {
-        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
-          ['explore-posts'],
-          (old) =>
-            old
-              ? {
-                  ...old,
-                  pages: old.pages.map((page) => ({
-                    ...page,
-                    data: page.data.map((item) =>
-                      item.post.id === postId
-                        ? {
-                            ...item,
-                            isLiked: action === 'like',
-                            likeCount:
-                              item.likeCount + (action === 'like' ? 1 : -1),
-                          }
-                        : item,
-                    ),
-                  })),
-                }
-              : old,
-        )
-      }
-
-      return { previousPostDetails, previousExploreData }
-    },
-
-    onError: (_err, _action, context) => {
-      if (context?.previousPostDetails) {
-        queryClient.setQueryData(['post', postId], context.previousPostDetails)
-      }
-      if (context?.previousExploreData) {
-        queryClient.setQueryData(['explore-posts'], context.previousExploreData)
-      }
-    },
+    // onMutate: async (action) => {
+    //   await Promise.all([
+    //     queryClient.cancelQueries({ queryKey: ['post', postId] }),
+    //     queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
+    //   ])
+    //
+    //   const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
+    //     'post',
+    //     postId,
+    //   ])
+    //   const previousExploreData = queryClient.getQueryData<
+    //     InfiniteData<IExploreGetRes>
+    //   >(['explore-posts'])
+    //
+    //   // Optimistic update: post detail
+    //   if (previousPostDetails) {
+    //     queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
+    //       old
+    //         ? {
+    //             ...old,
+    //             data: {
+    //               ...old.data,
+    //               liked: action === 'like',
+    //               likeCount: old.data.likeCount + (action === 'like' ? 1 : -1),
+    //             },
+    //           }
+    //         : old,
+    //     )
+    //   }
+    //
+    //   // Optimistic update: explore feed
+    //   if (previousExploreData) {
+    //     queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+    //       ['explore-posts'],
+    //       (old) =>
+    //         old
+    //           ? {
+    //               ...old,
+    //               pages: old.pages.map((page) => ({
+    //                 ...page,
+    //                 data: page.data.map((item) =>
+    //                   item.post.id === postId
+    //                     ? {
+    //                         ...item,
+    //                         isLiked: action === 'like',
+    //                         likeCount:
+    //                           item.likeCount + (action === 'like' ? 1 : -1),
+    //                       }
+    //                     : item,
+    //                 ),
+    //               })),
+    //             }
+    //           : old,
+    //     )
+    //   }
+    //
+    //   return { previousPostDetails, previousExploreData }
+    // },
+    //
+    // onError: (_err, _action, context) => {
+    //   if (context?.previousPostDetails) {
+    //     queryClient.setQueryData(['post', postId], context.previousPostDetails)
+    //   }
+    //   if (context?.previousExploreData) {
+    //     queryClient.setQueryData(['explore-posts'], context.previousExploreData)
+    //   }
+    // },
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
