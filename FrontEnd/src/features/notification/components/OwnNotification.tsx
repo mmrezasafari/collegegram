@@ -48,7 +48,7 @@ export const OwnNotification = () => {
                 <NotificationItem key={idx} notification={item} />
               ))}
               {isFetchingNextPage && (
-                <div className="absolute col-span-full bottom-10 flex justify-center">
+                <div className="col-span-full flex justify-center">
                   <Loading />
                 </div>
               )}

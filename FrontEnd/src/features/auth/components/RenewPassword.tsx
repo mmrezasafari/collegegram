@@ -1,3 +1,3 @@
 export function RenewPassword() {
-  return <diV>تعوسض پسورد</diV>
+  return <div>تعوسض پسورد</div>
 }

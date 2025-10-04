@@ -30,8 +30,7 @@ export const NotificationItem = ({ notification }: IProps) => {
 
   const { mutate: unFollowMutation } = useUnfollowAction(actor?.username)
   const { mutate: followMutation } = useFollowAction(actor?.username)
-  const { mutate: respondMutattion } = useRespond(actor?.username)
-  // const { mutate: removeFollower } = useRemoveFollower(actor?.username)
+  const { mutate: respondMutation } = useRespond(actor?.username ?? '')
 
   const handleFollow = () => {
     followMutation()
@@ -41,13 +40,9 @@ export const NotificationItem = ({ notification }: IProps) => {
     unFollowMutation()
   }
 
-  const handleRespond = () => {
-    respondMutattion()
+  const handleRespond = (accept: boolean) => {
+    respondMutation({ accept: accept })
   }
-
-  // const handleRemove = () => {
-  //   removeFollower()
-  // }
 
   const renderText = () => {
     switch (type) {
@@ -57,12 +52,11 @@ export const NotificationItem = ({ notification }: IProps) => {
             <Avatar className="w-16 h-16">
               <AvatarImage className="object-cover" src={post?.images[0].url} />
               <AvatarFallback className="border border-gray-400 bg-geryLight">
-                {actor?.firstName[0]}
+                {actor?.firstName ? actor?.firstName[0] : actor?.username[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-end gap-1">
               <p className="text-base font-medium">
-                $
                 {actor?.firstName
                   ? `${actor?.firstName} ${actor?.lastName} `
                   : `@${actor?.username} `}
@@ -80,7 +74,7 @@ export const NotificationItem = ({ notification }: IProps) => {
             <Avatar className="w-16 h-16">
               <AvatarImage className="object-cover" src={post?.images[0].url} />
               <AvatarFallback className="border border-gray-400 bg-geryLight">
-                {actor?.firstName[0]}
+                {actor?.firstName ? actor?.firstName[0] : actor?.username[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-end gap-1">
@@ -102,7 +96,7 @@ export const NotificationItem = ({ notification }: IProps) => {
             <Avatar className="w-16 h-16">
               <AvatarImage src={post?.images[0].url} />
               <AvatarFallback className="border border-gray-400 bg-geryLight">
-                {actor.firstName[0]}
+                {actor?.firstName ? actor?.firstName[0] : actor?.username[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-end gap-1">
@@ -125,7 +119,7 @@ export const NotificationItem = ({ notification }: IProps) => {
               <Avatar className="w-16 h-16">
                 <AvatarImage className="object-cover" src={actor?.imagePath} />
                 <AvatarFallback className="border border-gray-400 bg-geryLight">
-                  {actor?.firstName[0]}
+                  {actor?.firstName ? actor?.firstName[0] : actor?.username[0]}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-end gap-1">
@@ -180,7 +174,9 @@ export const NotificationItem = ({ notification }: IProps) => {
                     src={actor?.imagePath}
                   />
                   <AvatarFallback className="border border-gray-400 bg-geryLight">
-                    {actor?.firstName[0]}
+                    {actor?.firstName
+                      ? actor?.firstName[0]
+                      : actor?.username[0]}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -202,14 +198,14 @@ export const NotificationItem = ({ notification }: IProps) => {
                   <Button
                     className="flex"
                     variant="default"
-                    onClick={handleRespond}
+                    onClick={() => handleRespond(true)}
                   >
                     <span>قبول درخواست</span>
                   </Button>
                   <Button
                     className="flex"
                     variant="outline"
-                    onClick={handleFollow}
+                    onClick={() => handleRespond(false)}
                   >
                     <span>لغو</span>
                   </Button>
