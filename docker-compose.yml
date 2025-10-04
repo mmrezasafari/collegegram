@@ -63,6 +63,12 @@ services:
       - backend
     networks:
       - app-network
+  mailpit:
+    image: axllent/mailpit:edge
+    container_name: mailpit
+    ports:
+      - 1025:1025
+      - 8025:8025
 
 volumes:
   pgData:

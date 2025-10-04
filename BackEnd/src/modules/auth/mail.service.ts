@@ -4,7 +4,7 @@ export class MailService {
   async sendMail(userEmail: string, subject: string, text: string) {
     try {
       await mailTransporter.sendMail({
-        from: `"CollegeGram" <${process.env.GMAIL_USER}>`,
+        from: "CollegeGram",
         to: userEmail,
         subject,
         text,
