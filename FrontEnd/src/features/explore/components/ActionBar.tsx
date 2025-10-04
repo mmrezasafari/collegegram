@@ -21,16 +21,12 @@ const ActionBar = ({
   commentCount,
 }: IProps) => {
   const { mutate: toggleSaveAction, isPending: savePending } =
-    useToggleSavePost(postId)
+    useToggleSavePost(postId!)
   const { mutate: toogleLikeAction, isPending: likePending } =
     useToggleLike(postId)
 
   const onToggleSave = () => {
-    if (isSaved) {
-      toggleSaveAction('unsave')
-    } else {
-      toggleSaveAction('save')
-    }
+    toggleSaveAction(isSaved ? 'unsave' : 'save')
   }
 
   const onToggleLike = () => {

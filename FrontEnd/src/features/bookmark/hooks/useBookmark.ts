@@ -40,73 +40,73 @@ export function useToggleSavePost(postId: string) {
     mutationKey: ['post', postId, 'bookmark'],
     mutationFn: (action) => toggleSavePost(postId, action),
 
-    onMutate: async (action) => {
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ['post', postId] }),
-        queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
-      ])
+    // onMutate: async (action) => {
+    //   await Promise.all([
+    //     queryClient.cancelQueries({ queryKey: ['post', postId] }),
+    //     queryClient.cancelQueries({ queryKey: ['explore-posts'] }),
+    //   ])
+    //
+    //   const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
+    //     'post',
+    //     postId,
+    //   ])
+    //   const previousExploreData = queryClient.getQueryData<
+    //     InfiniteData<IExploreGetRes>
+    //   >(['explore-posts'])
+    //
+    //   // Optimistic update: post detail
+    //   if (previousPostDetails) {
+    //     queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
+    //       old
+    //         ? {
+    //           ...old,
+    //           data: {
+    //             ...old.data,
+    //             saved: action === 'save',
+    //             saveCount: old.data.saveCount + (action === 'save' ? 1 : -1),
+    //           },
+    //         }
+    //         : old,
+    //     )
+    //   }
+    //
+    //   // Optimistic update: explore feed
+    //   if (previousExploreData) {
+    //     queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
+    //       ['explore-posts'],
+    //       (old) =>
+    //         old
+    //           ? {
+    //             ...old,
+    //             pages: old.pages.map((page) => ({
+    //               ...page,
+    //               data: page.data.map((item) =>
+    //                 item.post.id === postId
+    //                   ? {
+    //                     ...item,
+    //                     isSaved: action === 'save',
+    //                     savedCount:
+    //                       item.savedCount + (action === 'save' ? 1 : -1),
+    //                   }
+    //                   : item,
+    //               ),
+    //             })),
+    //           }
+    //           : old,
+    //     )
+    //   }
+    //
+    //   return { previousPostDetails, previousExploreData }
+    // },
 
-      const previousPostDetails = queryClient.getQueryData<IGetPostRes>([
-        'post',
-        postId,
-      ])
-      const previousExploreData = queryClient.getQueryData<
-        InfiniteData<IExploreGetRes>
-      >(['explore-posts'])
-
-      // Optimistic update: post detail
-      if (previousPostDetails) {
-        queryClient.setQueryData<IGetPostRes>(['post', postId], (old) =>
-          old
-            ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  saved: action === 'save',
-                  saveCount: old.data.saveCount + (action === 'save' ? 1 : -1),
-                },
-              }
-            : old,
-        )
-      }
-
-      // Optimistic update: explore feed
-      if (previousExploreData) {
-        queryClient.setQueryData<InfiniteData<IExploreGetRes>>(
-          ['explore-posts'],
-          (old) =>
-            old
-              ? {
-                  ...old,
-                  pages: old.pages.map((page) => ({
-                    ...page,
-                    data: page.data.map((item) =>
-                      item.post.id === postId
-                        ? {
-                            ...item,
-                            isSaved: action === 'save',
-                            savedCount:
-                              item.savedCount + (action === 'save' ? 1 : -1),
-                          }
-                        : item,
-                    ),
-                  })),
-                }
-              : old,
-        )
-      }
-
-      return { previousPostDetails, previousExploreData }
-    },
-
-    onError: (_err, _action, context) => {
-      if (context?.previousPostDetails) {
-        queryClient.setQueryData(['post', postId], context.previousPostDetails)
-      }
-      if (context?.previousExploreData) {
-        queryClient.setQueryData(['explore-posts'], context.previousExploreData)
-      }
-    },
+    // onError: (_err, _action, context) => {
+    //   if (context?.previousPostDetails) {
+    //     queryClient.setQueryData(['post', postId], context.previousPostDetails)
+    //   }
+    //   if (context?.previousExploreData) {
+    //     queryClient.setQueryData(['explore-posts'], context.previousExploreData)
+    //   }
+    // },
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
