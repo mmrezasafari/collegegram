@@ -209,7 +209,7 @@ export const SearchBar = ({
               />
 
               <button
-                className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6 cursor-pointer hover:bg-primary"
+                className="bg-[#F46B82] text-white rounded-full px-6 py-2 font-bold text-lg mt-2 absolute left-6 bottom-0 cursor-pointer hover:bg-primary"
                 onClick={onToggleMore}
               >
                 بیشتر
