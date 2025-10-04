@@ -89,8 +89,13 @@ export function AppSidebar() {
     clearCookies()
     localStorage.clear()
     sessionStorage.clear()
+<<<<<<< HEAD
+    // if (isMobile) toggleSidebar()
+    // navigate('/logout')
+=======
     if (isMobile) toggleSidebar()
     navigate('/logout')
+>>>>>>> 9c5116f0ee0e5cc2132270538d7d0dd8532ea003
   }
 
   const onNavigate = (url: string) => {
@@ -201,7 +206,9 @@ export function AppSidebar() {
                 <button
                   onClick={() => {
                     handleLogout()
-                    window.location.href = `/login`
+                    // navigate('/logout')
+                    navigate('/')
+                    // window.location.href = `/`
                   }}
                 >
                   <div className="flex items-start gap-4 text-base">

@@ -62,7 +62,7 @@ export const UserCard = ({ user }: { user: ISearchedUserData }) => {
       <div className="flex w-full justify-center">
         {isFollowing && followStatus?.status === 'ACCEPTED' ? (
           <Button
-            className="flex w-[150px]"
+            className="flex w-[272px] h-[40]"
             variant="outline"
             onClick={(e) => {
               e.stopPropagation()
@@ -73,7 +73,7 @@ export const UserCard = ({ user }: { user: ISearchedUserData }) => {
           </Button>
         ) : followStatus && followStatus?.status === 'PENDING' ? (
           <Button
-            className="flex w-[150px]"
+            className="flex w-[272px] h-[40]"
             variant="outline"
             onClick={(e) => {
               e.stopPropagation()
@@ -84,7 +84,7 @@ export const UserCard = ({ user }: { user: ISearchedUserData }) => {
           </Button>
         ) : (
           <Button
-            className="flex w-[150px]"
+            className="flex w-[272px] h-[40]"
             variant="default"
             onClick={(e) => {
               e.stopPropagation()
