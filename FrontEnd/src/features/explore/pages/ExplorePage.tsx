@@ -45,7 +45,7 @@ export const ExplorePage = () => {
           </div>
         ) : allPosts?.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2">
+            <div className="flex flex-wrap gap-3 p-2">
               {allPosts.map((item, idx) => (
                 <FriendCard key={idx} friendData={item} />
               ))}
