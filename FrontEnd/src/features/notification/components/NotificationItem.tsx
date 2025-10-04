@@ -143,7 +143,7 @@ export const NotificationItem = ({ notification }: IProps) => {
                 >
                   <span>دنبال نکردن</span>
                 </Button>
-              ) : (actor?.isFollowing && status?.data.status) === 'PENDING' ? (
+              ) : status?.data.status === 'PENDING' ? (
                 <Button
                   className="flex w-full"
                   variant="default"
@@ -165,7 +165,7 @@ export const NotificationItem = ({ notification }: IProps) => {
         )
       case 'FOLLOW_REQUEST':
         return (
-          <div className="flex flex-row-reverse gap-20 items-center">
+          <div className="flex md:flex-row-reverse flex-col gap-2 md:gap-20 items-center">
             <div className="flex flex-row-reverse gap-4 items-center">
               <div className="flex flex-row-reverse justify-center gap-4 items-center">
                 <Avatar className="w-16 h-16">
@@ -185,7 +185,7 @@ export const NotificationItem = ({ notification }: IProps) => {
                   {actor?.firstName
                     ? `${actor?.firstName} ${actor?.lastName} `
                     : `@${actor?.username} `}{' '}
-                  <span>متین دهقان درخواست دوستی داده </span>
+                  <span>درخواست دوستی داده </span>
                 </p>
                 <p className="text-xs text-gray-600" dir="rtl">
                   {dayjs(createdAt).fromNow()}

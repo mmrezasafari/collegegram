@@ -90,5 +90,9 @@ export function usePostComment(postId: string) {
         duration: 10000,
       })
     },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', postId] })
+    },
   })
 }

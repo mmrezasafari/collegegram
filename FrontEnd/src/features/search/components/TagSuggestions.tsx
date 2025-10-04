@@ -32,7 +32,7 @@ export const TagSuggestions: React.FC<TagSuggestionsProps> = ({
           className="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-100 rounded-4xl"
           onMouseDown={() => handleTagSelect(tag)}
         >
-          <Avatar className="w-[32px] h-[32px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
+          <Avatar className="w-[40px] h-[36px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
             <AvatarImage
               src={tag.images[0]?.url}
               className="w-full h-full object-cover rounded-full"

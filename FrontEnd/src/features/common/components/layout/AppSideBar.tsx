@@ -199,20 +199,19 @@ export function AppSidebar() {
                   </div>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-full px-8 py-4">
-                <button
-                  onClick={() => {
-                    handleLogout()
-                    // navigate('/logout')
-                    navigate('/')
-                    // window.location.href = `/`
-                  }}
-                >
-                  <div className="flex items-start gap-4 text-base">
-                    <span>خروچ</span>
-                    <DoorClosed />
-                  </div>
-                </button>
+              <DropdownMenuItem
+                className="rounded-full px-8 py-4"
+                onClick={() => {
+                  handleLogout()
+                  // navigate('/logout')
+                  navigate('/')
+                  // window.location.href = `/`
+                }}
+              >
+                <div className="flex items-start gap-4 text-base">
+                  <span>خروچ</span>
+                  <DoorClosed />
+                </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

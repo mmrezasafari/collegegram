@@ -11,7 +11,6 @@ import type {
   ICloseFriend,
   ICloseFriendsListRes,
   IFollowersListRes,
-  IFollowingsListRes,
   IFollowRes,
   IRemoveFollowerRes,
   IUnblockUserRes,
@@ -94,12 +93,12 @@ export function useRespond(userName: string) {
           page.map((notif) =>
             notif.actor.username === userName
               ? {
-                  ...notif,
-                  actor: {
-                    ...notif.actor,
-                    isFollowing: true,
-                  },
-                }
+                ...notif,
+                actor: {
+                  ...notif.actor,
+                  isFollowing: true,
+                },
+              }
               : notif,
           ),
         )
@@ -171,13 +170,13 @@ export function useAddToBlockList(user: IUser) {
         (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  isBlockedByMe: true,
-                  isCloseFriend: false,
-                },
-              }
+              ...old,
+              data: {
+                ...old.data,
+                isBlockedByMe: true,
+                isCloseFriend: false,
+              },
+            }
             : old,
       )
 
@@ -247,9 +246,9 @@ export function useRemoveFromBlockList(user: IUser) {
       queryClient.setQueryData<IBlockListRes>(['blockList'], (old) =>
         old
           ? {
-              ...old,
-              data: old.data.filter((item) => item.username !== user.username),
-            }
+            ...old,
+            data: old.data.filter((item) => item.username !== user.username),
+          }
           : old,
       )
 
@@ -259,12 +258,12 @@ export function useRemoveFromBlockList(user: IUser) {
         (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  isBlockedByMe: false,
-                },
-              }
+              ...old,
+              data: {
+                ...old.data,
+                isBlockedByMe: false,
+              },
+            }
             : old,
       )
 
@@ -352,12 +351,12 @@ export function useAddToCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  isCloseFriend: true,
-                },
-              }
+              ...old,
+              data: {
+                ...old.data,
+                isCloseFriend: true,
+              },
+            }
             : old,
       )
 
@@ -429,11 +428,11 @@ export function useRemoveFromCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-                ...old,
-                data: old.data.filter(
-                  (item) => item.username !== user.username,
-                ),
-              }
+              ...old,
+              data: old.data.filter(
+                (item) => item.username !== user.username,
+              ),
+            }
             : old,
       )
 
@@ -443,12 +442,12 @@ export function useRemoveFromCloseFriends(user: IUser) {
         (old) =>
           old
             ? {
-                ...old,
-                data: {
-                  ...old.data,
-                  isCloseFriend: false,
-                },
-              }
+              ...old,
+              data: {
+                ...old.data,
+                isCloseFriend: false,
+              },
+            }
             : old,
       )
 
@@ -521,9 +520,9 @@ export function useRemoveFollower(userName: string) {
         (old) =>
           old
             ? {
-                ...old,
-                data: old.data.filter((u) => u.username !== userName),
-              }
+              ...old,
+              data: old.data.filter((u) => u.username !== userName),
+            }
             : old,
       )
 
@@ -531,12 +530,12 @@ export function useRemoveFollower(userName: string) {
       queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
         old
           ? {
-              ...old,
-              data: {
-                ...old.data,
-                followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
-              },
-            }
+            ...old,
+            data: {
+              ...old.data,
+              followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
+            },
+          }
           : old,
       )
 
@@ -586,104 +585,104 @@ export function useFollowAction(userName: string) {
       return followAction(userName)
     },
 
-    onMutate: async () => {
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ['user', userName] }),
-        queryClient.cancelQueries({ queryKey: ['me'] }),
-        queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
-        queryClient.cancelQueries({
-          queryKey: ['followingsList', me?.data.username],
-        }),
-      ])
-
-      const previousUser = queryClient.getQueryData<IRegisteredUser>([
-        'user',
-        userName,
-      ])
-      const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
-      const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
-        'followersList',
-        userName,
-      ])
-      const previousFollowings = queryClient.getQueryData<IFollowingsListRes>([
-        'followingsList',
-        me?.data.username,
-      ])
-
-      const meUser = me?.data && {
-        id: me.data.id,
-        username: me.data.username,
-        firstName: me.data.firstName,
-        lastName: me.data.lastName,
-        imageUrl: me.data.imagePath,
-        followerCount: me.data.followerCount,
-        followingCount: me.data.followingCount,
-        isFollowing: me.data.isFollowing,
-        email: me.data.email,
-      }
-
-      // Optimistic update: user
-      queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
-        old
-          ? {
-              ...old,
-              data: {
-                ...old.data,
-                isFollowing: !old.data.isFollowing,
-                followerCount: (old.data.followerCount ?? 0) + 1,
-              },
-            }
-          : old,
-      )
-
-      // Optimistic update: me
-      queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
-        old
-          ? {
-              ...old,
-              data: {
-                ...old.data,
-                followingCount: (old.data.followingCount ?? 0) + 1,
-              },
-            }
-          : old,
-      )
-
-      // Optimistic update: followers list
-      queryClient.setQueryData<IFollowersListRes>(
-        ['followersList', userName],
-        (old) =>
-          old && meUser && !old.data.find((u) => u.username === meUser.username)
-            ? { ...old, data: [...old.data, meUser] }
-            : old,
-      )
-
-      // Optimistic update: followings list
-      queryClient.setQueryData<IFollowingsListRes>(
-        ['followingsList', me?.data.username],
-        (old) =>
-          old && meUser ? { ...old, data: [...old.data, meUser] } : old,
-      )
-
-      return { previousUser, previousMe, previousFollowers, previousFollowings }
-    },
-
-    onError: (_err, _variables, context) => {
-      if (context?.previousUser)
-        queryClient.setQueryData(['user', userName], context.previousUser)
-      if (context?.previousMe)
-        queryClient.setQueryData(['me'], context.previousMe)
-      if (context?.previousFollowers)
-        queryClient.setQueryData(
-          ['followersList', userName],
-          context.previousFollowers,
-        )
-      if (context?.previousFollowings)
-        queryClient.setQueryData(
-          ['followingsList', me?.data.username],
-          context.previousFollowings,
-        )
-    },
+    // onMutate: async () => {
+    //   await Promise.all([
+    //     queryClient.cancelQueries({ queryKey: ['user', userName] }),
+    //     queryClient.cancelQueries({ queryKey: ['me'] }),
+    //     queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
+    //     queryClient.cancelQueries({
+    //       queryKey: ['followingsList', me?.data.username],
+    //     }),
+    //   ])
+    //
+    //   const previousUser = queryClient.getQueryData<IRegisteredUser>([
+    //     'user',
+    //     userName,
+    //   ])
+    //   const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
+    //   const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
+    //     'followersList',
+    //     userName,
+    //   ])
+    //   const previousFollowings = queryClient.getQueryData<IFollowingsListRes>([
+    //     'followingsList',
+    //     me?.data.username,
+    //   ])
+    //
+    //   const meUser = me?.data && {
+    //     id: me.data.id,
+    //     username: me.data.username,
+    //     firstName: me.data.firstName,
+    //     lastName: me.data.lastName,
+    //     imageUrl: me.data.imagePath,
+    //     followerCount: me.data.followerCount,
+    //     followingCount: me.data.followingCount,
+    //     isFollowing: me.data.isFollowing,
+    //     email: me.data.email,
+    //   }
+    //
+    //   // Optimistic update: user
+    //   queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
+    //     old
+    //       ? {
+    //           ...old,
+    //           data: {
+    //             ...old.data,
+    //             isFollowing: !old.data.isFollowing,
+    //             followerCount: (old.data.followerCount ?? 0) + 1,
+    //           },
+    //         }
+    //       : old,
+    //   )
+    //
+    //   // Optimistic update: me
+    //   queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
+    //     old
+    //       ? {
+    //           ...old,
+    //           data: {
+    //             ...old.data,
+    //             followingCount: (old.data.followingCount ?? 0) + 1,
+    //           },
+    //         }
+    //       : old,
+    //   )
+    //
+    //   // Optimistic update: followers list
+    //   queryClient.setQueryData<IFollowersListRes>(
+    //     ['followersList', userName],
+    //     (old) =>
+    //       old && meUser && !old.data.find((u) => u.username === meUser.username)
+    //         ? { ...old, data: [...old.data, meUser] }
+    //         : old,
+    //   )
+    //
+    //   // Optimistic update: followings list
+    //   queryClient.setQueryData<IFollowingsListRes>(
+    //     ['followingsList', me?.data.username],
+    //     (old) =>
+    //       old && meUser ? { ...old, data: [...old.data, meUser] } : old,
+    //   )
+    //
+    //   return { previousUser, previousMe, previousFollowers, previousFollowings }
+    // },
+    //
+    // onError: (_err, _variables, context) => {
+    //   if (context?.previousUser)
+    //     queryClient.setQueryData(['user', userName], context.previousUser)
+    //   if (context?.previousMe)
+    //     queryClient.setQueryData(['me'], context.previousMe)
+    //   if (context?.previousFollowers)
+    //     queryClient.setQueryData(
+    //       ['followersList', userName],
+    //       context.previousFollowers,
+    //     )
+    //   if (context?.previousFollowings)
+    //     queryClient.setQueryData(
+    //       ['followingsList', me?.data.username],
+    //       context.previousFollowings,
+    //     )
+    // },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })
@@ -721,100 +720,100 @@ export function useUnfollowAction(userName: string) {
       return unfollowAction(userName)
     },
 
-    onMutate: async () => {
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ['user', userName] }),
-        queryClient.cancelQueries({ queryKey: ['me'] }),
-        queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
-        queryClient.cancelQueries({
-          queryKey: ['followingsList', me?.data.username],
-        }),
-      ])
-
-      const previousUser = queryClient.getQueryData<IRegisteredUser>([
-        'user',
-        userName,
-      ])
-      const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
-      const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
-        'followersList',
-        userName,
-      ])
-      const previousFollowings = queryClient.getQueryData<IFollowingsListRes>([
-        'followingsList',
-        me?.data.username,
-      ])
-
-      // Optimistic update: user
-      queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
-        old
-          ? {
-              ...old,
-              data: {
-                ...old.data,
-                isFollowing: false,
-                followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
-              },
-            }
-          : old,
-      )
-
-      // Optimistic update: me
-      queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
-        old
-          ? {
-              ...old,
-              data: {
-                ...old.data,
-                followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
-              },
-            }
-          : old,
-      )
-
-      // Optimistic update: followers list
-      queryClient.setQueryData<IFollowersListRes>(
-        ['followersList', userName],
-        (old) =>
-          old && me?.data
-            ? {
-                ...old,
-                data: old.data.filter((u) => u.username !== me.data.username),
-              }
-            : old,
-      )
-
-      // Optimistic update: followings list
-      queryClient.setQueryData<IFollowingsListRes>(
-        ['followingsList', me?.data.username],
-        (old) =>
-          old
-            ? {
-                ...old,
-                data: old.data.filter((u) => u.username !== userName),
-              }
-            : old,
-      )
-
-      return { previousUser, previousMe, previousFollowers, previousFollowings }
-    },
-
-    onError: (_err, _variables, context) => {
-      if (context?.previousUser)
-        queryClient.setQueryData(['user', userName], context.previousUser)
-      if (context?.previousMe)
-        queryClient.setQueryData(['me'], context.previousMe)
-      if (context?.previousFollowers)
-        queryClient.setQueryData(
-          ['followersList', userName],
-          context.previousFollowers,
-        )
-      if (context?.previousFollowings)
-        queryClient.setQueryData(
-          ['followingsList', me?.data.username],
-          context.previousFollowings,
-        )
-    },
+    // onMutate: async () => {
+    //   await Promise.all([
+    //     queryClient.cancelQueries({ queryKey: ['user', userName] }),
+    //     queryClient.cancelQueries({ queryKey: ['me'] }),
+    //     queryClient.cancelQueries({ queryKey: ['followersList', userName] }),
+    //     queryClient.cancelQueries({
+    //       queryKey: ['followingsList', me?.data.username],
+    //     }),
+    //   ])
+    //
+    //   const previousUser = queryClient.getQueryData<IRegisteredUser>([
+    //     'user',
+    //     userName,
+    //   ])
+    //   const previousMe = queryClient.getQueryData<IRegisteredUser>(['me'])
+    //   const previousFollowers = queryClient.getQueryData<IFollowersListRes>([
+    //     'followersList',
+    //     userName,
+    //   ])
+    //   const previousFollowings = queryClient.getQueryData<IFollowingsListRes>([
+    //     'followingsList',
+    //     me?.data.username,
+    //   ])
+    //
+    //   // Optimistic update: user
+    //   queryClient.setQueryData<IRegisteredUser>(['user', userName], (old) =>
+    //     old
+    //       ? {
+    //           ...old,
+    //           data: {
+    //             ...old.data,
+    //             isFollowing: false,
+    //             followerCount: Math.max((old.data.followerCount ?? 1) - 1, 0),
+    //           },
+    //         }
+    //       : old,
+    //   )
+    //
+    //   // Optimistic update: me
+    //   queryClient.setQueryData<IRegisteredUser>(['me'], (old) =>
+    //     old
+    //       ? {
+    //           ...old,
+    //           data: {
+    //             ...old.data,
+    //             followingCount: Math.max((old.data.followingCount ?? 1) - 1, 0),
+    //           },
+    //         }
+    //       : old,
+    //   )
+    //
+    //   // Optimistic update: followers list
+    //   queryClient.setQueryData<IFollowersListRes>(
+    //     ['followersList', userName],
+    //     (old) =>
+    //       old && me?.data
+    //         ? {
+    //             ...old,
+    //             data: old.data.filter((u) => u.username !== me.data.username),
+    //           }
+    //         : old,
+    //   )
+    //
+    //   // Optimistic update: followings list
+    //   queryClient.setQueryData<IFollowingsListRes>(
+    //     ['followingsList', me?.data.username],
+    //     (old) =>
+    //       old
+    //         ? {
+    //             ...old,
+    //             data: old.data.filter((u) => u.username !== userName),
+    //           }
+    //         : old,
+    //   )
+    //
+    //   return { previousUser, previousMe, previousFollowers, previousFollowings }
+    // },
+    //
+    // onError: (_err, _variables, context) => {
+    //   if (context?.previousUser)
+    //     queryClient.setQueryData(['user', userName], context.previousUser)
+    //   if (context?.previousMe)
+    //     queryClient.setQueryData(['me'], context.previousMe)
+    //   if (context?.previousFollowers)
+    //     queryClient.setQueryData(
+    //       ['followersList', userName],
+    //       context.previousFollowers,
+    //     )
+    //   if (context?.previousFollowings)
+    //     queryClient.setQueryData(
+    //       ['followingsList', me?.data.username],
+    //       context.previousFollowings,
+    //     )
+    // },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['relation-status', userName] })

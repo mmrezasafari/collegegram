@@ -5,8 +5,13 @@ import { useEffect, useRef } from 'react'
 import { Loader } from 'lucide-react'
 
 export const MentionPage = () => {
-  const { allPosts, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteTagged()
+  const {
+    allPosts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+  } = useInfiniteTagged()
 
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -34,14 +39,18 @@ export const MentionPage = () => {
     <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl mt-2">تگ‌‌شده‌ها</h2>
       <div ref={containerRef} className="overflow-y-auto">
-        {allPosts?.length > 0 ? (
+        {isPending ? (
+          <div className="flex justify-center items-center h-full py-10">
+            <Loader size={40} color="#f6881f" className="animate-spin" />
+          </div>
+        ) : allPosts?.length > 0 ? (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 h-full justify-items-center items-center">
-              {allPosts?.map((item) => (
+              {allPosts.map((item) => (
                 <TaggedImageCard key={item.id} taggedPosts={item} />
               ))}
               {isFetchingNextPage && (
-                <div className="absolute col-span-full bottom-10 flex justify-center">
+                <div className="flex justify-center mt-4 col-span-full">
                   <Loader size={30} color="#f6881f" className="animate-spin" />
                 </div>
               )}

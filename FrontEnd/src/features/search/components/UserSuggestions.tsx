@@ -23,7 +23,7 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
           className="flex items-center p-2 cursor-pointer hover:bg-gray-100 rounded-4xl"
           onMouseDown={() => onSelect(user)}
         >
-          <Avatar className="w-[32px] h-[32px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
+          <Avatar className="w-[40px] h-[40px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
             <AvatarImage
               src={user?.imagePath}
               className="w-full h-full object-cover rounded-full"

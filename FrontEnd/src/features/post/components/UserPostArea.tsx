@@ -5,12 +5,12 @@ import { DialogAndDrawerWizard } from '@/features/common/components/layout/Dialo
 import { useGetUser } from '@/features/common/hooks/users/useGetUser'
 import { useGetRelationStatus } from '@/features/relationships/hooks/useRelations'
 import { ImageWithFallback } from '@/features/common/components/layout/ImgWithFallBack'
+import { Loading } from '@/features/common/components/ui/loading'
 
 export const UserPostArea = () => {
-  const { data: user } = useGetUser()
-  const { data: relationStatus } = useGetRelationStatus(
-    user?.data.username as string,
-  )
+  const { data: user, isPending: userPending } = useGetUser()
+  const { data: relationStatus, isPending: relationIsPending } =
+    useGetRelationStatus(user?.data.username as string)
   const { data } = useGetPosts()
   const images = data?.data
   const [postModalOpen, setPostModalOpen] = useState(false)
@@ -18,7 +18,11 @@ export const UserPostArea = () => {
 
   return (
     <>
-      {relationStatus?.data.status === 'PENDING' ? (
+      {userPending && relationIsPending ? (
+        <div className="h-full flex items-center justify-center">
+          <Loading />
+        </div>
+      ) : relationStatus?.data.status === 'PENDING' ? (
         <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
           <div className="flex flex-col text-center gap-4">
             <div className="font-bold text-sm md:text-xl text-center px-10">
@@ -27,7 +31,7 @@ export const UserPostArea = () => {
             </div>
           </div>
         </div>
-      ) : user?.data?.isPrivate ? (
+      ) : user?.data?.isPrivate && !user.data.isFollowing ? (
         <div className="h-full flex items-center justify-center border border-geryLight rounded-3xl">
           <div className="flex flex-col text-center gap-4">
             <div className="font-semibold text-sm md:text-xl text-justify px-2">
@@ -38,7 +42,7 @@ export const UserPostArea = () => {
         </div>
       ) : images?.length ? (
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 p-2 overflow-y-auto">
-          {images?.map((data, i) => (
+          {images.map((data, i) => (
             <div
               key={i}
               className="overflow-hidden rounded-2xl w-auto h-[150px] md:h-[305px]"
@@ -61,7 +65,7 @@ export const UserPostArea = () => {
             </div>
           </div>
         </div>
-      )}{' '}
+      )}
       {postModalOpen && (
         <DialogAndDrawerWizard
           open={postModalOpen}
