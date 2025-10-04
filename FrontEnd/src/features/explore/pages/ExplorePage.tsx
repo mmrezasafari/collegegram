@@ -5,8 +5,13 @@ import { useEffect, useRef } from 'react'
 import { Loading } from '@/features/common/components/ui/loading'
 
 export const ExplorePage = () => {
-  const { allPosts, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteExplore()
+  const {
+    allPosts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+  } = useInfiniteExplore()
 
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -34,9 +39,13 @@ export const ExplorePage = () => {
     <div className="flex flex-col gap-6 h-full">
       <h2 className="font-bold text-2xl mt-2">اکسپلور</h2>
       <div ref={containerRef} className="overflow-y-auto">
-        {allPosts?.length > 0 ? (
+        {isPending ? (
+          <div className="flex justify-center items-center h-full py-10">
+            <Loading />
+          </div>
+        ) : allPosts?.length > 0 ? (
           <>
-            <div className="flex flex-wrap gap-4 p-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2">
               {allPosts.map((item, idx) => (
                 <FriendCard key={idx} friendData={item} />
               ))}
