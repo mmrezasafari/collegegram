@@ -89,13 +89,10 @@ export function AppSidebar() {
     clearCookies()
     localStorage.clear()
     sessionStorage.clear()
-<<<<<<< HEAD
     // if (isMobile) toggleSidebar()
     // navigate('/logout')
-=======
     if (isMobile) toggleSidebar()
     navigate('/logout')
->>>>>>> 9c5116f0ee0e5cc2132270538d7d0dd8532ea003
   }
 
   const onNavigate = (url: string) => {
