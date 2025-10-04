@@ -20,7 +20,7 @@ export const UserSuggestions: React.FC<UserSuggestionsProps> = ({
       {users.map((user, idx) => (
         <div
           key={idx}
-          className="flex items-center py-2 cursor-pointer hover:bg-gray-100"
+          className="flex items-center p-2 cursor-pointer hover:bg-gray-100 rounded-4xl"
           onMouseDown={() => onSelect(user)}
         >
           <Avatar className="w-[32px] h-[32px] border border-geryLight flex justify-center items-center rounded-full bg-geryVeryLight">
