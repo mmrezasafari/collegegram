@@ -99,13 +99,14 @@ export const makeApp = (dataSource: DataSource) => {
   const commentService = new CommentService(commentRepo, postService, userService, notificationService);
   const likeCommentService = new LikeCommentService(likeCommentRepo, commentService);
   const searchService = new SearchService(userService, hashtagService, closeFriendService);
+  const blockService = new BlockService(blockRepo, userService, followService, commentService, closeFriendService, notificationService);
   const getNotificationService = new GetNotificationService(userService, closeFriendService, followService, notificationService)
   const feedService = new FeedService(userService, postService, mentionService, likeService, saveService, commentService, closeFriendService, followService);
 
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);
-  const blockService = new BlockService(blockRepo, userService, followService, commentService, closeFriendService);
+  
 
   commentService.setLikeComment(likeCommentService);
   userService.setFollowService(followService);

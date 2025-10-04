@@ -71,6 +71,10 @@ export class GetNotificationService {
     async getFriendsNotifications(userId: string, offset: number, limit: number) {
         const followings = await this.followService.getFollows(userId, "followings");
         const followingsId = followings.map(following => following.followingId);
+        if (followingsId.length === 0) {
+            return [];
+        }
+
 
         const notifications = await this.notificationService.getFriendsNotifications(userId, followingsId, offset, limit);
 

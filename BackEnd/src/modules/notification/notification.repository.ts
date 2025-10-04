@@ -13,6 +13,7 @@ export interface INotificationRepository {
     getFriendsNotifications(userId: string, friendsId: string[], offset: number, limit: number): Promise<NotificationDetails[]>;
     markAsRead(notificationIds: string[]): Promise<void>;
     getUnreadCount(userId: string): Promise<number>;
+    deleteBlockUserNotificatios(actorId: string, receiverId: string): Promise<void>
 }
 
 export class NotificationRepository implements INotificationRepository {
@@ -36,7 +37,7 @@ export class NotificationRepository implements INotificationRepository {
         await this.notificationRepository.delete(id);
     }
 
-    async deleteNotifications(actorId: string,  receiversId: string[], type: NotificationType, postId: string) {
+    async deleteNotifications(actorId: string, receiversId: string[], type: NotificationType, postId: string) {
         await this.notificationRepository
             .createQueryBuilder()
             .delete()
@@ -47,6 +48,17 @@ export class NotificationRepository implements INotificationRepository {
             .andWhere("receiverId IN (:...receiversId)", { receiversId })
             .execute();
     }
+
+    async deleteBlockUserNotificatios(actorId: string, receiverId: string): Promise<void> {
+        await this.notificationRepository
+            .createQueryBuilder()
+            .delete()
+            .from(NotificationEntity)
+            .where("receiverId = :receiverId", { receiverId })
+            .andWhere("actorId = :actorId", { actorId })
+            .execute();
+    }
+
 
     async getNotification(type: NotificationType, receiverId: string, actorId: string, postId?: string, commentId?: string) {
         return await this.notificationRepository.findOne({

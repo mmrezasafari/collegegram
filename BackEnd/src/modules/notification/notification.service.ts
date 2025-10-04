@@ -68,4 +68,9 @@ export class NotificationService {
     async markAsRead(notificationIds: string[]) {
         return await this.notificationRepo.markAsRead(notificationIds)
     }
+
+    async deleteBlockUserNotifications(actorId:string, receiverId:string){ 
+        await this.notificationRepo.deleteBlockUserNotificatios(actorId, receiverId)
+
+    }
 }
