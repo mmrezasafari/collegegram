@@ -60,7 +60,10 @@ export const SearchPage = () => {
             >
               پست‌ها
             </TabsTrigger>
-            <Separator orientation="vertical" className="bg-black h-6" />
+            <Separator
+              orientation="vertical"
+              className="h-10 border border-gray-400"
+            />
             <TabsTrigger
               className="text-[20px] rounded-none data-[state=active]:shadow-none text-grey data-[state=active]:text-black cursor-pointer px-4 py-2"
               value="users"
