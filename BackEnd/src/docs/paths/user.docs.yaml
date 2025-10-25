@@ -1,0 +1,75 @@
+paths:
+  /users/{username}: 
+    get: 
+      summary: Get user
+      tags:
+        - users
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string     
+      responses: 
+        '200': 
+          description: get successful user
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/User"
+                      - type: object
+                        properties:
+                          followerCount:
+                            type: integer
+                            example: 123
+                          followingCount:
+                            type: integer
+                            example: 45
+                          postCount:
+                            type: integer
+                            example: 12
+                          isFollowing:
+                            type: boolean
+                            example: true
+                          isCloseFriend:
+                            type: boolean
+                            example: true
+                          isBlockedByMe:
+                            type: boolean
+                            example: true
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"   

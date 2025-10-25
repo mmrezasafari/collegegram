@@ -1,0 +1,21 @@
+components:
+  schemas:
+    savePost:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: "Asghar"
+        postId:
+          type: string
+          example: "3r4"
+        imageUrl:
+          format: url
+          type: string
+          example: "example.png"
+        savedCounts:
+          type: integer
+          example: 100

@@ -1,0 +1,8 @@
+export enum NotificationType {
+  LIKE = "LIKE",
+  COMMENT = "COMMENT",
+  TAG = "TAG",
+  FOLLOW = "FOLLOW",
+  FOLLOW_REQUEST = "FOLLOW_REQUEST",
+  FOLLOW_ACCEPTED = "FOLLOW_ACCEPTED",
+}

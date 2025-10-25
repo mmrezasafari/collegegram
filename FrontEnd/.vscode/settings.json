@@ -29,5 +29,8 @@
   "prettier.jsxSingleQuote": false,
   "prettier.bracketSpacing": true,
   "prettier.arrowParens": "always",
-  "prettier.endOfLine": "lf"
+  "prettier.endOfLine": "lf",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
 }

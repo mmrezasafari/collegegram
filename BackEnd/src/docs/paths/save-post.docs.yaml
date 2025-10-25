@@ -1,0 +1,152 @@
+paths:
+  /posts/{id}/saved-post:
+    post:
+      summary: save post
+      tags:
+        - save
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: saved successfuly
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "پست با موفقیت ذخیره شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این پست را ذخیره دارید"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /posts/{id}/unsaved-post:
+    delete:
+      summary: unsave the post post
+      tags:
+        - save
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Unsaved successfuly
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "ذخبره پست با موفقیت حذف شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این پست را ذخیره نکرده اید"
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"

@@ -1,0 +1,152 @@
+paths:
+  /comments/{id}/like:
+    post:
+      summary: Like comment
+      tags:
+        - like
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Like success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "لایک کردن با موفقیت ثبت شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کامنت را لایک کرده اید"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /comments/{id}/unlike:
+    delete:
+      summary: Dislike comment
+      tags:
+        - like
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Dislike success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "لایک با موفقیت حذف شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کامنت را لایک نکرده اید"
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"

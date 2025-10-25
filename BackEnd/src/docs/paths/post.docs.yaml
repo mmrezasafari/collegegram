@@ -1,0 +1,244 @@
+paths:
+  /users/{username}/posts: 
+    get: 
+      summary: Get posts 
+      tags:
+        - posts
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string     
+      responses: 
+        '200': 
+          description: get successful posts
+          content:
+            application/json: 
+              schema:
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Post"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "نام کاربری معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این کاربر را ندارید"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"  
+  /posts/{id}: 
+    get: 
+      summary: Get post 
+      tags:
+        - post
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string     
+      responses: 
+        200: 
+          description: get successful posts
+          content:
+            application/json: 
+              schema:
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GetPost"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شناسه معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+    patch: 
+      summary: update post 
+      tags:
+        - post
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string   
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [images]
+            schema:
+              type: object
+              properties:
+                caption: 
+                  type: string
+                mention:
+                  type: string
+                onlyCloseFriends:
+                  type: boolean
+                imageUrls:
+                  type: array
+                  items:
+                    type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              example:
+                caption: "This is a #caption"
+                mention: "@Mobinakh @roozaa"
+                onlyCloseFriends: false
+                imageUrls: ["example.jpg", "example2.png"]
+                images: ["example.jpg", "example2.png"]  
+      responses: 
+        200: 
+          description: get successful posts
+          content:
+            application/json: 
+              schema:
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PostResponse"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شناسه معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این پست را ندارید"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "پست یافت نشد یا ویرایش انجام نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"                           

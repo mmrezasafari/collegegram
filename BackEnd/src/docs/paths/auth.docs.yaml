@@ -1,0 +1,341 @@
+paths:
+  /register: 
+    post: 
+      summary: Sign up
+      requestBody: 
+        require: true
+        content: 
+          application/json:
+            required: [username, email, password]
+            schema: 
+              type: object
+              properties:
+                username: 
+                  type: string
+                email: 
+                  type: string
+                password:
+                  type: string
+              example: 
+                username: "daleya"
+                email: "test@gmail.com"
+                password: "Pswd@@123"
+      responses: 
+        "200": 
+          description: Sign up success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data: 
+                    $ref: "#/components/schemas/User"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                UsernameIsNotCorrect:
+                  value:  
+                    success: false
+                    message: "نام‌کاربری باید حداقل ۵ کارکتر داشته باشد"
+                PasswordIsNotCorrect: 
+                  value:
+                    success: false
+                    message: "رمز عبور ایمن نیس"
+                EmailIsNotCorrect:
+                  value: 
+                    success: false
+                    message: "ایمیل معتبر نیست"
+        "409": 
+          description: "Conflict"
+          content: 
+            "application/json": 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "نام کاربری یا ایمیل تکراری است"
+        "500": 
+          description: "Internal Server Error"
+          content: 
+            "application/json": 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  
+  /login: 
+    post: 
+      summary: User login
+      response: User login
+      requestBody: 
+        require: true
+        content: 
+          application/json: 
+            required: true
+            schema: 
+              type: object
+              properties: 
+                usernameOrEmail: 
+                  type: string 
+                password: 
+                  type: string
+              
+              example: 
+                usernameOrEmail: "daleya"
+                password: "Pswd@@123"
+      responses: 
+        "200": 
+          description: Login success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data: 
+                    message: 
+                      type: string
+                  
+                example: 
+                  success: true
+                  data: 
+                    message: "کاربر با موفقیت وارد شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false,
+                message: "اطلاعات وارد شده اشتباه است"
+        
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /logout: 
+    post:
+      summary: Logout user 
+      security:
+        - accessToken: []
+        - refreshToken: []
+      response: logout user
+      responses: 
+        "200": 
+          description: Logout successful
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data: 
+                    message: 
+                      type: string
+                  
+                example: 
+                  success: true
+                  data: 
+                    message: "کاربر با موفقیت خارج شد"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /forget-password:
+    post:
+      summary: Forget Password
+      requestBody: 
+        require: true
+        content: 
+          application/json: 
+            required: true
+            schema: 
+              type: object
+              properties: 
+                usernameOrEmail: 
+                  type: string 
+              example: 
+                usernameOrEmail: "daleya"
+      responses:
+        200:
+          description: Password reset link sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "ایمیل بازیابی رمز عبور با موفقیت ارسال شد"
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false,
+                message: "اطلاعات وارد شده اشتباه است"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+
+  /reset-password:
+    patch:
+      summary: Reset Password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usernameOrEmail:
+                  type: string
+                token:
+                  type: string
+                newPassword:
+                  type: string
+              example:
+                usernameOrEmail: "daleya"
+                token: "reset-token-123"
+                newPassword: "NewPass@123"
+
+      responses:
+        200:
+          description: Password reset successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "رمز عبور با موفقیت بازنشانی شد"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                DataIsNotCorrect:
+                  value:
+                    success: false
+                    message: "اطلاعات وارد شده نامعتبر است"
+                TokenIsExpired:
+                  value:
+                    success: false
+                    message: "توکن منقضی شده است"
+                PasswordIsNotCorrect: 
+                  value:
+                    success: false
+                    message: "رمز عبور ایمن نیست"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"    
+
+  /check-password-token: 
+    get:
+      summary: Check password reset token validity
+      parameters:
+        - in: query
+          name: usernameOrEmail
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "توکن معتبر است"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                DataIsNotCorrect:
+                  value:
+                    success: false
+                    message: "اطلاعات وارد شده نامعتبر است"
+                TokenIsExpired:
+                  value:
+                    success: false
+                    message: "توکن منقضی شده است"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+
+ 

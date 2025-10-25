@@ -1,0 +1,117 @@
+components:
+  schemas:
+    PostImage:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "4a92133c-1144-4a53-929e-8801a971b255"
+        url:
+          type: string
+          example: "public/uploads/images-1757097988650.jpg"
+        mimeType:
+          type: string 
+          example: "image/jpeg"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-05T18:46:28.666Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-09-05T18:46:28.666Z"
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "d83954bb-e977-4280-8f9b-6557d34ef9a4"
+        caption:
+          type: string
+          example: "chi bedonam"
+        onlyCloseFriends:
+          type: boolean
+          default: false
+        user:
+          $ref: "#/components/schemas/User"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostImage"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-05T18:46:28.666Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-09-05T18:46:28.666Z"
+
+    PostResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            post:
+              $ref: "#/components/schemas/Post"
+            mentionedUsernames:
+              type: array
+              items:
+                type: string
+              example: ["Mobinakh", "roozaa"]
+            savedHashtags:
+              type: array
+              items:
+                type: string
+              example: ["test", "tag"]
+    PostWithTags:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "10f9ac2f-b086-46e0-b112-9746901837ea"
+        caption:
+          type: string
+          example: "in #iran beautiful #iran_nature"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-15T06:20:52.468Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-09-15T06:31:37.602Z"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostImage"
+        tags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: "8f19ff7d-ac66-4637-b44c-175160325e54"
+              context:
+                type: string
+                example: "iran"
+              createdAt:
+                type: string
+                format: date-time
+                example: "2025-09-15T06:25:58.726Z"
+              updatedAt:
+                type: string
+                format: date-time
+                example: "2025-09-15T06:25:58.726Z"
+
+      
+
+      

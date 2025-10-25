@@ -1,0 +1,514 @@
+paths:
+  /profile/me: 
+    get: 
+      summary: Get user
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []  
+      responses: 
+        '200': 
+          description: get successful user
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    allOf:
+                    - $ref: "#/components/schemas/User"
+                    - type: object
+                      properties:
+                        followerCount:
+                          type: integer
+                          example: 123
+                        followingCount:
+                          type: integer
+                          example: 45
+                        postCount:
+                          type: integer
+                          example: 12
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+    patch:
+      summary: Edit Profile
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      description: Update the details of an existing user by their ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastName:
+                  type: string
+                firstName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                bio:
+                  type: string
+                isPrivate:
+                  type: boolean
+              example:
+                lastName: "mobina"
+                firstName: "kheiri"
+                email: "mobina.kheiri@gmail.com"
+                password: "Mobin@123"
+                bio: "I am a software developer with a passion for open source."
+                isPrivate: false
+
+      responses:
+        200:
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/User"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                passwordWeak:
+                  value:
+                    success: false
+                    message: "رمز عبور ایمن نیست"
+                emailInvalid:
+                  value:
+                    success: false
+                    message: "ایمیل معتبر نیست"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "ایمیل تکراری است"
+
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+  /profile/posts:  
+    post:
+      summary: Create post
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [images]
+            schema:
+              type: object
+              properties:
+                caption: 
+                  type: string
+                mention:
+                  type: string
+                onlyCloseFriends:
+                  type: boolean
+                  default: false
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              example:
+                caption: "This is a #caption"
+                mention: "@Mobinakh @roozaa"
+                onlyCloseFriends: false
+                images: ["example.jpg", "example2.png"]
+
+      responses: 
+        200:
+          description: Create successful post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/PostResponse"              
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+                IdIsNotValid:
+                  value:
+                    success: false
+                    message: "شناسه کاربر معتبر نیست"
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500: 
+          description: "Internal Server Error"
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /profile/image:
+    post:
+      summary: Create image user
+      tags:
+        - profile
+      security:
+        - accessToken: []
+        - refreshToken: []
+      requestBody:
+        content: 
+          multipart/form-data:
+            required: [avatar]
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+              example:
+                avatar: "example.jpg"
+
+      responses: 
+        200:
+          description: Create successful post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        400: 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              examples: 
+                ImageIsBiggerThanLimit:
+                  value:  
+                    success: false
+                    message: "حجم عکس زیاد است"
+                CaptionIsNotValid: 
+                  value:
+                    success: false
+                    message: "کپشن بیش از حد بزرگ است"
+                ImageIsNotValid:
+                  value: 
+                    success: false
+                    message: "این فرمت پشتیبانی نمی‌شود"
+
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500: 
+          description: "Internal Server Error"
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /profile/home-page:
+      get: 
+        summary: Get Home page
+        tags:
+          - profile
+        security:
+          - accessToken: []
+          - refreshToken: []  
+        parameters:
+          - in: query
+            name: offset
+            schema: 
+              type: integer
+              description: The number of items to skip before starting to collect the result set
+          - in: query
+            name: limit
+            schema:
+              type: integer
+              description: The numbers of items to return
+          - in: query
+            name: sort
+            schema:
+              type: string
+              enum:
+                - ASC
+                - DESC
+            example: ASC
+        responses: 
+          '200': 
+            description: get successful homepage
+            content:
+              application/json: 
+                schema:
+                  type: object
+                  properties: 
+                    success: 
+                      type: boolean
+                    data:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/HomePage"
+          401:
+            description: unauthorized
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "احراز هویت انجام نشده است"
+          500:
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "خطای سرور"  
+  /profile/mentioned-page:
+      get: 
+        summary: Get Mention page
+        tags:
+          - profile
+        security:
+          - accessToken: []
+          - refreshToken: []  
+        parameters:
+          - in: query
+            name: offset
+            schema: 
+              type: integer
+              description: The number of items to skip before starting to collect the result set
+          - in: query
+            name: limit
+            schema:
+              type: integer
+              description: The numbers of items to return
+          - in: query
+            name: sort
+            schema:
+              type: string
+              enum:
+                - ASC
+                - DESC
+            example: ASC
+        responses: 
+          200: 
+            description: get successful mentionpage
+            content:
+              application/json: 
+                schema:
+                  type: object
+                  properties: 
+                    success: 
+                      type: boolean
+                    data:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/MentionedAndSavedPage"
+          401:
+            description: unauthorized
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "احراز هویت انجام نشده است"
+          500:
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "خطای سرور"
+  /profile/saved-page:
+      get: 
+        summary: Get Saved page
+        tags:
+          - profile
+        security:
+          - accessToken: []
+          - refreshToken: []  
+        parameters:
+          - in: query
+            name: offset
+            schema: 
+              type: integer
+              description: The number of items to skip before starting to collect the result set
+          - in: query
+            name: limit
+            schema:
+              type: integer
+              description: The numbers of items to return
+          - in: query
+            name: sort
+            schema:
+              type: string
+              enum:
+                - ASC
+                - DESC
+            example: ASC
+        responses: 
+          200: 
+            description: get successful mentionpage
+            content:
+              application/json: 
+                schema:
+                  type: object
+                  properties: 
+                    success: 
+                      type: boolean
+                    data:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/MentionedAndSavedPage"
+          401:
+            description: unauthorized
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "احراز هویت انجام نشده است"
+          500:
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                    $ref: "#/components/schemas/Error"
+                example:
+                  success: false
+                  message: "خطای سرور"                
+        

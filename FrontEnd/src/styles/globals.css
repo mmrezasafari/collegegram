@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Globals clolors css */
+  --color-primary: #ea5a69;
+  --color-secondary: #f6881f;
+  --color-light: #ffffff;
+  --color-backgroundLight: #f5f5f5;
+  --color-textBlack: #191919;
+  --color-backgroundSuccess: #c3f9c2;
+  --color-textSuccess: #005f3e;
+  --color-backgroundWarning: #ffe4c1;
+  --color-textWarning: #bd5b00;
+  --color-backgroundError: #ffebeb;
+  --color-textError: #cc0000;
+  --color-backgroundInfo: #e9e4ff;
+  --color-textInfo: #e9e4ff;
+  --color-grey: #a5a5a5;
+  --color-geryLight: #d8d8d8;
+  --color-geryVeryLight: #f2f2f7;
+
+  /* global css variables */
+  --shadow-formShadow: 5px 5px 45px 0px #00000080;
+  --shadow-checkBoxShadow: 0px 0px 8px 0px #0000001a;
+}

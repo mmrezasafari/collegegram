@@ -1,0 +1,27 @@
+import { UserService } from "../user/user.service";
+import { IHashtagRepository } from "./tag.repository";
+
+
+export class HashtagService {
+    constructor(
+        private tagRepo: IHashtagRepository,
+    ) { }
+
+    async savePostHashtags(postId: string, hashtags: string[]) {
+        const tags = await this.tagRepo.saveHashtag(postId, hashtags);
+        return tags?.map(tag => tag.context) || [];
+    }
+
+    async removePostHashtags(postId: string) {
+        await this.tagRepo.removePostHashtags(postId);
+    }
+
+    async searchTagInExplore(offset: number, limit: number, sort: "ASC" | "DESC", search: string | null) {
+        if (!search) {
+            return await this.tagRepo.getTagsExplore(offset, limit, sort);
+        }
+        return await this.tagRepo.searchTagInExplore(offset, limit, sort, search);
+    }
+
+
+}

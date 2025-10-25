@@ -1,0 +1,473 @@
+paths:
+  /users/{username}/follow:
+    post:
+      summary: Follow user by username
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Login success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "درخواست دنبال کردن شما با موفقیت انجام شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کاربر را دنبال می‌کردید"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /users/{username}/unfollow:
+    delete:
+      summary: UnFollow user by username
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Login success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "درخواست لغو دنبال کردن شما با موفقیت انجام شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما این کاربر را دنبال نمی‌کردید"
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /users/{username}/followers:
+    get:
+      summary: "List of followers"
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses:
+        200:
+          description: get followers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Follow"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این کاربر را ندارید"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"            
+  /users/{username}/followings:
+    get:
+      summary: "List of followings"
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses:
+        200:
+          description: get followings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Follow"
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "شما اجازه دسترسی به این کاربر را ندارید"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"
+  /users/{username}/follower:
+    delete:
+      summary: Delete follower by username
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses: 
+        "200": 
+          description: Follower Deleted
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "دنبال‌کننده با موفقیت حذف شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "این کاربر دنبال کننده شما نیست"
+
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /users/{username}/respond:
+    post:
+      summary: Respond to follow request
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user who sent the follow request(follower)
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accept:
+                  type: boolean
+              required:
+                - accept
+            example:
+              accept: true
+      responses: 
+        "200": 
+          description: Respond success
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  success: 
+                    type: boolean 
+                  message: 
+                    type: string
+                  
+                example: 
+                  success: true
+                  message: "درخواست دنبال کردن با موفقیت پاسخ داده شد"
+        "400": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              examples: 
+                UserIsFollowing:
+                  value:  
+                    success: false
+                    message: "شما این کاربر را دنبال می‌کنید"
+                NoFollowRequest:
+                  value:
+                    success: false
+                    message: " درخواست دنبال کردن یافت نشد"
+        "401":
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        "404": 
+          description: Bad Request
+          content: 
+            application/json: 
+              schema: 
+               $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد."
+        "500": 
+          description: Internal Server Error
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Error"
+              example: 
+                success: false
+                message: "خطای سرور"
+  /users/{username}/status:
+    get:
+      summary: Get follow status with a user
+      tags:
+        - follow
+      security:
+        - accessToken: []
+        - refreshToken: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user to receive follow request(following)
+          schema: 
+            type: string
+      responses:
+        200:
+          description: get follow status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    properties:
+                      status:
+                        type: string
+                        enum: [NONE, ACCEPTED, PENDING]
+                        example: ACCEPTED
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "احراز هویت انجام نشده است"
+        404:          
+          description: User not found
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "کاربر یافت نشد"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "خطای سرور"

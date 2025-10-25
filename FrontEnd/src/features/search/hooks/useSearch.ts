@@ -1,0 +1,102 @@
+import api from '@/lib/axios'
+import type { IErrorRes } from '@/types/error'
+import type {
+  ISearchUserGetRes,
+  ISearchTagsData,
+  ISearchedUserData,
+  ISearchTagsGetRes,
+} from '@/types/search'
+import {
+  useInfiniteQuery,
+  type InfiniteData,
+  type QueryFunctionContext,
+} from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
+
+interface ISearchUsersPage {
+  data: ISearchedUserData
+  nextOffset?: number
+}
+
+interface ISearchTagsPage {
+  data: ISearchTagsData
+  nextOffset?: number
+}
+
+// Fetch Users Data
+async function fetchSearchUsersData({
+  pageParam = 0,
+  query = '',
+}: QueryFunctionContext & { query?: string }): Promise<ISearchUsersPage> {
+  const limit = 10
+  const { data } = await api.get<ISearchUserGetRes>(
+    `search/users?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=false`,
+  )
+
+  return {
+    data: data.data as any,
+    nextOffset:
+      data.data.length === limit ? (pageParam as number) + limit : undefined,
+  }
+}
+
+export function useInfiniteSearch(enabled: boolean = false) {
+  const query = useInfiniteQuery<
+    ISearchUsersPage,
+    AxiosError<IErrorRes>,
+    InfiniteData<ISearchUsersPage>,
+    ['search'],
+    number
+  >({
+    queryKey: ['search'],
+    queryFn: fetchSearchUsersData,
+    getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
+    initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    enabled: enabled, // Only run when explicitly enabled
+  })
+
+  const allUsers: ISearchedUserData[] =
+    (query.data as any)?.pages.flatMap((page: any) => page.data) ?? []
+
+  return { ...query, allUsers }
+}
+
+// Fetch Tagged Data
+async function fetchSearchTagsData({
+  pageParam = 0,
+  query = '',
+}: QueryFunctionContext & { query?: string }): Promise<ISearchTagsPage> {
+  const limit = 10
+  const { data } = await api.get<ISearchTagsGetRes>(
+    `search/tags?offset=${pageParam}&limit=${limit}&sort=ASC&search=${query}&isSummary=true`,
+  )
+  return {
+    data: data.data as any,
+    nextOffset:
+      data.data.length === limit ? (pageParam as number) + limit : undefined,
+  }
+}
+
+export function useInfiniteTagSearch() {
+  const query = useInfiniteQuery<
+    ISearchTagsPage,
+    AxiosError<IErrorRes>,
+    ISearchTagsPage,
+    ['search'],
+    number
+  >({
+    queryKey: ['search'],
+    queryFn: fetchSearchTagsData,
+    getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
+    initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  })
+
+  const allTags: ISearchTagsData[] =
+    (query.data as any)?.pages.flatMap((page: any) => page.data.data) ?? []
+
+  return { ...query, allTags }
+}

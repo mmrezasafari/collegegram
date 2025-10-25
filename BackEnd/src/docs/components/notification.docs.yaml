@@ -1,0 +1,62 @@
+components:
+  schemas:
+    MyNotificationDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [LIKE, COMMENT, TAG, FOLLOW, FOLLOW_REQUEST, FOLLOW_ACCEPTED]
+        actor:
+          $ref: "#/components/schemas/User"
+        post:
+          $ref: "#/components/schemas/Post"
+          nullable: true
+        comment:
+          $ref: "#/components/schemas/Comment"
+          nullable: true
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    FriendsNotificationDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [LIKE, COMMENT, FOLLOW, FOLLOW_ACCEPTED]
+        actor:
+          $ref: "#/components/schemas/User"
+        receiver:
+          $ref: "#/components/schemas/User"
+          nullable: true
+        post:
+          $ref: "#/components/schemas/Post"
+          nullable: true
+        comment:
+          $ref: "#/components/schemas/Comment"
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: string
+        userId:
+          type: string
+        content:
+          type: string
+        parentId:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time

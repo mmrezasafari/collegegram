@@ -1,0 +1,56 @@
+components:
+  schemas:
+    GetPost:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            post:
+              type: object
+              properties:
+                username: 
+                  type: string
+                profileImage:
+                  type: string
+                firstName: 
+                  type: string
+                lastName: 
+                  type: string
+                caption:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      url:
+                        type: string
+                      fileName:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                createdAt:
+                  type: string
+                  format: date-time
+            mentionedUsernames:
+              type: array
+              items:
+                type: string
+            likeCount:
+              type: integer
+            liked:
+              type: boolean
+            saveCount:
+              type: integer
+            saved:
+              type: boolean
+            commentCount:
+              type: integer
+                 
